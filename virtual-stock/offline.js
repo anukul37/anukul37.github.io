@@ -5,7 +5,7 @@ const DEFAULT_ENDPOINT='https://script.google.com/macros/s/AKfycbzkTF08dH_w6FU8C
 const DEFAULT_KEY='CHANGE_ME_TO_A_LONG_RANDOM_SECRET';
 let db=null, pending=new Map(), centralState='loading', centralMessage='กำลังเชื่อมต่อฐานข้อมูลกลาง', centralVer=0, lastPull=0;
 const enabled=()=>!['127.0.0.1','localhost'].includes(location.hostname);
-const iso=d=>{let x=new Date(d+'T00:00:00');return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`};
+const iso=d=>{let x=d instanceof Date?d:new Date(d+'T00:00:00');return `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,'0')}-${String(x.getDate()).padStart(2,'0')}`};
 const add=(d,n)=>{let x=new Date(d+'T00:00:00');x.setDate(x.getDate()+n);return iso(x)};
 const days=(a,b)=>Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/86400000);
 const range=(a,b)=>Array.from({length:days(a,b)+1},(_,i)=>add(a,i));
