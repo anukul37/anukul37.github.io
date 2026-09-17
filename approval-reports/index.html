@@ -1,0 +1,3153 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบรายงานยาที่ต้องอนุมัติ | ศูนย์ศัลยกรรมกระดูกและข้อ</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --pur:#5E2B8F; --pur2:#7C46B4; --pur3:#B18FD6;
+  --gold:#C9971F; --gold2:#E7B93C;
+  --pink:#E9DAF6; --mint:#F3E2B6; --rose:#F1E9F9; --blue:#ECE5F8;
+  --pink-d:#7B3FB3; --mint-d:#C9971F; --blue-d:#7E57B5; --rose-d:#9A6BC4;
+  --ink:#3A2A4D; --muted:#8E7BA3; --bg:#F6F3FA; --card:#ffffff;
+  --danger:#e05c6f; --ok:#4caf7d; --warn:#e6a23c;
+  --shadow:0 4px 16px rgba(94,43,143,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Sarabun',sans-serif;background:linear-gradient(165deg,#4E1F7E 0%,#5E2B8F 45%,#7C46B4 100%);background-attachment:fixed;color:var(--ink);font-size:15px}
+.layout{display:flex;min-height:100vh;align-items:stretch}
+aside{width:232px;background:transparent;padding:16px 0 16px 12px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+aside .brand{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.2);border-radius:14px;min-height:58px;margin-bottom:12px;margin-right:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px}
+#nav{display:flex;flex-direction:column;gap:4px}
+.sbtn{display:flex;align-items:center;gap:10px;border:none;background:transparent;padding:12px 14px;border-radius:14px 0 0 14px;font-family:inherit;font-size:13.5px;font-weight:600;color:#E7DCF7;cursor:pointer;text-align:left;width:100%}
+.sbtn:hover{background:rgba(255,255,255,.14);color:#fff;border-radius:14px;margin-right:12px;width:calc(100% - 12px)}
+.sbtn.on{background:#fff;color:var(--pur);box-shadow:0 4px 14px rgba(30,10,50,.25)}
+.sdiv{border-top:1px solid rgba(255,255,255,.25);margin:10px 16px 10px 4px}
+aside .btn.ghost{margin-right:12px;background:rgba(255,255,255,.12);color:#EFE6FA}
+aside .btn.ghost:hover{background:rgba(255,255,255,.22)}
+.sideknee{margin-top:auto;margin-right:12px;width:calc(100% - 12px);opacity:.9;border-radius:14px;pointer-events:none}
+.content{flex:1;min-width:0;background:var(--bg);border-radius:26px 0 0 26px;overflow:hidden}
+.tophead{background:#fff;padding:20px 26px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:relative;overflow:hidden;min-height:230px}
+.tophead>*{position:relative;z-index:2}
+.decos{position:absolute;right:0;top:0;height:100%;width:100%;display:flex;align-items:stretch;justify-content:flex-end;gap:0;z-index:1;pointer-events:none;overflow:hidden}
+.decos img{width:100%;height:100%;object-fit:cover;object-position:right center;display:block}
+.deco-knee{opacity:.55}
+.deco-hosp{opacity:1}
+.tophead .tt1{font-size:17px;font-weight:700;color:var(--ink)}
+.tophead .tt2{font-size:26px;font-weight:800;color:var(--pur)}
+.tophead .tt3{font-size:17px;font-weight:800;color:var(--gold)}
+.datecard{margin-left:auto;background:#fff;border:1.5px solid #EDE0F5;border-radius:14px;padding:8px 16px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow)}
+.uplogo{width:150px;height:150px;flex-shrink:0}
+.uplogo img,.uplogo svg{width:100%;height:100%;object-fit:contain}
+main{padding:24px 26px 60px;width:100%}
+.sechead{display:flex;align-items:center;gap:8px;font-size:16.5px;font-weight:800;color:var(--pur);margin:20px 0 12px}
+.sechead:first-child{margin-top:0}
+.ovgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:14px}
+.ov{background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:16px;cursor:pointer;border:1.5px solid transparent;transition:border-color .15s;position:relative;overflow:hidden}
+.ov:hover{border-color:var(--pur3)}
+.ov .wm{position:absolute;right:6px;bottom:-6px;font-size:56px;opacity:.10;pointer-events:none;z-index:1}
+.ov .head,.ov .cols{position:relative;z-index:2}
+.ov .head{display:flex;align-items:center;gap:10px;font-weight:800;margin-bottom:12px;font-size:15px}
+.ov .ic{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;color:#fff;box-shadow:0 3px 8px rgba(94,43,143,.2)}
+.ov .cols{display:flex}
+.ov .col{flex:1;text-align:center;border-right:1.5px dashed #EAE0F4;padding:0 4px}
+.ov .col:last-child{border:none}
+.ov .col .lbl{font-size:15px;font-weight:700;color:var(--ink)}
+.ov .col .num{font-size:30px;font-weight:800;line-height:1.15}
+.menu2{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:14px}
+.m2{display:flex;align-items:center;gap:14px;background:#fff;border:1.5px solid #EDE0F5;border-radius:16px;padding:14px 18px;cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);box-shadow:var(--shadow);transition:all .15s;text-align:left}
+.m2:hover{border-color:var(--pur2);transform:translateY(-2px)}
+.m2 .mic{width:46px;height:46px;border-radius:12px;background:var(--rose);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.m2 .arr{margin-left:auto;width:34px;height:34px;border-radius:50%;background:var(--pur2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0;padding-bottom:2px}
+.notebar{background:var(--rose);border-radius:14px;padding:12px 18px;font-size:13px;color:#5C4477;margin-top:20px;display:flex;gap:10px;align-items:center}
+@media(max-width:880px){
+  body{font-size:14px}
+  .layout{flex-direction:column}
+  aside{width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;padding:10px 10px 8px;gap:6px}
+  aside .brand{margin:0;min-height:40px;padding:0 12px;font-size:13.5px}
+  #nav{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;width:100%;gap:4px;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+  .sbtn{width:auto;border-radius:12px;padding:8px 11px;font-size:12.5px;white-space:nowrap;flex-shrink:0}
+  .sbtn:hover{margin-right:0;width:auto}
+  .sdiv,.sideknee{display:none}
+  #roleinfo{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  #roleinfo>*{margin:0!important;width:auto!important}
+  aside .btn.ghost{width:auto;margin-right:0;padding:7px 10px;font-size:12px}
+  .content{border-radius:20px 20px 0 0}
+  .tophead{min-height:0;padding:12px 14px;gap:10px}
+  .decos{display:none}
+  .uplogo{width:64px;height:64px}
+  .tophead .tt1{font-size:13.5px}
+  .tophead .tt2{font-size:18px}
+  .tophead .tt3{font-size:13.5px}
+  .datecard{padding:6px 10px;font-size:12.5px;gap:6px}
+  main{padding:14px 12px 44px}
+  h2.page{font-size:17px}
+  .sechead{font-size:15px;margin:14px 0 10px}
+  .ovgrid{gap:10px}
+  .ov{padding:12px}
+  .ov .col .num{font-size:24px}
+  .ov .col .lbl{font-size:13px}
+  .menu2{gap:10px}
+  .m2{padding:11px 14px;font-size:14px}
+  .m2 .mic{width:38px;height:38px;font-size:18px}
+  .card{padding:12px;border-radius:14px}
+  table{font-size:12.5px}
+  th,td{padding:7px 6px}
+  .btn{padding:8px 12px;font-size:13px}
+  .btn.sm{padding:4px 8px;font-size:11.5px}
+  .toolbar input[type=search]{min-width:120px}
+  .modal{padding:16px;border-radius:16px}
+  .docgrid{grid-template-columns:1fr}
+}
+h2.page{font-size:19px;font-weight:700;margin-bottom:4px}
+p.sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+.grid8{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:18px}
+.menucard{border:none;border-radius:20px;padding:22px 20px;text-align:left;cursor:pointer;font-family:inherit;
+  box-shadow:var(--shadow);transition:transform .15s;display:flex;flex-direction:column;gap:8px;min-height:120px}
+.menucard:hover{transform:translateY(-3px)}
+.menucard .ic{font-size:26px}
+.menucard .t{font-size:15.5px;font-weight:700;color:#5a4250;line-height:1.35}
+.menucard .n{font-size:13px;color:#7a6570}
+.menucard .badge{align-self:flex-start;background:#ffffffb0;border-radius:20px;padding:2px 12px;font-size:13px;font-weight:700;color:#6a4f5e}
+.c-pink{background:var(--pink)} .c-mint{background:var(--mint)} .c-rose{background:var(--rose)} .c-blue{background:var(--blue)}
+.statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.stat{background:var(--card);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow)}
+.stat .v{font-size:26px;font-weight:700}
+.stat .l{font-size:12.5px;color:var(--muted)}
+.card{background:var(--card);border-radius:18px;padding:18px;box-shadow:var(--shadow);margin-bottom:18px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.toolbar input[type=search]{flex:1;min-width:180px;padding:9px 14px;border:1.5px solid #E5DBF2;border-radius:12px;font-family:inherit;font-size:14px;background:#fff}
+.btn{border:none;border-radius:12px;padding:9px 16px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.btn.primary{background:var(--pink);color:#4A1D75}
+.btn.primary:hover{background:var(--pink-d);color:#fff}
+.btn.soft{background:var(--blue);color:#5B3E91}
+.btn.mint{background:var(--mint);color:#8A6414}
+.btn.ghost{background:#F1EBF7;color:#7D6B93}
+.btn.sm{padding:5px 10px;font-size:12.5px;border-radius:9px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{background:var(--rose);color:#5E2B8F;padding:10px 8px;font-size:12.5px;text-align:left;font-weight:700}
+th:first-child{border-radius:10px 0 0 10px} th:last-child{border-radius:0 10px 10px 0}
+td{padding:10px 8px;border-bottom:1px solid #F0E9F7;vertical-align:middle}
+tr:hover td{background:#FAF6FD}
+.tick{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-width:44px;cursor:pointer;user-select:none;border-radius:10px;padding:4px 6px}
+.tick:hover{background:#F4EDFA}
+.tick .m{font-size:18px;line-height:1}
+.tick .d{font-size:10.5px;color:var(--muted)}
+.tick.yes .m{color:var(--ok)} .tick.no .m{color:#D5C6E5}
+.tag{display:inline-block;padding:2px 10px;border-radius:20px;font-size:12px;font-weight:700}
+.tag.deno{background:var(--mint);color:#8A6414}
+.tag.teri{background:var(--blue);color:#5B3E91}
+.tag.pending{background:#fdeecf;color:#a8741f}
+.tag.waiting{background:var(--rose);color:#7B3FB3}
+.tag.waitnext{background:#FCE3EF;color:#C2447E}
+.tag.active{background:var(--mint);color:#8A6414}
+.tag.done{background:#e8e4e6;color:#8a7f85}
+.note-red{color:var(--danger);font-size:12.5px;font-weight:600}
+.docgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.doccard{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.doccard .h{background:var(--blue);padding:12px 16px;font-weight:700;color:#5B3E91;display:flex;justify-content:space-between;align-items:center}
+.doccard ul{list-style:none;padding:10px 16px 14px}
+.doccard li{padding:7px 0;border-bottom:1px dashed #EAE0F4;font-size:13.5px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.doccard li:last-child{border:none}
+.empty{color:var(--muted);text-align:center;padding:26px;font-size:14px}
+.modalbg{position:fixed;inset:0;background:rgba(90,60,75,.35);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modalbg.show{display:flex}
+.modal{background:#fff;border-radius:20px;padding:24px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto}
+.modal h3{margin-bottom:16px;color:#5E2B8F}
+.frm{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.frm .full{grid-column:1/-1}
+.frm label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.frm input,.frm select,.frm textarea{width:100%;padding:9px 12px;border:1.5px solid #E5DBF2;border-radius:10px;font-family:inherit;font-size:14px;background:#fff}
+.frm textarea{resize:vertical;min-height:60px}
+.tdp{display:block}
+.dtbtn{width:100%;padding:9px 12px;border:1.5px solid #E5DBF2;border-radius:10px;background:#fff;font-family:inherit;font-size:14px;text-align:left;cursor:pointer;color:var(--ink)}
+.dtbtn:hover{border-color:var(--pur3)}
+.dtbtn.empty{color:var(--muted)}
+.calhead{display:flex;gap:6px;align-items:center}
+.calhead select{padding:8px 6px;border:1.5px solid #E5DBF2;border-radius:10px;font-family:inherit;font-size:13.5px;background:#fff}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:12px}
+.calgrid .dh{text-align:center;font-size:12px;font-weight:700;color:var(--muted);padding:4px 0}
+.cday{border:none;background:#F7F3FB;border-radius:9px;padding:9px 0;font-family:inherit;font-size:13.5px;cursor:pointer;color:var(--ink)}
+.cday:hover{background:var(--rose)}
+.cday.today{outline:2px solid var(--gold2)}
+.cday.sel{background:var(--pur2);color:#fff!important;font-weight:700}
+#calhint{margin-top:10px;font-size:12.5px;color:var(--muted);text-align:center}
+.hin{width:100%;padding:8px 10px;border:1.5px solid #E5DBF2;border-radius:9px;font-family:inherit;font-size:13.5px;background:#fff}
+/* หน้าประวัติการรับยา — แบบกะทัดรัด */
+#hpanel{max-width:96vw!important;width:96vw;max-height:94vh}
+#hpanel h3{font-size:16px}
+#hpanel table{font-size:13px}
+#hpanel th,#hpanel td{padding:4px 4px}
+#hpanel .dtbtn{padding:6px 8px;font-size:12.5px;white-space:nowrap}
+#hpanel .hin{padding:6px 8px;font-size:12.5px}
+#hpanel .stat{padding:8px 12px}
+#hpanel .stat .v{font-size:20px!important;line-height:1.5!important}
+#hpanel .statrow{gap:8px}
+#hpanel .tblwrap{max-height:56vh;overflow-y:auto}
+#hpanel th{position:sticky;top:0;z-index:2}
+.wscroll{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;position:relative;z-index:1}
+.wscroll::-webkit-scrollbar{display:none}
+.wpad{height:37px}
+.wi{height:36px;line-height:36px;text-align:center;font-size:14px;color:var(--muted);scroll-snap-align:center;cursor:pointer;user-select:none}
+.wi.on{color:var(--pur);font-weight:800;font-size:15px}
+.modal .acts{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.phone{white-space:nowrap}
+.stockqty{display:inline-flex;align-items:center;gap:8px}
+.stockqty button{width:28px;height:28px;border-radius:8px;border:none;cursor:pointer;font-size:16px;font-weight:700}
+.stockqty .minus{background:var(--rose);color:#7B3FB3}
+.stockqty .plus{background:var(--mint);color:#8A6414}
+.stockqty .q{font-size:17px;font-weight:700;min-width:30px;text-align:center}
+.lowstock{color:var(--danger);font-weight:700}
+.back{background:none;border:none;color:var(--muted);cursor:pointer;font-family:inherit;font-size:13.5px;margin-bottom:10px;padding:0}
+.back:hover{color:var(--pink-d)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#3F2560;color:#fff;padding:10px 22px;border-radius:24px;font-size:14px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:200}
+.toast.show{opacity:1}
+@media(max-width:700px){.frm{grid-template-columns:1fr}}
+@media print{aside,.tophead,.toolbar,.btn,.back{display:none!important}body{background:#fff}}
+.tblwrap{overflow-x:auto}
+
+/* ===== UI refresh: purple-gold institutional theme ===== */
+:root{
+  --pur:#5E2B8F; --pur2:#7A45A7; --pur3:#C8B2DD;
+  --gold:#B8841F; --gold2:#E2B94E;
+  --pink:#F1E8F8; --mint:#F8EBC3; --rose:#FAF3FF; --blue:#EFE8F7;
+  --pink-d:#5E2B8F; --mint-d:#A87416; --blue-d:#6B3D98; --rose-d:#8D4DB9;
+  --ink:#342744; --muted:#7F6E91; --bg:#F7F3FA; --card:#FFFFFF;
+  --danger:#C9485B; --ok:#3D9470; --warn:#C98A2F;
+  --line:#E8DDF1; --line2:#F1EAF7;
+  --shadow:0 10px 26px rgba(94,43,143,.09);
+}
+html{scroll-behavior:smooth}
+body{
+  background:linear-gradient(155deg,#3D145F 0%,#5E2B8F 48%,#8460AA 100%);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+.layout{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0))}
+aside{width:248px;padding:18px 0 18px 14px;gap:6px}
+aside .brand{
+  min-height:62px;margin-right:14px;border-radius:8px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);
+  box-shadow:0 8px 24px rgba(0,0,0,.10);letter-spacing:0;
+}
+.sbtn{
+  border-radius:8px 0 0 8px;padding:12px 14px;color:#F0E7FA;
+  transition:background .15s,color .15s,box-shadow .15s,transform .15s;
+}
+.sbtn:hover{background:rgba(255,255,255,.13);border-radius:8px;margin-right:14px;width:calc(100% - 14px);transform:translateX(2px)}
+.sbtn.on{color:#4A1F74;background:#fff;box-shadow:0 10px 22px rgba(38,12,65,.22)}
+.sdiv{border-top-color:rgba(255,255,255,.18);margin-right:18px}
+aside .btn.ghost{margin-right:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.10);color:#F2F7FA}
+aside .btn.ghost:hover{background:rgba(255,255,255,.18)}
+.sideknee{border-radius:8px;opacity:.72;filter:saturate(.85)}
+.content{background:var(--bg);border-radius:18px 0 0 18px}
+.tophead{
+  min-height:200px;padding:22px 30px;
+  background:linear-gradient(90deg,#FFFFFF 0%,#FFFFFF 48%,#FBF8FF 100%);
+  border-bottom:1px solid var(--line);
+}
+.decos{opacity:.28;filter:saturate(.8) contrast(.96)}
+.deco-knee{opacity:.35}.deco-hosp{opacity:.55}
+.tophead .tt1{color:#6E5C7F;font-size:16px}
+.tophead .tt2{color:#4A1F74;font-size:27px;font-weight:800}
+.tophead .tt3{color:var(--gold);font-size:16px}
+.datecard{border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 18px rgba(36,50,65,.07);background:rgba(255,255,255,.94)}
+main{padding:26px 30px 64px}
+h2.page{font-size:21px;font-weight:800;color:#4A1F74}
+p.sub{color:var(--muted);font-size:13.5px}
+.sechead{color:#5E2B8F;font-size:17px}
+.ov,.m2,.menucard,.stat,.card,.doccard{
+  border-radius:8px;border:1px solid var(--line);box-shadow:var(--shadow);
+}
+.ov,.m2,.menucard,.stat,.card,.doccard{background:rgba(255,255,255,.96)}
+.ov{padding:17px;transition:border-color .15s,transform .15s,box-shadow .15s}
+.ov:hover{border-color:#C8B2DD;transform:translateY(-2px);box-shadow:0 14px 30px rgba(94,43,143,.12)}
+.ov .wm{opacity:.075}
+.ov .ic{border-radius:8px;box-shadow:none}
+.ov .col{border-right-color:var(--line2)}
+.ov .col .num{color:#4A1F74}
+.menu2{gap:12px}
+.m2{border-color:var(--line);border-radius:8px}
+.m2:hover{border-color:#C8B2DD;box-shadow:0 14px 28px rgba(94,43,143,.11)}
+.m2 .mic{border-radius:8px;background:#F4EDFA}
+.m2 .arr{border-radius:8px;background:#5E2B8F}
+.notebar{border-radius:8px;background:#F6F0E7;color:#6C5632;border:1px solid #EAD8B8}
+.stat{padding:15px 16px}
+.stat .v{font-weight:800;color:#4A1F74}
+.stat .l{color:#687787}
+.card{padding:18px;margin-bottom:18px}
+.toolbar{gap:8px}
+.toolbar input[type=search],.frm input,.frm select,.frm textarea,.dtbtn,.hin,.calhead select{
+  border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);
+  transition:border-color .15s,box-shadow .15s,background .15s;
+}
+.toolbar input[type=search]:focus,.frm input:focus,.frm select:focus,.frm textarea:focus,.dtbtn:focus,.hin:focus,.calhead select:focus{
+  outline:none;border-color:#B995D3;box-shadow:0 0 0 3px rgba(94,43,143,.14);
+}
+.btn{
+  border-radius:8px;border:1px solid transparent;
+  transition:background .15s,color .15s,border-color .15s,box-shadow .15s,transform .15s;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:#5E2B8F;color:#fff;box-shadow:0 8px 16px rgba(94,43,143,.20)}
+.btn.primary:hover{background:#4A1F74;color:#fff}
+.btn.soft{background:#EFE8F7;color:#5E2B8F;border-color:#E2D5EE}
+.btn.mint{background:#F8EBC3;color:#7A5510;border-color:#EAD595}
+.btn.ghost{background:#FBF8FE;color:#715F82;border-color:#E8DDF1}
+.btn.sm{border-radius:7px}
+.tblwrap{border:1px solid var(--line);border-radius:8px;background:#fff}
+table{border-collapse:separate;border-spacing:0}
+th{
+  background:#F4EDFA;color:#5E2B8F;border-bottom:1px solid var(--line);
+  position:relative;
+}
+th:first-child{border-radius:8px 0 0 0} th:last-child{border-radius:0 8px 0 0}
+td{border-bottom:1px solid var(--line2)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FCF9FF}
+.tag{border-radius:7px;padding:3px 9px;border:1px solid transparent}
+.tag.deno{background:#F8EBC3;color:#7A5510;border-color:#EAD595}
+.tag.teri{background:#EFE8F7;color:#5E2B8F;border-color:#E2D5EE}
+.tag.pending{background:#FFF3D8;color:#94681D;border-color:#F0D9A6}
+.tag.waiting{background:#F4EDFA;color:#5E2B8F;border-color:#E2D5EE}
+.tag.waitnext{background:#F9EAF0;color:#A33F59;border-color:#EEC9D5}
+.tag.active{background:#E6F4EE;color:#267056;border-color:#CFE9DD}
+.tag.done{background:#EEF1F3;color:#69737D;border-color:#DEE5E9}
+.tick{border-radius:8px}
+.tick:hover{background:#F4EDFA}
+.doccard .h{background:#EFE8F7;color:#5E2B8F}
+.modalbg{background:rgba(44,20,65,.48);backdrop-filter:blur(3px)}
+.modal{border-radius:8px;border:1px solid var(--line);box-shadow:0 20px 60px rgba(44,20,65,.24)}
+.modal h3{color:#4A1F74;font-weight:800}
+.cday{border-radius:7px;background:#FBF8FE}
+.cday:hover{background:#F4EDFA}
+.cday.today{outline:2px solid #D7A84B}
+.cday.sel{background:#5E2B8F}
+.stockqty button{border-radius:7px}
+.stockqty .minus{background:#F8EEF1;color:#A33F59}
+.stockqty .plus{background:#F8EBC3;color:#7A5510}
+.toast{background:#3D145F;border-radius:8px;box-shadow:0 16px 34px rgba(44,20,65,.26)}
+@media(max-width:880px){
+  aside{background:#3D145F;padding:10px}
+  aside .brand{border-radius:8px}
+  .sbtn{border-radius:8px}
+  .sbtn:hover{border-radius:8px;margin-right:0}
+  .content{border-radius:14px 14px 0 0}
+  .tophead{padding:14px;background:#fff}
+  main{padding:16px 12px 48px}
+  .card{border-radius:8px}
+}
+
+
+/* Header visual upgrade: University of Phayao hospital image */
+.tophead{
+  min-height:230px;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg,rgba(61,20,95,.18) 0%,rgba(94,43,143,.10) 38%,rgba(94,43,143,.03) 64%,rgba(255,255,255,0) 100%),
+    url("bg-hospital.png") center right/cover no-repeat;
+  border-bottom:1px solid rgba(94,43,143,.14);
+}
+.tophead::before{
+  content:"";
+  position:absolute;
+  left:-4%;right:-4%;top:-18px;height:86px;
+  z-index:1;pointer-events:none;
+  background:
+    radial-gradient(900px 72px at 74% -18px,rgba(226,185,78,.34),rgba(226,185,78,0) 68%),
+    linear-gradient(168deg,rgba(61,20,95,.96) 0%,rgba(94,43,143,.90) 32%,rgba(122,69,167,.28) 54%,rgba(122,69,167,0) 55%),
+    linear-gradient(174deg,rgba(226,185,78,0) 0%,rgba(226,185,78,0) 58%,rgba(226,185,78,.88) 59%,rgba(184,132,31,.82) 68%,rgba(184,132,31,0) 69%);
+  clip-path:polygon(0 0,100% 0,100% 56%,78% 44%,54% 62%,28% 48%,0 66%);
+  opacity:.96;
+}
+.tophead::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:0;height:4px;
+  z-index:3;pointer-events:none;
+  background:linear-gradient(90deg,#5E2B8F 0%,#7A45A7 42%,#E2B94E 72%,#B8841F 100%);
+}
+.tophead .decos{display:none}
+.tophead .tt1{color:#5E2B8F;text-shadow:0 1px 8px rgba(255,255,255,.55)}
+.tophead .tt2{color:#3D145F;text-shadow:0 2px 12px rgba(255,255,255,.58)}
+.tophead .tt3{color:#8A5E0E;text-shadow:0 1px 8px rgba(255,255,255,.60)}
+.tophead .uplogo{filter:drop-shadow(0 10px 18px rgba(94,43,143,.12))}
+.datecard{background:rgba(255,255,255,.86);backdrop-filter:blur(8px);border-color:rgba(200,178,221,.7)}
+@media(max-width:880px){
+  .tophead{
+    min-height:150px;
+    background:
+      linear-gradient(90deg,rgba(61,20,95,.16) 0%,rgba(94,43,143,.08) 58%,rgba(255,255,255,0) 100%),
+      url("bg-hospital.png") center right/cover no-repeat;
+  }
+  .tophead::before{height:62px;top:-14px;clip-path:polygon(0 0,100% 0,100% 54%,72% 42%,45% 60%,0 50%)}
+}
+
+
+/* Badge no wrap fix */
+.tag{white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;min-width:max-content;line-height:1.25}
+
+/* Appointment extra wrap fix */
+.appt-extra{min-width:150px;max-width:230px;white-space:normal;line-height:1.35}
+.appt-extra b{white-space:nowrap}
+.appt-extra small{display:block;color:var(--muted);white-space:normal;overflow-wrap:anywhere}
+
+/* Mobile navigation polish */
+@media(max-width:880px){
+  body{background:#F7F2FA}
+  .layout{display:block;min-height:100vh;background:#F7F2FA}
+  aside{
+    position:sticky;top:0;z-index:80;width:100%;
+    display:block;padding:10px 10px 8px;background:linear-gradient(155deg,#3D145F 0%,#5E2B8F 100%);
+    box-shadow:0 8px 24px rgba(61,20,95,.18);
+  }
+  aside .brand{
+    width:auto;min-height:44px;margin:0 0 8px;padding:0 14px;
+    justify-content:flex-start;border-radius:8px;font-size:15px;
+  }
+  #nav{
+    display:flex;flex-direction:row;flex-wrap:nowrap;gap:8px;width:100%;
+    overflow-x:auto;padding:0 0 8px;scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  #nav::-webkit-scrollbar{display:none}
+  .sbtn{
+    flex:0 0 auto;width:auto;min-height:42px;border-radius:8px!important;
+    padding:9px 13px;background:rgba(255,255,255,.10);color:#F4EAFB;
+    white-space:nowrap;font-size:13.5px;box-shadow:none;scroll-snap-align:start;
+  }
+  .sbtn.on{background:#fff;color:#4A1F74;box-shadow:0 8px 18px rgba(26,8,45,.18)}
+  .sbtn:hover{width:auto;margin-right:0;transform:none;background:rgba(255,255,255,.16)}
+  .sdiv,.sideknee{display:none!important}
+  #roleinfo{
+    display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;padding-bottom:2px;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  }
+  #roleinfo::-webkit-scrollbar{display:none}
+  #roleinfo>*{flex:0 0 auto;margin:0!important;width:auto!important}
+  aside .btn.ghost{
+    min-height:38px;margin:0;border-radius:8px;padding:8px 12px;
+    font-size:13px;background:rgba(255,255,255,.11);color:#fff;
+  }
+  .content{border-radius:0;overflow:visible}
+  main{padding:16px 12px 52px}
+  .tophead{border-radius:0 0 8px 8px;margin:0}
+}
+@media(max-width:520px){
+  aside{padding:8px 8px 7px}
+  aside .brand{min-height:40px;margin-bottom:7px;font-size:14px}
+  .sbtn{min-height:38px;padding:8px 11px;font-size:13px;gap:7px}
+  aside .btn.ghost{min-height:36px;padding:7px 10px;font-size:12.5px}
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+<aside>
+  <div class="brand">🏥&nbsp; รพ.ม.พะเยา</div>
+  <div id="nav"></div>
+  <div class="sdiv"></div>
+  <div id="roleinfo"></div>
+  <button id="bk1" class="btn ghost" style="width:100%;text-align:left" onclick="backupGS()">💾 สำรองข้อมูล (Google Sheets)</button>
+  <button id="bk2" class="btn ghost" style="width:100%;text-align:left" onclick="restoreGS()">♻️ นำเข้า / กู้คืนข้อมูล</button>
+  <input type="file" id="impfile" accept=".xlsx,.xls" style="display:none" onchange="importXLSX(this)">
+  <img class="sideknee" src="bg-knee2.png" alt="" onerror="this.style.display='none'">
+</aside>
+<div class="content">
+  <div class="tophead">
+    <div class="decos">
+      <img class="deco-knee" src="bg-knee.png" alt="" onerror="this.style.display='none'">
+      <img class="deco-hosp" src="bg-hospital.png" alt="" onerror="this.style.display='none'">
+    </div>
+    <div class="uplogo">
+      <img src="logo.png" alt="" onerror="this.style.display='none';document.getElementById('lgfb').style.display='block'">
+      <svg id="lgfb" style="display:none" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 3 C20 12 12 20 12 34 C12 46 21 55 32 55 C43 55 52 46 52 34 C52 20 44 12 32 3 Z" fill="#8355A7"/>
+        <path d="M32 10 L34 22 L32 19 L30 22 Z M24 16 L26 26 L24 24 L22 26 Z M40 16 L42 26 L40 24 L38 26 Z" fill="#fff" opacity=".9"/>
+        <path d="M12 40 C18 52 46 52 52 40 L48 56 C42 62 22 62 16 56 Z" fill="#E7B93C"/>
+        <path d="M32 20 C28 26 30 32 32 36 C34 40 33 46 30 48 M32 20 C36 26 34 32 32 36 C30 40 31 46 34 48" stroke="#1E7A45" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="32" cy="18" r="3" fill="#D97B29"/>
+      </svg>
+    </div>
+    <div>
+      <div class="tt1">ระบบรายงานยาที่ต้องอนุมัติ</div>
+      <div class="tt2">ศูนย์ศัลยกรรมกระดูกและข้อ</div>
+      <div class="tt3">โรงพยาบาลมหาวิทยาลัยพะเยา</div>
+    </div>
+    <div class="datecard"><span style="font-size:22px">📅</span>
+      <div><small style="color:var(--muted)">อัปเดตล่าสุด</small><br><b id="todayth" style="color:var(--pur)"></b></div>
+    </div>
+  </div>
+  <main id="main"></main>
+</div>
+</div>
+
+<!-- Login -->
+<div class="modalbg show" id="loginbg" style="z-index:300;background:linear-gradient(135deg,#4A1D75,#7C46B4)">
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div style="width:110px;height:110px;margin:0 auto 8px">
+      <img src="logo.png" alt="" style="width:100%;height:100%;object-fit:contain"
+        onerror="this.style.display='none';document.getElementById('lgfb2').style.display='block'">
+      <svg id="lgfb2" style="display:none;width:100%;height:100%" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 3 C20 12 12 20 12 34 C12 46 21 55 32 55 C43 55 52 46 52 34 C52 20 44 12 32 3 Z" fill="#8355A7"/>
+        <path d="M32 10 L34 22 L32 19 L30 22 Z M24 16 L26 26 L24 24 L22 26 Z M40 16 L42 26 L40 24 L38 26 Z" fill="#fff" opacity=".9"/>
+        <path d="M12 40 C18 52 46 52 52 40 L48 56 C42 62 22 62 16 56 Z" fill="#E7B93C"/>
+        <path d="M32 20 C28 26 30 32 32 36 C34 40 33 46 30 48 M32 20 C36 26 34 32 32 36 C30 40 31 46 34 48" stroke="#1E7A45" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="32" cy="18" r="3" fill="#D97B29"/>
+      </svg>
+    </div>
+    <h3 style="text-align:center;margin-bottom:2px">ระบบรายงานยาที่ต้องอนุมัติ</h3>
+    <div style="color:var(--pur);font-weight:700">ศูนย์ศัลยกรรมกระดูกและข้อ</div>
+    <div style="color:var(--muted);font-size:13px;margin-bottom:16px">โรงพยาบาลมหาวิทยาลัยพะเยา</div>
+    <input id="pin" type="password" placeholder="🔑 รหัสผ่าน (เจ้าหน้าที่ / ผู้ดูแลระบบ)"
+      style="width:100%;padding:11px 14px;border:1.5px solid #E5DBF2;border-radius:12px;font-family:inherit;font-size:14px;text-align:center;margin-bottom:10px"
+      onkeydown="if(event.key==='Enter')loginPin()">
+    <button class="btn primary" style="width:100%;margin-bottom:8px" onclick="loginPin()">เข้าสู่ระบบ</button>
+    <button class="btn ghost" style="width:100%" onclick="login('viewer')">👀 เข้าชมแบบดูอย่างเดียว (ไม่ต้องใช้รหัส)</button>
+    <p style="color:var(--muted);font-size:11.5px;margin-top:12px">ระดับสิทธิ์: ดูอย่างเดียว (เห็นเฉพาะหน้าหลัก) · เจ้าหน้าที่ (กรอกข้อมูลคนไข้) · ผู้ดูแลระบบ (อนุมัติ/ตั้งค่า/ลบ)</p>
+  </div>
+</div>
+
+<!-- Patient modal -->
+<div class="modalbg" id="pmodal">
+  <div class="modal">
+    <h3 id="pm-title">เพิ่มเคสใหม่</h3>
+    <div class="frm">
+      <div class="full"><label>ชื่อ-สกุล ผู้ป่วย *</label><input id="f-name"></div>
+      <div><label>HN</label><input id="f-hn"></div>
+      <div><label>เบอร์โทร</label><input id="f-phone" placeholder="08x-xxx-xxxx"></div>
+      <div class="full"><label>อายุผู้ป่วย — พิมพ์ ปี/เดือน/วัน แล้วกด "คำนวณวันเกิด" หรือเลือกวันเกิดจากปฏิทินโดยตรง (ระบบจะขยับอายุให้เองตามเวลา)</label>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <input class="hin" id="f-agy" type="number" min="0" placeholder="ปี" style="width:72px">
+          <input class="hin" id="f-agm" type="number" min="0" max="11" placeholder="เดือน" style="width:72px">
+          <input class="hin" id="f-agd" type="number" min="0" max="30" placeholder="วัน" style="width:72px">
+          <button type="button" class="btn soft sm" onclick="ageToDob()">↻ คำนวณวันเกิด</button>
+          <div class="tdp" id="f-dob" style="flex:1;min-width:190px"></div>
+        </div>
+      </div>
+      <div><label>สิทธิ์การรักษา</label><select id="f-right">
+        <option value="">– เลือก –</option>
+        <option>สปสช.</option><option>ประกันสังคม</option>
+        <option>สวัสดิการข้าราชการ</option><option>อื่นๆ</option></select></div>
+      <div><label>ยา *</label><select id="f-drug">
+        <option value="deno">Denosumab</option><option value="teri">Teriparatide</option></select></div>
+      <div><label>แพทย์เจ้าของไข้</label><select id="f-doctor"></select></div>
+      <div><label>สถานะ</label><select id="f-status">
+        <option value="pending">ลงทะเบียนแล้ว รออนุมัติ</option>
+        <option value="waiting">อนุมัติแล้ว รอทำนัดฉีดยา</option>
+        <option value="active">ทำนัดแล้ว รอรับยา</option>
+        <option value="waitnext">ใช้ยาอยู่ รอทำนัดครั้งถัดไป</option>
+        <option value="done">สิ้นสุดการรักษา</option></select></div>
+      <div><label>วันที่อนุมัติ (พ.ศ.)</label><div class="tdp" id="f-approved"></div></div>
+      <div><label>นัดหลัก: วันนัดฉีดยา (พ.ศ.)</label><div class="tdp" id="f-appt"></div></div>
+      <div><label>ได้รับยาแล้ว (Dose)</label><input type="number" id="f-doses" min="0" value="0"></div>
+      <div><label>นัดเพิ่มเติม — เรื่อง</label><input id="f-appt2label" placeholder="เช่น นัดมารับยา"></div>
+      <div><label>นัดเพิ่มเติม — วันที่ (พ.ศ.)</label><div class="tdp" id="f-appt2"></div></div>
+      <div><label>วันที่รับยาล่าสุด (พ.ศ.)</label><div class="tdp" id="f-lastdose"></div></div>
+      <div class="full"><label>หมายเหตุ (เช่น รอโทรนัด / ยังไม่มาตามนัด)</label><textarea id="f-note"></textarea></div>
+    </div>
+    <div class="acts" style="justify-content:space-between">
+      <button class="btn ghost" id="pm-del" style="color:var(--danger)" onclick="delFromModal()">🗑 ลบคนไข้</button>
+      <span style="display:flex;gap:10px">
+        <button class="btn ghost" onclick="closeModal()">ยกเลิก</button>
+        <button class="btn primary" onclick="savePatient()">บันทึก</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="ptfile" accept=".pdf" style="display:none" onchange="attachPtFile(this)">
+
+<!-- Appointment modal -->
+<div class="modalbg" id="amodal">
+  <div class="modal" style="max-width:400px">
+    <h3 id="am-title">ทำนัดฉีดยา</h3>
+    <label style="display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;font-weight:600">นัดหลัก: วันนัดฉีดยา (พ.ศ.)</label>
+    <div class="tdp" id="a-date"></div>
+    <label style="display:block;font-size:12.5px;color:var(--muted);margin:12px 0 6px;font-weight:600">นัดเพิ่มเติม (ถ้ามี) — เรื่อง เช่น นัดมารับยา</label>
+    <input id="a-label2" placeholder="เช่น นัดมารับยา" style="width:100%;padding:9px 12px;border:1.5px solid #E5DBF2;border-radius:10px;font-family:inherit;font-size:14px;margin-bottom:8px">
+    <div class="tdp" id="a-date2"></div>
+    <div class="acts">
+      <button class="btn ghost" onclick="closeAppt()">ยกเลิก</button>
+      <button class="btn primary" onclick="saveAppt()">✓ บันทึกนัด → เริ่มใช้ยา</button>
+    </div>
+  </div>
+</div>
+
+<!-- Stock modal -->
+<div class="modalbg" id="smodal">
+  <div class="modal">
+    <h3 id="sm-title">เพิ่มรายการ Stock</h3>
+    <div class="frm">
+      <div class="full"><label>ชื่อยา *</label><select id="s-drug">
+        <option value="deno">Denosumab (Prolia) 60 mg</option>
+        <option value="teri">Teriparatide 20 mcg</option></select></div>
+      <div><label>Lot No.</label><input id="s-lot"></div>
+      <div class="full"><label>วันหมดอายุ (พ.ศ.)</label><div class="tdp" id="s-exp"></div></div>
+      <div><label>จำนวน (เข็ม/ปากกา)</label><input type="number" id="s-qty" min="0" value="1"></div>
+    </div>
+    <div class="acts">
+      <button class="btn ghost" onclick="closeStockModal()">ยกเลิก</button>
+      <button class="btn primary" onclick="saveStock()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Excel import dialog -->
+<div class="modalbg" id="xmodal">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <h3>นำเข้าจากไฟล์ Excel</h3>
+    <p style="color:var(--muted);font-size:13.5px;margin-bottom:14px">เลือกไฟล์ .xlsx ที่สำรองไว้จากระบบนี้<br>ข้อมูลปัจจุบันจะถูกแทนที่ทั้งหมด</p>
+    <button class="btn primary" style="width:100%" onclick="document.getElementById('impfile').click()">📂 เลือกไฟล์ Excel</button>
+    <div class="acts" style="justify-content:center">
+      <button class="btn ghost" onclick="document.getElementById('xmodal').classList.remove('show')">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Step date modal -->
+<div class="modalbg" id="tmodal">
+  <div class="modal" style="max-width:400px">
+    <h3 id="tm-title">บันทึกขั้นตอน</h3>
+    <label style="display:block;font-size:12.5px;color:var(--muted);margin:8px 0 6px;font-weight:600">วันที่ดำเนินการ (พ.ศ.)</label>
+    <div class="tdp" id="t-date"></div>
+    <div class="acts" style="justify-content:space-between">
+      <button class="btn ghost" style="color:var(--danger)" onclick="clearStep()">✕ ล้างติ๊กออก</button>
+      <span style="display:flex;gap:8px">
+        <button class="btn ghost" onclick="closeStep()">ยกเลิก</button>
+        <button class="btn primary" onclick="saveStep()">✓ บันทึก</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- Dose history modal -->
+<div class="modalbg" id="hmodal">
+  <div class="modal" style="max-width:620px" id="hpanel"></div>
+</div>
+
+<!-- Calendar popup -->
+<div class="modalbg" id="calbg" style="z-index:400">
+  <div class="modal" style="max-width:340px" id="calpanel"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= DATA ================= */
+const KEY='orthoMedApp_v1';
+const STEPS=[
+  ['order','แพทย์เจ้าของไข้ Order'],
+  ['ortho','หัวหน้าแผนก Ortho'],
+  ['pharm','หัวหน้างานเภสัชกรรม'],
+  ['deputy','รองผู้อำนวยการ'],
+  ['director','ผู้อำนวยการ'],
+  ['scan','เอกสารสแกน (Load)']
+];
+const DRUGNAME={deno:'Denosumab',teri:'Teriparatide'};
+const STATUSNAME={pending:'ลงทะเบียนแล้ว รออนุมัติ',waiting:'อนุมัติแล้ว รอทำนัดฉีดยา',active:'ทำนัดแล้ว รอรับยา',waitnext:'ใช้ยาอยู่ รอทำนัดครั้งถัดไป',done:'สิ้นสุดการรักษา'};
+
+let db=load();
+function ensureDefaults(){
+  db.patients=db.patients||[];db.doctors=db.doctors||[];db.stock=db.stock||[];
+  db.docs=db.docs||{};
+  db.signers=db.signers||{};
+  db.auth=db.auth||{};
+  if(db.auth.staff===undefined)db.auth.staff='';
+  if(db.auth.admin===undefined)db.auth.admin='';
+  db.notify=db.notify||{};
+}
+ensureDefaults();
+function load(){
+  try{const d=JSON.parse(localStorage.getItem(KEY));if(d&&d.patients)return d;}catch(e){}
+  return seed();
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));pushSync();}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+
+function seed(){
+  const doctors=['นพ.อิทธินันท์','นพ.พีรพล','นพ.นิติภูมิ','นพ.ชานนท์','นพ.วรสันต์','นพ.ปุริมพัฒน์'];
+  const P=(o)=>Object.assign({id:uid(),hn:'',phone:'',doctor:'',steps:{},approved:'',appt:'',note:''},o);
+  return {
+    doctors,
+    patients:[
+      P({name:'นาง สมศรี ใจดี',hn:'680001',drug:'deno',doctor:doctors[3],status:'pending',phone:'089-111-2233',
+        steps:{order:'2026-07-01',ortho:'2026-07-03'}}),
+      P({name:'นาย ประเสริฐ มั่นคง',hn:'680002',drug:'deno',doctor:doctors[0],status:'pending',phone:'086-222-3344',
+        steps:{order:'2026-07-05'}}),
+      P({name:'นาง บุญมี ศรีสุข',hn:'680003',drug:'teri',doctor:doctors[4],status:'pending',phone:'081-333-4455',
+        steps:{order:'2026-07-02',ortho:'2026-07-04',pharm:'2026-07-06',scan:'2026-07-06'}}),
+      P({name:'นาง XYZ ตัวอย่าง',hn:'680004',drug:'deno',doctor:doctors[1],status:'waiting',phone:'089-XXX-XXX1',
+        approved:'2026-07-09'}),
+      P({name:'นาง WYV ตัวอย่าง',hn:'680005',drug:'deno',doctor:doctors[2],status:'waiting',phone:'096-XXX-XXX4',
+        approved:'2026-06-06',note:'รอโทรนัด'}),
+      P({name:'นาย มานะ พากเพียร',hn:'680006',drug:'teri',doctor:doctors[5],status:'waiting',phone:'085-444-5566',
+        approved:'2026-06-29',note:'รอโทรนัด'}),
+      P({name:'นาง วรรณา ล.สุวรัตน์',hn:'680007',drug:'deno',doctor:doctors[3],status:'active',phone:'082-555-6677',
+        approved:'2026-06-02',appt:'2026-07-02',note:'pt.ประสงค์มารับยา 2/7/69 *ยังไม่มาตามนัด'}),
+      P({name:'นาง จันทร์เพ็ญ ศรีคำ',hn:'680008',drug:'deno',doctor:doctors[0],status:'active',phone:'083-666-7788',
+        approved:'2026-05-20',appt:'2026-11-20'}),
+      P({name:'นาย บรรจง รัตนเทศ',hn:'680009',drug:'teri',doctor:doctors[2],status:'active',phone:'084-777-8899',
+        approved:'2026-05-27',appt:'2026-08-27'}),
+      P({name:'นาง อาภรณ์ วงค์ประสิทธิ์',hn:'680010',drug:'deno',doctor:doctors[4],status:'active',phone:'087-888-9900',
+        approved:'2026-06-15',appt:'2026-12-15'})
+    ],
+    stock:[
+      {id:uid(),drug:'deno',lot:'A2419',exp:'2027-03-31',qty:4},
+      {id:uid(),drug:'teri',lot:'T8811',exp:'2026-12-31',qty:2}
+    ]
+  };
+}
+
+/* ================= HELPERS ================= */
+function thDate(iso){
+  if(!iso)return '–';
+  const [y,m,d]=iso.split('-').map(Number);
+  return d+'/'+m+'/'+(y+543);
+}
+/* ---- ตัวเลือกวันที่แบบ พ.ศ. ---- */
+const THMONTHS=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const THDAYS=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];
+function thDateFull(iso){
+  const [y,m,d]=iso.split('-').map(Number);
+  return THDAYS[new Date(y,m-1,d).getDay()]+'ที่ '+d+' '+THMONTHS[m-1]+' '+(y+543);
+}
+function tdpSet(id,iso){
+  const el=document.getElementById(id);
+  el.dataset.iso=iso||'';
+  el.innerHTML=`<button type="button" class="dtbtn ${iso?'':'empty'}" onclick="openCal('${id}')">📅 ${iso?thDateFull(iso):'เลือกวันที่'}</button>`;
+}
+function tdpGet(id){return document.getElementById(id).dataset.iso||'';}
+
+/* ---- ปฏิทิน พ.ศ. ---- */
+let calTarget=null,calY=0,calM=0;
+function openCal(id){
+  calTarget=id;
+  const iso=tdpGet(id);
+  const base=iso?new Date(+iso.slice(0,4),+iso.slice(5,7)-1,1):new Date();
+  calY=base.getFullYear();calM=base.getMonth();
+  renderCal();
+  document.getElementById('calbg').classList.add('show');
+}
+function calNav(n){
+  calM+=n;
+  if(calM<0){calM=11;calY--;}
+  if(calM>11){calM=0;calY++;}
+  renderCal();
+}
+function calJump(){
+  calY=+document.getElementById('cal-y').value;
+  calM=+document.getElementById('cal-m').value;
+  renderCal();
+}
+function renderCal(){
+  const t=new Date();
+  const tIso=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+  const sel=tdpGet(calTarget);
+  const startDow=new Date(calY,calM,1).getDay();
+  const days=new Date(calY,calM+1,0).getDate();
+  let yTop=Math.max(t.getFullYear()+14,2040),
+      yEnd=(calTarget==='f-dob')?1920:(calTarget&&calTarget.indexOf('hd-')===0?2015:2026); /* วันเกิดถอยถึง 2463 / ประวัติรับยาถอยถึง 2558 */
+  if(calY<yEnd)yEnd=calY;
+  if(calY>yTop)yTop=calY;
+  let yOpts='';
+  for(let yy=yTop;yy>=yEnd;yy--)yOpts+=`<option value="${yy}" ${yy===calY?'selected':''}>${yy+543}</option>`;
+  const DH=['อา','จ','อ','พ','พฤ','ศ','ส'];
+  let cells=DH.map((d,i)=>`<div class="dh" style="${i===0?'color:#D9534F':''}">${d}</div>`).join('');
+  for(let i=0;i<startDow;i++)cells+='<div></div>';
+  for(let d=1;d<=days;d++){
+    const iso=calY+'-'+String(calM+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const dow=(startDow+d-1)%7;
+    cells+=`<button type="button" class="cday ${iso===tIso?'today':''} ${iso===sel?'sel':''}" style="${dow===0?'color:#D9534F':''}" onclick="pickCal('${iso}')">${d}</button>`;
+  }
+  document.getElementById('calpanel').innerHTML=`
+    <div class="calhead">
+      <button type="button" class="btn ghost sm" onclick="calNav(-1)">‹</button>
+      <select id="cal-m" onchange="calJump()" style="flex:1">${THMONTHS.map((n,i)=>`<option value="${i}" ${i===calM?'selected':''}>${n}</option>`).join('')}</select>
+      <select id="cal-y" onchange="calJump()">${yOpts}</select>
+      <button type="button" class="btn ghost sm" onclick="calNav(1)">›</button>
+    </div>
+    <div class="calgrid">${cells}</div>
+    <div id="calhint">${sel?'เลือกไว้: <b>'+thDateFull(sel)+'</b>':'ยังไม่ได้เลือกวันที่'}</div>
+    <div class="acts" style="margin-top:10px;justify-content:space-between">
+      <button type="button" class="btn ghost sm" onclick="pickCal('')">ล้างค่า</button>
+      <span style="display:flex;gap:8px">
+        <button type="button" class="btn mint sm" onclick="pickCal('${tIso}')">วันนี้</button>
+        <button type="button" class="btn ghost sm" onclick="document.getElementById('calbg').classList.remove('show')">ปิด</button>
+      </span>
+    </div>`;
+}
+function pickCal(iso){
+  const el=document.getElementById(calTarget);
+  el.dataset.iso=iso||'';
+  const b=el.querySelector('.dtbtn');
+  if(iso){b.textContent='📅 '+thDateFull(iso);b.classList.remove('empty');}
+  else{b.textContent='📅 เลือกวันที่';b.classList.add('empty');}
+  document.getElementById('calbg').classList.remove('show');
+}
+function ageYMD(dobIso){
+  const b=new Date(dobIso),t=new Date();
+  let y=t.getFullYear()-b.getFullYear(),
+      m=t.getMonth()-b.getMonth(),
+      d=t.getDate()-b.getDate();
+  if(d<0){m--;d+=new Date(t.getFullYear(),t.getMonth(),0).getDate();}
+  if(m<0){y--;m+=12;}
+  return {y:Math.max(0,y),m:Math.max(0,m),d:Math.max(0,d)};
+}
+function ageToDob(){
+  const y=parseInt(document.getElementById('f-agy').value)||0;
+  const m=parseInt(document.getElementById('f-agm').value)||0;
+  const d=parseInt(document.getElementById('f-agd').value)||0;
+  if(!y&&!m&&!d){alert('กรุณาพิมพ์อายุอย่างน้อย 1 ช่อง (ปี / เดือน / วัน)');return;}
+  const t=new Date();
+  const b=new Date(t.getFullYear()-y,t.getMonth()-m,t.getDate()-d);
+  const iso=b.getFullYear()+'-'+String(b.getMonth()+1).padStart(2,'0')+'-'+String(b.getDate()).padStart(2,'0');
+  tdpSet('f-dob',iso);
+  toast('✓ คำนวณวันเกิด: '+thDateFull(iso));
+}
+function ageOf(p){
+  if(p&&p.dob){
+    const b=new Date(p.dob),t=new Date();
+    let y=t.getFullYear()-b.getFullYear();
+    const m=t.getMonth()-b.getMonth();
+    if(m<0||(m===0&&t.getDate()<b.getDate()))y--;
+    return y>=0?String(y):'';
+  }
+  return p&&p.age?String(p.age):'';
+}
+function esc(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800);}
+function count(f){return db.patients.filter(f).length;}
+function drugTag(d){return `<span class="tag ${d}">${DRUGNAME[d]}</span>`;}
+function statusTag(s){return `<span class="tag ${s}">${STATUSNAME[s]}</span>`;}
+function latestStepDate(p){
+  const dates=STEPS.map(s=>p.steps&&p.steps[s[0]]).filter(Boolean).sort();
+  return dates.length?dates[dates.length-1]:'';
+}
+
+/* ================= AUTH (สิทธิ์เข้าใช้งาน) ================= */
+const LV={viewer:0,staff:1,admin:2};
+const RNAME={viewer:'👀 โหมดดูอย่างเดียว',staff:'✏️ เจ้าหน้าที่ (กรอกข้อมูล)',admin:'🔑 ผู้ดูแลระบบ'};
+let ROLE=sessionStorage.getItem('upRole')||null;
+if(ROLE&&!(ROLE in LV))ROLE=null;
+function can(r){return !!ROLE&&LV[ROLE]>=LV[r];}
+function need(r){
+  if(can(r))return true;
+  toast(r==='admin'?'🔒 เฉพาะผู้ดูแลระบบเท่านั้น':'🔒 โหมดดูอย่างเดียว — ต้องเข้าสู่ระบบด้วยรหัสเจ้าหน้าที่');
+  return false;
+}
+function login(role){
+  ROLE=role;sessionStorage.setItem('upRole',role);
+  document.getElementById('loginbg').classList.remove('show');
+  render();
+}
+function loginPin(){
+  const v=document.getElementById('pin').value;
+  if(!db.auth.admin){
+    if(v.length<6){alert('ตั้งรหัสผู้ดูแลระบบครั้งแรกอย่างน้อย 6 ตัวอักษร');return;}
+    db.auth.admin=v;
+    if(!db.auth.staff)db.auth.staff=v;
+    save();
+    alert('ตั้งรหัสผู้ดูแลระบบครั้งแรกเรียบร้อยแล้ว กรุณาเปลี่ยนรหัสเจ้าหน้าที่ในหน้า ตั้งค่า');
+    login('admin');
+    return;
+  }
+  if(v===db.auth.admin)login('admin');
+  else if(v===db.auth.staff)login('staff');
+  else alert('รหัสผ่านไม่ถูกต้อง');
+}
+function logout(){sessionStorage.removeItem('upRole');location.reload();}
+function setPin(k,v){
+  if(!need('admin'))return;
+  v=v.trim();
+  if(!v){alert('รหัสผ่านห้ามว่าง');render();return;}
+  db.auth[k]=v;save();toast('✓ เปลี่ยนรหัสผ่านแล้ว');
+}
+
+/* ================= SYNC ฐานข้อมูลกลาง (Google Sheets ผ่าน Apps Script) ================= */
+const DEF_SYNC='https://script.google.com/macros/s/AKfycbzkTF08dH_w6FU8CixUThwO25fDZ9n2SI6XMqTJqnWbSeo-gTFpsVy9JYdDqRDdPmS51A/exec';
+const DEF_SYNCKEY='CHANGE_ME_TO_A_LONG_RANDOM_SECRET';
+let SYNCURL=localStorage.getItem('upSyncUrl');
+if(!SYNCURL)SYNCURL=DEF_SYNC;
+let SYNCKEY=localStorage.getItem('upSyncKey')||DEF_SYNCKEY;
+let syncVer=0, syncState=SYNCURL?'loading':'off', syncTimer=null, pushTimer=null, initialSyncDone=!SYNCURL, syncBusy=false;
+const SYNCLBL={off:'⚪ ข้อมูลเฉพาะเครื่องนี้',loading:'⏳ กำลังเชื่อมต่อ...',on:'🟢 ฐานข้อมูลกลาง: เชื่อมต่อแล้ว',error:'🔴 ฐานข้อมูลกลาง: ขัดข้อง'};
+function setSyncUrl(v){
+  if(!need('admin'))return;
+  v=v.trim();
+  localStorage.setItem('upSyncUrl',v);SYNCURL=v;
+  if(v){initialSyncDone=false;initSync(true);}
+  else{initialSyncDone=true;syncState='off';clearInterval(syncTimer);toast('ยกเลิกการเชื่อมต่อแล้ว ใช้ข้อมูลในเครื่องนี้');render();}
+}
+function setSyncKey(v){
+  if(!need('admin'))return;
+  SYNCKEY=v.trim();
+  localStorage.setItem('upSyncKey',SYNCKEY);
+  toast('✓ บันทึก API key ฐานข้อมูลกลางแล้ว');
+}
+function useDefaultSync(){
+  if(!need('admin'))return;
+  SYNCURL=DEF_SYNC;
+  SYNCKEY=DEF_SYNCKEY;
+  localStorage.setItem('upSyncUrl',SYNCURL);
+  localStorage.setItem('upSyncKey',SYNCKEY);
+  toast('✓ ใช้ค่าฐานข้อมูลกลางของระบบแล้ว');
+  initialSyncDone=false;
+  initSync(true);
+}
+async function testSyncAccess(){
+  if(!need('admin'))return;
+  if(!SYNCURL){alert('ยังไม่ได้กรอก Web App URL ของ Apps Script');return;}
+  try{
+    const res=await apiGet('check=1');
+    if(res&&res.ok){
+      alert('✓ URL และ API key ถูกต้อง\n\nระบบติดต่อฐานข้อมูลกลางได้แล้ว สามารถซิงก์ข้อมูลและอัปโหลดไฟล์แนบได้');
+    }else{
+      throw new Error((res&&res.err)||'ตรวจสอบไม่สำเร็จ');
+    }
+  }catch(e){
+    const detail=(e&&e.message)?e.message:String(e||'ไม่ทราบสาเหตุ');
+    const hint=detail==='unauthorized'
+      ? '\n\nสาเหตุ: API key ในเว็บไม่ตรงกับค่า API_KEY ใน Apps Script\n\nให้คัดลอกค่าในบรรทัด const API_KEY=... จาก Apps Script มาใส่ช่อง API key ในเว็บ แล้วกด "บันทึก API key" จากนั้นกดตรวจสอบอีกครั้ง'
+      : '\n\nให้ตรวจสอบว่า Web App URL ลงท้ายด้วย /exec และ Deploy เป็นเวอร์ชันล่าสุดแล้ว';
+    alert('✗ ยังเชื่อมต่อฐานข้อมูลกลางไม่ได้\n\nรายละเอียด: '+detail+hint);
+  }
+}
+async function apiGet(params){
+  const q=new URLSearchParams(params||'');
+  if(SYNCKEY)q.set('key',SYNCKEY);
+  const r=await fetch(SYNCURL+(q.toString()?'?'+q.toString():''),{method:'GET'});
+  return r.json();
+}
+async function apiPost(body){
+  body=Object.assign({key:SYNCKEY},body);
+  const r=await fetch(SYNCURL,{method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify(body)});
+  return r.json();
+}
+async function apiSave(){return apiPost({action:'save',data:db,baseVer:syncVer||0});}
+
+/* ---- สำรอง/กู้คืน ผ่าน Google Sheets ---- */
+async function backupGS(){
+  if(!need('staff'))return;
+  if(!SYNCURL){
+    if(confirm('ยังไม่ได้เชื่อมต่อฐานข้อมูลกลาง Google Sheets\nต้องการสำรองเป็นไฟล์ Excel แทนหรือไม่?'))exportXLSX();
+    return;
+  }
+  toast('⏳ กำลังสำรองข้อมูลขึ้น Google Sheets...');
+  try{
+    const res=await apiPost({action:'backup'});
+    if(!res.ok)throw 0;
+    toast('✓ สำรองแล้ว — ดูได้ที่แท็บ "'+res.name+'" ใน Google Sheets');
+  }catch(e){
+    alert('สำรองไม่สำเร็จ\n\nสาเหตุที่พบบ่อย: โค้ด Apps Script ใน Google Sheets ยังเป็นเวอร์ชันเก่า\nวิธีแก้: หน้า ⚙️ ตั้งค่าระบบ → คัดลอกโค้ด Apps Script ใหม่ → วางทับของเดิม → Deploy → จัดการการทำให้ใช้งานได้ → ✏ → เวอร์ชันใหม่ → Deploy (URL เดิมใช้ต่อได้)');
+  }
+}
+async function setupAutoBackup(){
+  if(!need('admin'))return;
+  if(!SYNCURL){alert('กรุณาเชื่อมต่อฐานข้อมูลกลางก่อน');return;}
+  if(!confirm('ตั้งค่าให้ Google Sheets สำรองอัตโนมัติทุกวันเวลา 17.00 น. เฉพาะวันที่มีการเปลี่ยนแปลงข้อมูลคนไข้ใช่ไหม?'))return;
+  try{
+    toast('⏳ กำลังตั้งค่าสำรองอัตโนมัติ...');
+    const res=await apiPost({action:'setupAutoBackup'});
+    if(!res.ok)throw new Error(res.err||'setup failed');
+    alert('✓ ตั้งค่าสำเร็จ\n\nระบบจะสำรองข้อมูลอัตโนมัติทุกวันเวลา 17.00 น. เฉพาะวันที่มีการเปลี่ยนแปลงข้อมูลคนไข้');
+  }catch(e){
+    alert('ตั้งค่าสำรองอัตโนมัติไม่สำเร็จ\n\nรายละเอียด: '+((e&&e.message)||e)+'\n\nให้คัดลอก Apps Script เวอร์ชันล่าสุดไปวางทับ แล้ว Deploy เป็นเวอร์ชันใหม่ก่อนลองอีกครั้ง');
+  }
+}
+async function restoreGS(){
+  if(!need('admin'))return;
+  if(!SYNCURL){document.getElementById('impfile').click();return;}
+  try{
+    const res=await apiGet('backups=1');
+    if(!res.ok)throw 0;
+    const list=res.list||[];
+    if(!list.length){
+      if(confirm('ยังไม่มีชุดสำรองใน Google Sheets (กด "💾 สำรองข้อมูล" ก่อน)\n\nต้องการนำเข้าจากไฟล์ Excel แทนหรือไม่?'))
+        document.getElementById('xmodal').classList.add('show');
+      return;
+    }
+    const pick=prompt('เลือกชุดสำรองที่จะกู้คืน (พิมพ์หมายเลข):\n\n'+
+      list.map((n,i)=>(i+1)+'. '+n).join('\n')+
+      '\n\n0 = นำเข้าจากไฟล์ Excel แทน','');
+    if(pick===null)return;
+    if(pick.trim()==='0'){document.getElementById('xmodal').classList.add('show');return;}
+    const idx=parseInt(pick)-1;
+    if(!(idx>=0&&idx<list.length)){alert('หมายเลขไม่ถูกต้อง');return;}
+    if(!confirm('ยืนยันกู้คืนจาก "'+list[idx]+'" ?\nข้อมูลปัจจุบันจะถูกแทนที่ทั้งหมด (ทุกเครื่องที่เชื่อมต่อ)'))return;
+    const r2=await apiPost({action:'restore',name:list[idx]});
+    if(!(r2.ok&&r2.data))throw 0;
+    db=r2.data;ensureDefaults();
+    localStorage.setItem(KEY,JSON.stringify(db));
+    syncVer=r2.ver||0;render();
+    toast('✓ กู้คืนข้อมูลจาก "'+list[idx]+'" สำเร็จ');
+  }catch(e){
+    alert('กู้คืนไม่สำเร็จ\n\nสาเหตุที่พบบ่อย: โค้ด Apps Script ยังเป็นเวอร์ชันเก่า — กรุณาอัปเดตโค้ดจากหน้า ⚙️ ตั้งค่าระบบ แล้ว Deploy เวอร์ชันใหม่');
+  }
+}
+async function initSync(manual){
+  if(!SYNCURL)return;
+  syncState='loading';renderNav();
+  try{
+    const res=await apiGet('');
+    if(!res.ok)throw 0;
+    if(res.data){
+      db=res.data;ensureDefaults();
+      localStorage.setItem(KEY,JSON.stringify(db));
+      syncVer=res.ver||0;
+    }else{
+      const sv=await apiSave();          // ฐานข้อมูลยังว่าง → ส่งข้อมูลเครื่องนี้ขึ้นไป
+      if(sv.ok)syncVer=sv.ver||0;else throw 0;
+    }
+    syncState='on';
+    initialSyncDone=true;
+    render();
+    toast(manual?'✓ เชื่อมต่อฐานข้อมูลกลางสำเร็จ':'✓ ซิงก์ข้อมูลล่าสุดแล้ว');
+    startPoll();
+  }catch(e){
+    syncState='error';render();
+    toast('⚠ เชื่อมต่อฐานข้อมูลกลางไม่ได้ ใช้ข้อมูลในเครื่องไปก่อน');
+  }
+}
+function startPoll(){
+  clearInterval(syncTimer);
+  syncTimer=setInterval(async()=>{
+    if(!SYNCURL||syncState!=='on'||syncBusy)return;   /* กันซิงก์มาทับระหว่างอัปโหลดไฟล์ */
+    try{
+      const res=await apiGet('check=1');
+      if(res.ok&&res.ver&&res.ver!==syncVer){
+        const full=await apiGet('');
+        if(full.ok&&full.data){
+          db=full.data;ensureDefaults();
+          localStorage.setItem(KEY,JSON.stringify(db));
+          syncVer=full.ver;render();
+          toast('🔄 มีข้อมูลอัปเดตจากเครื่องอื่น');
+        }
+      }
+    }catch(e){}
+  },10000);
+}
+function pushSync(){
+  if(!SYNCURL)return;
+  if(!initialSyncDone){
+    syncState='loading';
+    renderNav();
+    initSync(false);
+    toast('⏳ รอซิงก์ฐานข้อมูลกลางก่อนบันทึก เพื่อป้องกันข้อมูลเก่าทับของล่าสุด');
+    return;
+  }
+  clearTimeout(pushTimer);
+  syncBusy=true;              /* มีข้อมูลรอส่งขึ้นกลาง — ห้ามซิงก์ดึงของเก่ามาทับ */
+  pushTimer=setTimeout(async()=>{
+    try{
+      const res=await apiSave();
+      if(res&&res.err==='stale'&&res.data){
+        db=res.data;ensureDefaults();
+        localStorage.setItem(KEY,JSON.stringify(db));
+        syncVer=res.ver||syncVer;
+        syncState='on';
+        initialSyncDone=true;
+        render();
+        startPoll();
+        alert('มีข้อมูลใหม่จากเครื่องอื่น ระบบโหลดข้อมูลกลางล่าสุดกลับมาแล้ว\n\nเพื่อป้องกันข้อมูลเก่าทับข้อมูลใหม่ กรุณาทำรายการอีกครั้ง');
+        return;
+      }
+      if(!res.ok)throw new Error(res.err||'save failed');
+      syncVer=res.ver||syncVer;
+      if(syncState!=='on'){syncState='on';renderNav();startPoll();}
+    }catch(e){
+      syncState='error';renderNav();
+      toast('⚠ บันทึกขึ้นฐานข้อมูลกลางไม่สำเร็จ (ข้อมูลยังอยู่ในเครื่องนี้ จะลองใหม่เมื่อบันทึกครั้งถัดไป)');
+    }finally{
+      syncBusy=false;         /* ส่งเสร็จแล้ว ปล่อยให้ซิงก์ทำงานต่อ */
+    }
+  },800);
+}
+function copyScript(){
+  const t=document.getElementById('gscode');
+  t.select();t.setSelectionRange(0,999999);
+  try{document.execCommand('copy');toast('✓ คัดลอกโค้ดแล้ว นำไปวางใน Apps Script');}
+  catch(e){alert('คัดลอกอัตโนมัติไม่ได้ กรุณาเลือกข้อความแล้วกด Ctrl+C');}
+}
+
+/* ================= แจ้งเตือน TELEGRAM ================= */
+function todayISO(){
+  const t=new Date();
+  return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+}
+function setNotify(k,v){
+  if(!need('admin'))return;
+  db.notify=db.notify||{};
+  db.notify[k]=v.trim();save();toast('✓ บันทึกการตั้งค่าแจ้งเตือนแล้ว');
+}
+async function sendTG(chatId,text){
+  const N=db.notify||{};
+  if(!N.token||!chatId)return false;
+  try{
+    const r=await fetch('https://api.telegram.org/bot'+N.token+'/sendMessage',{
+      method:'POST',
+      body:new URLSearchParams({chat_id:chatId,text:text})
+    });
+    const j=await r.json();
+    return !!j.ok;
+  }catch(e){return false;}
+}
+/* ส่งถึงกลุ่มหลัก + สำเนาถึงกลุ่มเภสัชกรเสมอ */
+async function sendWithPharm(chat,text){
+  const N=db.notify||{};
+  let ok=false;
+  if(chat)ok=(await sendTG(chat,text))||ok;
+  if(N.chatPharm&&N.chatPharm!==chat)ok=(await sendTG(N.chatPharm,text))||ok;
+  return ok;
+}
+function notifyNewCase(p){
+  const N=db.notify||{};
+  if(!N.token)return;
+  sendTG(N.chatPharm||N.chatNurse,
+    '🆕 เพิ่มเคสใหม่เข้าระบบ\n'+
+    '👤 '+p.name+' (HN '+(p.hn||'-')+')\n'+
+    '💊 ยา: '+DRUGNAME[p.drug]+'\n'+
+    '🧑‍⚕️ แพทย์: '+(p.doctor||'-')+'\n'+
+    '📋 สถานะ: '+STATUSNAME[p.status]
+  ).then(ok=>{if(ok)toast('📨 แจ้งเคสใหม่ถึงเภสัชกรแล้ว');});
+}
+function notifyApproved(p){
+  const N=db.notify||{};
+  if(!N.token)return;
+  sendWithPharm(N.chatNurse,
+    '✅ เคสได้รับอนุมัติแล้ว\n'+
+    '👤 '+p.name+' (HN '+(p.hn||'-')+')\n'+
+    '💊 ยา: '+DRUGNAME[p.drug]+'\n'+
+    '📞 โทร: '+(p.phone||'-')+'\n'+
+    '🧑‍⚕️ แพทย์: '+(p.doctor||'-')+'\n\n'+
+    '➡️ พยาบาลกรุณาโทรนัดผู้ป่วยเพื่อฉีดยา'
+  ).then(ok=>{if(ok)toast('📨 ส่งแจ้งเตือน Telegram ถึงพยาบาลแล้ว');});
+}
+function doseReceivedOnDate(p,iso){
+  if(!p||!iso)return false;
+  if(p.lastDose===iso)return true;
+  return (p.doseLog||[]).some(e=>(typeof e==='string'?e:(e&&e.d))===iso);
+}
+async function checkNotify(){
+  const N=db.notify||{};
+  if(!N.token)return;
+  const today=todayISO();
+  const tm=new Date();tm.setDate(tm.getDate()+1);
+  const tomorrow=tm.getFullYear()+'-'+String(tm.getMonth()+1).padStart(2,'0')+'-'+String(tm.getDate()).padStart(2,'0');
+  const nowHour=new Date().getHours();
+  const canD0=nowHour>=8&&nowHour<12;   /* แจ้งเตือนรอบวันนัดจริง เฉพาะช่วง 08.00-11.59 น. */
+  const d0WindowPassed=nowHour>=12;     /* หลังเที่ยงไม่ยิงย้อนหลังของวันเดียวกัน */
+  let changed=false;
+  for(const p of db.patients){
+    if(p.status!=='active'||!p.appt)continue;
+    const info='👤 '+p.name+' (HN '+(p.hn||'-')+')\n💊 '+DRUGNAME[p.drug]+'\n📞 '+(p.phone||'-')+'\n🧑‍⚕️ '+(p.doctor||'-');
+    const doseDoneToday=doseReceivedOnDate(p,today);
+    if(p.appt===tomorrow&&p.ntfD1!==p.appt){
+      if(await sendTG(N.chatPharm||N.chatNurse,'💊 เตรียมยาล่วงหน้า — พรุ่งนี้มีนัดฉีดยา\n📅 '+thDateFull(p.appt)+'\n'+info)){p.ntfD1=p.appt;changed=true;}
+    }
+    if(p.appt===today&&doseDoneToday&&p.ntfD0!==p.appt){
+      p.ntfD0=p.appt;
+      changed=true;
+    }else if(p.appt===today&&canD0&&p.ntfD0!==p.appt){
+      if(await sendTG(N.chatPharm||N.chatNurse,'📌 วันนี้มีนัดฉีดยา (แจ้งเตือนรอบ 08.00 น.)\n📅 '+thDateFull(p.appt)+'\n'+info)){p.ntfD0=p.appt;changed=true;}
+    }else if(p.appt===today&&d0WindowPassed&&p.ntfD0!==p.appt){
+      p.ntfD0=p.appt;
+      changed=true;
+    }
+    /* นัดเพิ่มเติม (เช่น นัดมารับยา) → แจ้งพยาบาล + ย้ำผู้ป่วยเรื่องนัดฉีดยา */
+    if(p.appt2){
+      const lbl=p.appt2Label||'นัดเพิ่มเติม';
+      const remind=p.appt?'\n\n⚠️ กรุณาย้ำผู้ป่วยเรื่อง "นัดฉีดยา" วันที่ '+thDateFull(p.appt)+' ด้วย (ระยะห่างนัดนาน ผู้ป่วยอาจลืม)':'';
+      if(p.appt2===tomorrow&&p.ntf2D1!==p.appt2){
+        if(await sendWithPharm(N.chatNurse,'📋 พรุ่งนี้ผู้ป่วยมีนัด: '+lbl+'\n📅 '+thDateFull(p.appt2)+'\n'+info+remind)){p.ntf2D1=p.appt2;changed=true;}
+      }
+      if(p.appt2===today&&canD0&&p.ntf2D0!==p.appt2){
+        if(await sendWithPharm(N.chatNurse,'📋 วันนี้ผู้ป่วยมีนัด: '+lbl+' (แจ้งเตือนรอบ 08.00 น.)\n📅 '+thDateFull(p.appt2)+'\n'+info+remind)){p.ntf2D0=p.appt2;changed=true;}
+      }else if(p.appt2===today&&d0WindowPassed&&p.ntf2D0!==p.appt2){
+        p.ntf2D0=p.appt2;
+        changed=true;
+      }
+    }
+  }
+  for(const s of db.stock){
+    if(!s.exp||s.qty<=0)continue;
+    const days=Math.round((new Date(s.exp)-new Date(today))/864e5);
+    if(days<=60&&s.ntfExp!==s.exp){
+      if(await sendWithPharm(N.chatStock,'⚠️ แจ้งเตือนยาใกล้หมดอายุ\n💊 '+DRUGNAME[s.drug]+' Lot '+(s.lot||'-')+'\n📅 หมดอายุ '+thDate(s.exp)+(days>=0?' (อีก '+days+' วัน)':' (หมดอายุแล้ว!)')+'\n📦 คงเหลือ '+s.qty)){s.ntfExp=s.exp;changed=true;}
+    }
+  }
+  if(changed){save();render();}
+}
+async function findChatIds(){
+  if(!need('admin'))return;
+  const N=db.notify||{};
+  if(!N.token){alert('กรุณากรอก Bot Token ก่อน แล้วบันทึก (คลิกออกจากช่อง) ก่อนกดปุ่มนี้');return;}
+  try{
+    const r=await fetch('https://api.telegram.org/bot'+N.token+'/getUpdates');
+    const j=await r.json();
+    if(!j.ok)throw 0;
+    const seen={};
+    (j.result||[]).forEach(u=>{
+      const c=(u.message&&u.message.chat)||(u.my_chat_member&&u.my_chat_member.chat)||(u.channel_post&&u.channel_post.chat)||(u.edited_message&&u.edited_message.chat);
+      if(c&&(c.type==='group'||c.type==='supergroup'||c.type==='channel'))seen[c.id]=c.title||String(c.id);
+      if(c&&c.type==='private')seen[c.id]='(แชทส่วนตัว) '+(c.first_name||'')+' '+(c.last_name||'');
+    });
+    const list=Object.entries(seen);
+    if(!list.length){
+      alert('ยังไม่พบกลุ่มใด ๆ ทำตามนี้ก่อนครับ:\n\n1. เชิญบอทของเราเข้ากลุ่มที่ต้องการ\n2. พิมพ์ข้อความอะไรก็ได้ในกลุ่มนั้น 1 ข้อความ\n3. กลับมากดปุ่มนี้อีกครั้ง');
+      return;
+    }
+    alert('🔍 พบแชทที่บอทมองเห็น:\n\n'+list.map(([id,t])=>'📌 '+t+'\n     Chat ID:  '+id).join('\n\n')+'\n\nจด Chat ID (รวมเครื่องหมายลบ) ไปวางในช่องของกลุ่มนั้น');
+  }catch(e){alert('เรียกดูไม่สำเร็จ — ตรวจสอบ Bot Token และอินเทอร์เน็ต');}
+}
+async function testTG(){
+  if(!need('admin'))return;
+  const N=db.notify||{};
+  if(!N.token){alert('กรุณากรอก Bot Token ก่อน');return;}
+  const msg='🔔 ทดสอบระบบแจ้งเตือน — ระบบรายงานยา ศูนย์ศัลยกรรมกระดูกและข้อ ('+thDateFull(todayISO())+')';
+  let sent=0;
+  for(const c of [N.chatNurse,N.chatPharm,N.chatStock]){
+    if(c&&await sendTG(c,msg))sent++;
+  }
+  alert(sent>0?'✓ ส่งข้อความทดสอบสำเร็จ '+sent+' กลุ่ม':'✗ ส่งไม่สำเร็จ — ตรวจสอบ Token / Chat ID / อินเทอร์เน็ต');
+}
+
+/* ================= NAV ================= */
+const VIEWS=[
+  ['home','🏠','หน้าหลัก'],
+  ['pending','📋','ติดตามเคสรออนุมัติ'],
+  ['waiting','📅','เคสรอทำนัด'],
+  ['appts','🗓️','ติดตามวันนัด'],
+  ['doctors','🧑‍⚕️','เลือกตามแพทย์ผู้สั่ง'],
+  ['summary','📊','SUMMARY Case ทั้งหมด'],
+  ['download','⬇️','DOWNLOAD เอกสารขออนุมัติ'],
+  ['manual','📖','คู่มือการใช้งาน'],
+  ['settings','⚙️','ตั้งค่าระบบ']
+];
+let cur='home', search='', subDrug='all', apptFilter='all';
+function nav(v){
+  if(ROLE==='viewer'&&v!=='home'){
+    toast('🔒 กรุณาเข้าสู่ระบบก่อนใช้งาน — กดปุ่ม "ออกจากระบบ / สลับสิทธิ์" ที่แถบด้านซ้าย');
+    return;
+  }
+  cur=v;search='';render();window.scrollTo(0,0);
+}
+function renderNav(){
+  document.getElementById('nav').innerHTML=VIEWS
+    .filter(([k])=>(k!=='settings'||can('admin'))&&(k!=='manual'||can('staff')))
+    .map(([k,ic,l])=>
+    `<button class="sbtn ${cur===k?'on':''}" ${ROLE==='viewer'&&k!=='home'?'style="opacity:.45"':''} onclick="nav('${k}')"><span>${ic}</span><span>${l}</span></button>`).join('');
+  document.getElementById('roleinfo').innerHTML=ROLE?`
+    <div style="background:rgba(255,255,255,.16);border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;color:#fff;margin:0 12px 6px 0;text-align:center">${RNAME[ROLE]}</div>
+    <div style="font-size:11.5px;color:#D9C9F0;padding:0 12px 6px 0;text-align:center">${SYNCLBL[syncState]}
+      ${SYNCURL?`<span style="cursor:pointer;color:#fff;font-weight:700" onclick="initSync(true)" title="ซิงก์เดี๋ยวนี้"> ↻</span>`:''}</div>
+    <button class="btn ghost sm" style="width:100%;text-align:left;margin-bottom:6px" onclick="logout()">🚪 ออกจากระบบ / สลับสิทธิ์</button>`:'';
+  document.getElementById('bk1').style.display=can('staff')?'':'none';
+  document.getElementById('bk2').style.display=can('admin')?'':'none';
+}
+function render(){
+  if(ROLE==='viewer'&&cur!=='home')cur='home';   /* ดูอย่างเดียว: เห็นเฉพาะหน้าหลัก */
+  renderNav();
+  const M=document.getElementById('main');
+  if(cur==='home')M.innerHTML=vHome();
+  else if(cur==='pending')M.innerHTML=vPending();
+  else if(cur==='waiting')M.innerHTML=vWaitPage();
+  else if(cur==='doctors')M.innerHTML=vDoctors();
+  else if(cur==='appts')M.innerHTML=vAppts();
+  else if(cur==='summary')M.innerHTML=vSummary();
+  else if(cur==='download')M.innerHTML=vDownload();
+  else if(cur==='manual')M.innerHTML=vManual();
+  else if(cur==='settings')M.innerHTML=vSettings();
+  else if(cur==='stock')M.innerHTML=vStock();
+}
+
+/* ================= VIEWS ================= */
+function vHome(){
+  const cnt=(st,dr)=>count(p=>p.status===st&&p.drug===dr);
+  const stockT={deno:0,teri:0};db.stock.forEach(s=>stockT[s.drug]+=s.qty);
+  const ov=(icon,wm,icbg,ttl,v1,v2,unit,numcolor,view)=>`
+    <div class="ov" onclick="nav('${view}')">
+      <span class="wm">${wm}</span>
+      <div class="head"><span class="ic" style="background:${icbg}">${icon}</span><span style="color:${numcolor}">${ttl}</span></div>
+      <div class="cols">
+        <div class="col"><div class="lbl">Denosumab</div><div class="num" style="color:${numcolor}">${v1}</div><div class="lbl">${unit}</div></div>
+        <div class="col"><div class="lbl">Teriparatide</div><div class="num" style="color:${numcolor}">${v2}</div><div class="lbl">${unit}</div></div>
+      </div>
+    </div>`;
+  const menu=(ic,t,view)=>`<button class="m2" onclick="nav('${view}')"><span class="mic">${ic}</span><span>${t}</span><span class="arr">›</span></button>`;
+  return `
+  <div class="sechead">📊 สรุปภาพรวม</div>
+  <div class="ovgrid">
+    ${ov('👥','💉','#7C46B4','Case ใช้ยา — อนุมัติทั้งหมด '+count(p=>p.status!=='done')+' ราย',
+      count(p=>p.drug==='deno'&&p.status!=='done'),count(p=>p.drug==='teri'&&p.status!=='done'),'Case','#7C46B4','appts')}
+    ${ov('⏳','⌛','#DFA92C','Case รออนุมัติ',cnt('pending','deno'),cnt('pending','teri'),'Case','#C9891A','pending')}
+    ${ov('🧪','💊','#4A7FD4','Stock คงเหลือ',stockT.deno,stockT.teri,'Dose','#3568C0','stock')}
+    ${ov('✅','📅','#E45C9C','Case รอทำนัด (อนุมัติใหม่ + นัดครั้งถัดไป)',
+      cnt('waiting','deno')+cnt('waitnext','deno'),cnt('waiting','teri')+cnt('waitnext','teri'),'Case','#D84388','waiting')}
+  </div>
+  <div class="sechead">🗂️ เมนูการทำงาน</div>
+  <div class="menu2">
+    ${menu('📋','ติดตามเคสรออนุมัติ','pending')}
+    ${menu('📅','เคสรอทำนัด','waiting')}
+    ${menu('🗓️','ติดตามวันนัด','appts')}
+    ${menu('🧑‍⚕️','เลือกตามแพทย์ผู้สั่ง','doctors')}
+    ${menu('📊','SUMMARY Case ทั้งหมด','summary')}
+    ${menu('⬇️','DOWNLOAD เอกสารขออนุมัติ','download')}
+  </div>
+  <div class="notebar">ℹ️&nbsp;<b>หมายเหตุ</b> : ข้อมูลนี้เป็นข้อมูลสำหรับการบริหารจัดการภายในศูนย์ศัลยกรรมกระดูกและข้อเท่านั้น</div>`;
+}
+
+function toolbarHTML(addLabel,onadd){
+  return `<div class="toolbar">
+    <input type="search" class="srch" placeholder="🔍 ค้นหาชื่อ / HN / แพทย์..." value="${esc(search)}" oninput="doSearch(this)">
+    ${can('staff')?`<button class="btn primary" onclick="${onadd}">＋ ${addLabel}</button>`:''}
+    <button class="btn ghost" onclick="window.print()">🖨 พิมพ์</button>
+  </div>`;
+}
+function doSearch(el){
+  search=el.value;render();
+  const s=document.querySelector('input.srch');
+  if(s){s.focus();s.setSelectionRange(s.value.length,s.value.length);}
+}
+function match(p){
+  if(!search)return true;
+  const s=search.toLowerCase();
+  return (p.name+p.hn+(p.doctor||'')+(p.phone||'')).toLowerCase().includes(s);
+}
+
+/* ---- pending ---- */
+function vPending(){
+  const rows=db.patients.filter(p=>p.status==='pending'&&match(p));
+  return `
+  <h2 class="page">⏳ ติดตามเคสที่ยังไม่ได้อนุมัติ</h2>
+  <p class="sub">เจ้าหน้าที่: เพิ่ม/แก้ไขข้อมูลเคส และพิมพ์แบบฟอร์มได้ · ผู้ดูแลระบบ: คลิกช่อง ○/✓ เพื่อบันทึกขั้นตอน<b>พร้อมเลือกวันที่เองได้</b> และกดอนุมัติ</p>
+  <div class="card">
+    ${toolbarHTML('เพิ่มเคสรออนุมัติ',"openModal(null,'pending')")}
+    <div class="tblwrap"><table>
+      <tr><th>ผู้ป่วย</th><th>ยา</th><th>แพทย์เจ้าของไข้</th>
+      ${STEPS.map(s=>`<th style="text-align:center">${s[1]}</th>`).join('')}
+      <th style="text-align:center">วันที่เคยอนุมัติ</th><th style="text-align:center">ไฟล์แนบ (PDF)</th><th></th></tr>
+      ${rows.length?rows.map(p=>{
+        const done=STEPS.every(s=>p.steps[s[0]]);
+        return `<tr>
+        <td><b>${esc(p.name)}</b><br><small style="color:var(--muted)">HN ${esc(p.hn)||'–'}</small></td>
+        <td>${drugTag(p.drug)}</td>
+        <td>${esc(p.doctor)||'–'}</td>
+        ${STEPS.map(s=>{
+          const v=p.steps[s[0]];
+          return `<td style="text-align:center"><span class="tick ${v?'yes':'no'}" ${can('admin')?`onclick="toggleStep('${p.id}','${s[0]}')"`:'style="cursor:default"'} title="${s[1]}">
+            <span class="m">${v?'✓':'○'}</span><span class="d">${v?thDate(v):''}</span></span></td>`;
+        }).join('')}
+        <td style="text-align:center">${p.approved?`<span class="tag waiting">${thDate(p.approved)}</span>`:'–'}</td>
+        <td style="text-align:center;white-space:nowrap">
+          ${p.pdfName?`<button class="btn soft sm" onclick="openPtFile('${p.id}')" title="${esc(p.pdfName)}">${p.pdfUrl?'📄 เปิด':'☁️ อัปขึ้นกลาง'}</button><br>`:''}
+          ${can('staff')?`<button class="btn ghost sm" style="margin-top:3px" onclick="pickPtFile('${p.id}')">${p.pdfName?'เปลี่ยน':'📎 แนบ'}</button>`:(p.pdfName?'':'–')}
+        </td>
+        <td style="white-space:nowrap">
+          ${done&&can('admin')?`<button class="btn mint sm" onclick="approve('${p.id}')">✓ อนุมัติแล้ว</button>`:''}
+          <button class="btn primary sm" onclick="printForm('${p.id}')">🖨 แบบฟอร์ม</button>
+          ${can('staff')?`<button class="btn soft sm" onclick="openModal('${p.id}')">แก้ไข</button>`:''}
+          ${can('admin')?`<button class="btn ghost sm" onclick="delPatient('${p.id}')">ลบ</button>`:''}
+        </td></tr>`;
+      }).join(''):`<tr><td colspan="${STEPS.length+6}"><div class="empty">ไม่มีเคสรออนุมัติ 🎉</div></td></tr>`}
+    </table></div>
+  </div>`;
+}
+
+/* ---- เอกสารกำกับการใช้ยา (แนบครั้งเดียว เก็บในเบราว์เซอร์) ---- */
+function docBar(drug){
+  const has=db.docs[drug];
+  return `<div class="card" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+    <span style="font-size:24px">📄</span>
+    <div style="flex:1;min-width:220px"><b>เอกสารกำกับการใช้ยา ${DRUGNAME[drug]}</b> <small style="color:var(--danger);font-weight:600">*ต้องปริ้นแนบทุกเคสที่อนุมัติ</small><br>
+    <small style="color:var(--muted)">${has?'ไฟล์: '+esc(has):'ยังไม่ได้แนบไฟล์ — แนบครั้งเดียว ใช้เปิดพิมพ์ได้ตลอด'}</small></div>
+    ${has?`<button class="btn mint" onclick="openDocFile('${drug}')">🖨 เปิด / พิมพ์</button>`:''}
+    ${can('staff')?`<button class="btn ghost" onclick="document.getElementById('doc-${drug}').click()">${has?'เปลี่ยนไฟล์':'＋ แนบไฟล์ PDF'}</button>`:''}
+    <input type="file" id="doc-${drug}" accept=".pdf" style="display:none" onchange="attachDoc('${drug}',this)">
+  </div>`;
+}
+
+/* ---- waiting appointment (รวม 2 ยา สลับแท็บ) ---- */
+function vWaitPage(){
+  const drug=subDrug;
+  const isWait=p=>p.status==='waiting'||p.status==='waitnext';
+  const rows=db.patients.filter(p=>isWait(p)&&(drug==='all'||p.drug===drug)&&match(p));
+  return `
+  <h2 class="page">📅 เคสรอทำนัดฉีดยา</h2>
+  <p class="sub">รวมเคสอนุมัติใหม่ และเคสที่รับยาแล้วรอทำนัดครั้งถัดไป — โทรนัดผู้ป่วยแล้วกด "นัดแล้ว → เริ่มใช้ยา"</p>
+  <div class="toolbar">
+    <button class="btn ${drug==='all'?'primary':'ghost'}" onclick="subDrug='all';render()">ทั้งหมด</button>
+    <button class="btn ${drug==='deno'?'primary':'ghost'}" onclick="subDrug='deno';render()">Denosumab</button>
+    <button class="btn ${drug==='teri'?'primary':'ghost'}" onclick="subDrug='teri';render()">Teriparatide</button>
+  </div>
+  ${drug!=='all'?docBar(drug):''}
+  <div class="card">
+    ${toolbarHTML('เพิ่มเคส',`openModal(null,'waiting','${drug==='all'?'deno':drug}')`)}
+    <div class="tblwrap"><table>
+      <tr><th>#</th><th>ประเภท</th><th>ยา</th><th>ได้รับยาแล้ว</th><th>ผู้ป่วย</th><th>เบอร์โทร</th><th>วันที่อนุมัติ</th><th>แพทย์</th><th>หมายเหตุ</th><th></th></tr>
+      ${rows.length?rows.map((p,i)=>`<tr>
+        <td>${i+1}</td>
+        <td>${p.status==='waitnext'?'<span class="tag waitnext">นัดครั้งถัดไป</span>':'<span class="tag waiting">อนุมัติใหม่</span>'}</td>
+        <td>${drugTag(p.drug)}</td>
+        <td><b>${p.doses||0}</b> Dose${p.lastDose?`<br><small style="color:var(--muted)">ล่าสุด ${thDate(p.lastDose)}</small>`:''}</td>
+        <td><b>${esc(p.name)}</b><br><small style="color:var(--muted)">HN ${esc(p.hn)||'–'}</small></td>
+        <td class="phone">📞 ${esc(p.phone)||'–'}</td>
+        <td>อนุมัติแล้ว <b>${thDate(p.approved)}</b></td>
+        <td>${esc(p.doctor)||'–'}</td>
+        <td>${p.note?`<span class="note-red">${esc(p.note)}</span>`:'–'}</td>
+        <td style="white-space:nowrap">
+          ${can('staff')?`<button class="btn mint sm" onclick="startDrug('${p.id}')">นัดแล้ว → เริ่มใช้ยา</button>`:''}
+          <button class="btn primary sm" onclick="printForm('${p.id}')">🖨 แบบฟอร์ม</button>
+          ${can('staff')?`<button class="btn soft sm" onclick="openModal('${p.id}')">แก้ไข</button>`:''}
+          ${can('admin')?`<button class="btn ghost sm" onclick="delPatient('${p.id}')">ลบ</button>`:''}
+        </td></tr>`).join(''):'<tr><td colspan="10"><div class="empty">ไม่มีเคสรอทำนัด</div></td></tr>'}
+    </table></div>
+  </div>`;
+}
+
+/* ---- active ---- */
+function vActive(drug){
+  const rows=db.patients.filter(p=>p.status==='active'&&p.drug===drug&&match(p));
+  return `
+  <h2 class="page">💉 เคสที่ใช้ ${DRUGNAME[drug]}</h2>
+  <p class="sub">ผู้ป่วยที่ได้รับยาแล้ว — ติดตามวันนัดครั้งถัดไป</p>
+  <div class="card">
+    ${toolbarHTML('เพิ่มเคส',`openModal(null,'active','${drug}')`)}
+    <div class="tblwrap"><table>
+      <tr><th>#</th><th>ผู้ป่วย</th><th>เบอร์โทร</th><th>แพทย์</th><th>วันที่อนุมัติ</th><th>วันนัดถัดไป</th><th>หมายเหตุ</th><th></th></tr>
+      ${rows.length?rows.map((p,i)=>`<tr>
+        <td>${i+1}</td>
+        <td><b>${esc(p.name)}</b><br><small style="color:var(--muted)">HN ${esc(p.hn)||'–'}</small></td>
+        <td class="phone">📞 ${esc(p.phone)||'–'}</td>
+        <td>${esc(p.doctor)||'–'}</td>
+        <td>${thDate(p.approved)}</td>
+        <td><b>${thDate(p.appt)}</b></td>
+        <td>${p.note?`<span class="note-red">${esc(p.note)}</span>`:'–'}</td>
+        <td style="white-space:nowrap">
+          <button class="btn soft sm" onclick="openModal('${p.id}')">แก้ไข</button>
+          <button class="btn ghost sm" onclick="finishDrug('${p.id}')">สิ้นสุดการรักษา</button>
+        </td></tr>`).join(''):'<tr><td colspan="8"><div class="empty">ยังไม่มีเคส</div></td></tr>'}
+    </table></div>
+  </div>`;
+}
+
+/* ---- ติดตามวันนัด ---- */
+function vAppts(){
+  let rows=db.patients.filter(p=>p.status==='active'&&match(p));
+  if(apptFilter!=='all')rows=rows.filter(p=>p.drug===apptFilter);
+  rows.sort((a,b)=>(a.appt||'9999')<(b.appt||'9999')?-1:1);
+  const today=new Date().toISOString().slice(0,10);
+  return `
+  <h2 class="page">🗓️ ติดตามวันนัด</h2>
+  <p class="sub">ผู้ป่วยที่ทำนัดแล้ว รอรับยา/ฉีดยา เรียงตามวันนัดถัดไป — สีแดง = เลยวันนัดแล้ว</p>
+  <div class="toolbar">
+    <button class="btn ${apptFilter==='all'?'primary':'ghost'}" onclick="apptFilter='all';render()">ทั้งหมด</button>
+    <button class="btn ${apptFilter==='deno'?'primary':'ghost'}" onclick="apptFilter='deno';render()">Denosumab</button>
+    <button class="btn ${apptFilter==='teri'?'primary':'ghost'}" onclick="apptFilter='teri';render()">Teriparatide</button>
+    <input type="search" class="srch" placeholder="🔍 ค้นหา..." value="${esc(search)}" oninput="doSearch(this)">
+    <button class="btn ghost" onclick="window.print()">🖨 พิมพ์</button>
+  </div>
+  <div class="card"><div class="tblwrap"><table>
+    <tr><th>#</th><th>นัดฉีดยา (หลัก)</th><th>สถานะนัด</th><th>นัดเพิ่มเติม</th><th>ผู้ป่วย</th><th>ยา</th><th>ได้รับยาแล้ว</th><th>เบอร์โทร</th><th>แพทย์</th><th>หมายเหตุ</th><th></th></tr>
+    ${rows.length?rows.map((p,i)=>{
+      const over=p.appt&&p.appt<today;
+      const days=p.appt?Math.round((new Date(p.appt)-new Date(today))/864e5):null;
+      return `<tr>
+      <td>${i+1}</td>
+      <td><b style="${over?'color:var(--danger)':''}">${thDate(p.appt)}</b></td>
+      <td>${p.appt?(over?`<span class="note-red">เลยนัด ${-days} วัน</span>`:`<span class="tag active">อีก ${days} วัน</span>`):'<span class="tag pending">ยังไม่ระบุ</span>'}</td>
+      <td class="appt-extra">${p.appt2?`<b style="${p.appt2<today?'color:var(--danger)':''}">${thDate(p.appt2)}</b><br><small>${esc(p.appt2Label||'นัดเพิ่มเติม')}</small>`:'–'}</td>
+      <td style="white-space:nowrap"><b>${esc(p.name)}</b> <small style="color:var(--muted)">HN ${esc(p.hn)||'–'}</small></td>
+      <td>${drugTag(p.drug)}</td>
+      <td style="white-space:nowrap"><b>${p.doses||0}</b> Dose${p.lastDose?` <small style="color:var(--muted)">ล่าสุด ${thDate(p.lastDose)}</small>`:''}</td>
+      <td class="phone">📞 ${esc(p.phone)||'–'}</td>
+      <td style="white-space:nowrap">${esc(p.doctor)||'–'}</td>
+      <td>${p.note?`<span class="note-red">${esc(p.note)}</span>`:'–'}</td>
+      <td style="white-space:nowrap">
+        ${can('staff')?`<button class="btn mint sm" onclick="nextRound('${p.id}')">💉 รับยาแล้ว → รอนัดถัดไป</button>
+        <button class="btn soft sm" onclick="openModal('${p.id}')">แก้ไข</button>
+        <button class="btn ghost sm" onclick="finishDrug('${p.id}')">สิ้นสุด</button>`:''}
+      </td></tr>`;}).join(''):'<tr><td colspan="11"><div class="empty">ไม่มีเคสที่ใช้ยาอยู่</div></td></tr>'}
+  </table></div></div>`;
+}
+
+/* ---- DOWNLOAD เอกสารขออนุมัติ ---- */
+function vDownload(){
+  const item=drug=>`
+  <div class="card">
+    <div class="sechead" style="margin-top:0">💊 ${DRUGNAME[drug]}</div>
+    <div class="toolbar">
+      <button class="btn primary" onclick="printFormBlank('${drug}')">🖨 พิมพ์แบบฟอร์มเปล่า (เติมชื่อผู้ลงนามอัตโนมัติ)</button>
+    </div>
+    ${docBar(drug)}
+  </div>`;
+  return `
+  <h2 class="page">⬇️ DOWNLOAD เอกสารขออนุมัติ</h2>
+  <p class="sub">แบบฟอร์มรายเคส (เติมชื่อผู้ป่วย+แพทย์ให้อัตโนมัติ) พิมพ์ได้จากปุ่ม "🖨 แบบฟอร์ม" ในหน้าติดตามเคสรออนุมัติ</p>
+  ${item('deno')}${item('teri')}`;
+}
+function printFormBlank(drug){
+  const w=window.open('','_blank');
+  if(!w){alert('เบราว์เซอร์บล็อกหน้าต่างใหม่ กรุณาอนุญาต pop-up');return;}
+  w.document.write(formHTML({name:'',hn:'',age:'',right:'',doctor:'',drug,steps:{}}));
+  w.document.close();
+}
+
+/* ---- doctors ---- */
+function vDoctors(){
+  return `
+  <h2 class="page">🧑‍⚕️ เลือกตามแพทย์ผู้สั่ง</h2>
+  <p class="sub">แสดงเฉพาะเคสที่ยังไม่สิ้นสุดการรักษา แยกตามแพทย์เจ้าของไข้</p>
+  <div class="docgrid">
+    ${db.doctors.map(d=>{
+      const ps=db.patients.filter(p=>p.doctor===d&&p.status!=='done');
+      return `<div class="doccard">
+        <div class="h"><span>${esc(d)}</span><span class="tag waiting">${ps.length} เคส</span></div>
+        <ul>${ps.length?ps.map(p=>`<li><span><b>${esc(p.name)}</b><br>
+          <small style="color:var(--muted)">${STATUSNAME[p.status]}${p.appt?' · นัด '+thDate(p.appt):''}</small></span>
+          ${drugTag(p.drug)}</li>`).join(''):'<li><span style="color:var(--muted)">ไม่มีเคส</span></li>'}</ul>
+      </div>`;
+    }).join('')}
+  </div>
+  `;
+}
+
+/* ---- คู่มือการใช้งานฉบับละเอียด 16 หัวข้อ (เจ้าหน้าที่ขึ้นไป) ---- */
+function vManual(){
+  if(!can('staff'))return '<div class="empty">🔒 กรุณาเข้าสู่ระบบด้วยรหัสเจ้าหน้าที่หรือผู้ดูแลระบบ</div>';
+  const sec=(t,body)=>`<div class="card"><div class="sechead" style="margin-top:0">${t}</div>${body}</div>`;
+  const warn=t=>`<div style="background:#FDF3DC;border-left:4px solid #E7B93C;padding:8px 14px;border-radius:8px;margin:8px 0;font-size:13.5px">${t}</div>`;
+  const ok=t=>`<div style="background:#E8F6EE;border-left:4px solid #4caf7d;padding:8px 14px;border-radius:8px;margin:8px 0;font-size:13.5px">${t}</div>`;
+  const dg=t=>`<div style="background:#FCE9EC;border-left:4px solid #e05c6f;padding:8px 14px;border-radius:8px;margin:8px 0;font-size:13.5px">${t}</div>`;
+  const k=t=>`<b style="background:#EDE4F7;border-radius:6px;padding:1px 8px;color:var(--pur);font-size:13px;white-space:nowrap">${t}</b>`;
+  return `
+  <h2 class="page">📖 คู่มือการใช้งานฉบับละเอียด</h2>
+  <p class="sub">16 หัวข้อ ครอบคลุมทุกฟีเจอร์ — กดปุ่ม 🖨 ท้ายหน้าเพื่อพิมพ์แจกทีม</p>
+
+  ${sec('1. การเข้าถึงระบบ (คอม/มือถือ)',`
+  <b>ทางคอมพิวเตอร์</b>
+  <ul>
+    <li><b>แบบไฟล์:</b> ดับเบิลคลิกไฟล์ .html (เปิดด้วย Chrome/Edge) — เครื่องใหม่เชื่อมต่อฐานข้อมูลกลางให้อัตโนมัติ</li>
+    <li><b>แบบลิงก์ (Netlify):</b> เปิดลิงก์ของหน่วยงาน ใช้ได้ทุกเครื่องที่มีอินเทอร์เน็ต</li>
+  </ul>
+  <b>ทางมือถือ</b>
+  <ol>
+    <li>เปิดลิงก์ในเบราว์เซอร์มือถือ (เลย์เอาต์ปรับเป็นมือถือให้เอง เมนูอยู่ด้านบนเลื่อนซ้ายขวาได้)</li>
+    <li>เมนูเบราว์เซอร์ → ${k('เพิ่มไปยังหน้าจอหลัก')} → ได้ไอคอนใช้เหมือนแอป</li>
+  </ol>
+  ${ok('💡 เน็ตหลุดใช้งานต่อได้ ข้อมูลเก็บในเครื่องก่อน แล้วซิงก์อัตโนมัติเมื่อบันทึกครั้งถัดไป (ดูสถานะ 🟢/🔴 ที่แถบข้าง)')}`)}
+
+  ${sec('2. การเข้าสู่ระบบและระดับสิทธิ์',`
+  <p>ใส่รหัสผ่านช่องเดียว ระบบแยกระดับให้เอง หรือกด "เข้าชมแบบดูอย่างเดียว" โดยไม่ใช้รหัส</p>
+  <div class="tblwrap"><table>
+    <tr><th>ระดับ</th><th>ทำอะไรได้</th><th>ทำอะไรไม่ได้</th></tr>
+    <tr><td>👀 <b>ดูอย่างเดียว</b></td><td>ดูหน้าหลักเท่านั้น</td><td>เข้าหน้าอื่น/กดปุ่มใด ๆ จะขึ้นเตือนให้เข้าสู่ระบบ</td></tr>
+    <tr><td>✏️ <b>เจ้าหน้าที่</b></td><td>เพิ่ม/แก้เคส · ทำนัด · บันทึกรับยา · แก้ประวัติรับยา · สต๊อก · แนบไฟล์ · พิมพ์ฟอร์ม · สำรองข้อมูล · คู่มือ</td><td>ติ๊กขั้นตอนเซ็น · อนุมัติ · ลบ · ตั้งค่า</td></tr>
+    <tr><td>🔑 <b>ผู้ดูแลระบบ</b></td><td>ทุกอย่าง + ติ๊กเซ็น อนุมัติ ลบเคส กู้คืน และหน้าตั้งค่า</td><td>—</td></tr>
+  </table></div>
+  <p style="font-size:13px">ป้ายสิทธิ์ปัจจุบัน + สถานะฐานข้อมูล + ปุ่ม ${k('🚪 ออกจากระบบ / สลับสิทธิ์')} อยู่ที่แถบข้าง</p>
+  ${dg('⚠ ผู้ดูแลต้องเปลี่ยนรหัสผ่านจากค่าเริ่มต้นทันทีที่ใช้งานจริง (หน้า ⚙️ ตั้งค่าระบบ)')}`)}
+
+  ${sec('3. หน้าหลัก (Dashboard)',`
+  <ul>
+    <li><b>การ์ดสรุป 4 ใบ</b> (คลิกกระโดดไปหน้านั้นได้): Case ใช้ยา (นับผู้ลงทะเบียนที่ยังไม่สิ้นสุดการรักษา) · Case รออนุมัติ · Stock คงเหลือ (คลิกเข้าหน้าสต๊อก) · Case รอทำนัด (อนุมัติใหม่+นัดครั้งถัดไป) — แยกตัวเลข Denosumab / Teriparatide ทุกใบ</li>
+    <li><b>เมนูการทำงาน 6 ปุ่ม</b> ทางลัดแต่ละหน้า · การ์ด "อัปเดตล่าสุด" แสดงวันที่ พ.ศ. ปัจจุบัน</li>
+  </ul>`)}
+
+  ${sec('4. ติดตามเคสรออนุมัติ',`
+  <b>เพิ่มเคสใหม่ (เจ้าหน้าที่ขึ้นไป)</b>
+  <ol>
+    <li>กด ${k('＋ เพิ่มเคสรออนุมัติ')} → กรอก ชื่อ-สกุล (จำเป็น), HN, เบอร์โทร, ยา, แพทย์, สิทธิ์การรักษา</li>
+    <li><b>อายุผู้ป่วย</b> กรอกได้ 2 วิธี: พิมพ์ ${k('ปี')} ${k('เดือน')} ${k('วัน')} แล้วกด ${k('↻ คำนวณวันเกิด')} หรือเลือกวันเกิดจากปฏิทินโดยตรง — อายุจะขยับเองตามเวลาจริงตลอดไป</li>
+    <li>กด ${k('บันทึก')} → ระบบแจ้ง Telegram "🆕 เพิ่มเคสใหม่" ถึงเภสัชกรอัตโนมัติ</li>
+  </ol>
+  <b>ติ๊กขั้นตอนลงนาม 6 ขั้น (ผู้ดูแลระบบ)</b>
+  <ol>
+    <li>คลิกช่อง ○ ของขั้นตอน (Order แพทย์ → หน.Ortho → หน.เภสัชกรรม → รอง ผอ. → ผอ. → เอกสารสแกน)</li>
+    <li>เด้งหน้าต่างพร้อม<b>ปฏิทินเลือกวันที่ดำเนินการ</b> (เลือกย้อนวันเซ็นจริงได้) → ${k('✓ บันทึก')}</li>
+    <li>คลิก ✓ ซ้ำเพื่อแก้วันที่ หรือ ${k('✕ ล้างติ๊กออก')} เพื่อยกเลิก</li>
+    <li>ครบ 6 ช่อง → ปุ่ม ${k('✓ อนุมัติแล้ว')} → เคสย้ายไป "เคสรอทำนัด" + แจ้ง Telegram ถึงพยาบาล + ถามพิมพ์แบบฟอร์ม</li>
+  </ol>
+  <b>เครื่องมืออื่นในแถว</b>
+  <ul>
+    <li>${k('🖨 แบบฟอร์ม')} — พิมพ์แบบฟอร์มกำกับการใช้ยา 2 หน้า เติมชื่อผู้ป่วย/อายุ/สิทธิ์/แพทย์/ผู้ลงนาม 4 ตำแหน่งอัตโนมัติ</li>
+    <li>${k('📎 แนบ')} — แนบไฟล์ PDF เอกสารสแกนของเคส ระบบจะอัปโหลดขึ้น Google Drive กลางและบันทึกลิงก์ไว้กับเคส เพื่อให้เปิดได้ทุกเครื่อง</li>
+    <li>${k('☁️ อัปขึ้นกลาง')} — ปุ่มนี้หมายถึงไฟล์เก่าที่เคยเก็บเฉพาะเครื่องเดิม ยังไม่มีลิงก์กลาง ให้เลือก PDF ใหม่ 1 ครั้งเพื่ออัปขึ้นกลาง</li>
+  </ul>`)}
+
+  ${sec('5. เคสรอทำนัดฉีดยา',`
+  <p>รวมเคส 2 ประเภท (มีป้ายบอก): <b>อนุมัติใหม่</b> และ <b>นัดครั้งถัดไป</b> (รับยารอบก่อนแล้ว) — สลับแท็บ ${k('ทั้งหมด')} / ${k('Denosumab')} / ${k('Teriparatide')}</p>
+  <ol>
+    <li>โทรนัดผู้ป่วยตามเบอร์ในตาราง</li>
+    <li>กด ${k('นัดแล้ว → เริ่มใช้ยา')} → เลือก<b>นัดหลัก (วันนัดฉีดยา)</b> + <b>นัดเพิ่มเติม</b>ถ้ามี (เช่น "นัดมารับยา" ที่มาถึงก่อน) → บันทึก → เคสย้ายไปหน้าติดตามวันนัด</li>
+  </ol>
+  <p style="font-size:13px;color:var(--muted)">เลือกแท็บยาเฉพาะตัวจะเห็นแถบ 📄 เอกสารกำกับการใช้ยา สำหรับแนบ/เปิดพิมพ์ไฟล์ต้นฉบับ</p>`)}
+
+  ${sec('6. ติดตามวันนัด และการบันทึกรับยา',`
+  <p>เรียงตามวันนัดหลัก · สถานะนัดบอก "อีก X วัน" หรือ<b style="color:var(--danger)">สีแดง "เลยนัด X วัน"</b> ต้องโทรตาม · คอลัมน์นัดเพิ่มเติมแสดงวัน+ชื่อนัด</p>
+  <b>เมื่อผู้ป่วยมารับยา/ฉีดยาแล้ว</b>
+  <ul>
+    <li><b>Denosumab:</b> กด ${k('💉 รับยาแล้ว → รอนัดถัดไป')} → ยืนยัน → นับ +1 Dose ลงวันที่อัตโนมัติ</li>
+    <li><b>Teriparatide:</b> กดปุ่มเดียวกัน → <b>กรอกจำนวนด้าม</b> (เช่น 3) → <b>กรอกหมายเหตุ</b> (ถ้ามี) → ยอดบวกตามจำนวนด้าม บันทึกครบทุกอย่างเข้าประวัติ</li>
+  </ul>
+  <p>${k('สิ้นสุด')} = จบการรักษา (ออกจากการนับหน้าหลัก แต่ดูย้อนหลังได้ใน SUMMARY)</p>`)}
+
+  ${sec('7. ประวัติการรับยารายครั้ง',`
+  <ol>
+    <li>หน้า SUMMARY → <b>คลิกชื่อผู้ป่วย</b> (ตัวม่วงขีดเส้นใต้)</li>
+    <li>เห็นยอดรวม Dose, นัดถัดไป และตาราง <b>ครั้งที่ / วันที่ / จำนวนยา / หมายเหตุ</b> (1 แถว = รับยา 1 ครั้ง)</li>
+    <li>แก้ได้ทุกช่อง: ${k('＋ เพิ่มแถว')} ใส่ประวัติย้อนหลัง · ✕ ลบแถว · กด ${k('✓ บันทึก')} ระบบ<b>รวมยอด Dose อัตโนมัติ</b>จากคอลัมน์จำนวนยา (ไม่กรอกนับเป็น 1) เช่น 1+3+3 = 7 Dose</li>
+  </ol>`)}
+
+  ${sec('8. เลือกตามแพทย์ผู้สั่ง',`
+  <p>การ์ดรายแพทย์ แสดงเคสที่ยังไม่สิ้นสุดการรักษาของแต่ละคน พร้อมสถานะ วันนัด ชนิดยา — ใช้ตอบแพทย์ว่า "คนไข้ของผมถึงไหนแล้ว" (เพิ่ม/แก้ชื่อแพทย์ที่หน้าตั้งค่า)</p>`)}
+
+  ${sec('9. SUMMARY เคสทั้งหมด',`
+  <ul>
+    <li>สถิติทุกสถานะ + ยอดจ่ายยาสะสม (Dose) แยกชนิดยา</li>
+    <li>ตารางทุกเคส: ค้นหา · คลิกชื่อดูประวัติรับยา · 📄 เปิดไฟล์แนบ · ${k('แก้ไข')} (ผู้ดูแลมีปุ่ม 🗑 ลบคนไข้ในหน้าต่างแก้ไข)</li>
+    <li>${k('⬇ Export Excel (.xlsx)')} ออกรายงานทุกเคส · ${k('🖨 พิมพ์')}</li>
+  </ul>`)}
+
+  ${sec('10. Check Stock ยา',`
+  <ul>
+    <li>เข้าจากการ์ด "Stock คงเหลือ" หน้าหลัก</li>
+    <li>${k('＋ เพิ่มรายการ / รับยาเข้า')} ระบุยา, Lot, วันหมดอายุ (ปฏิทิน พ.ศ.), จำนวน</li>
+    <li>ปุ่ม ＋/− ปรับยอดเมื่อจ่าย/รับยา · ตัวเลขแดง = เหลือน้อยกว่า 2 · ⚠ = หมดอายุภายใน 90 วัน</li>
+    <li>ยาเหลืออายุ ≤ 60 วัน ระบบแจ้ง Telegram ถึงกลุ่มสต๊อกยาอัตโนมัติ (ครั้งเดียวต่อ Lot)</li>
+  </ul>`)}
+
+  ${sec('11. DOWNLOAD เอกสารขออนุมัติ',`
+  <ul>
+    <li>${k('🖨 พิมพ์แบบฟอร์มเปล่า')} ของแต่ละยา (เติมชื่อผู้ลงนาม 4 ตำแหน่ง เว้นช่องผู้ป่วยให้เขียนมือ)</li>
+    <li>แถบ 📄 แนบ/เปิดไฟล์ PDF แนวทางกำกับการใช้ยาต้นฉบับ</li>
+    <li>ฟอร์มรายเคสที่เติมข้อมูลผู้ป่วยแล้ว พิมพ์จากหน้าติดตามเคสรออนุมัติ</li>
+  </ul>`)}
+
+  ${sec('12. การแจ้งเตือน Telegram',`
+  <div class="tblwrap"><table>
+    <tr><th>เหตุการณ์</th><th>เวลา</th><th>กลุ่มหลัก</th></tr>
+    <tr><td>🆕 เพิ่มเคสใหม่เข้าระบบ</td><td>ทันที</td><td>เภสัชกร</td></tr>
+    <tr><td>✅ เคสอนุมัติ → พยาบาลโทรนัด</td><td>ทันทีที่กดอนุมัติ</td><td>พยาบาล</td></tr>
+    <tr><td>💊 นัดฉีดยา → เตรียมยาล่วงหน้า</td><td>ก่อนนัด 1 วัน + วันนัดจริงเฉพาะช่วง 08.00-11.59 น.</td><td>เภสัชกร</td></tr>
+    <tr><td>📋 นัดเพิ่มเติม + ย้ำผู้ป่วยเรื่องนัดฉีดยา</td><td>ก่อนนัด 1 วัน + วันนัดจริงเฉพาะช่วง 08.00-11.59 น.</td><td>พยาบาล</td></tr>
+    <tr><td>⚠️ ยาเหลืออายุ ≤ 60 วัน</td><td>ครั้งเดียวต่อ Lot</td><td>สต๊อกยา</td></tr>
+  </table></div>
+  ${ok('📌 <b>กลุ่มเภสัชกรได้รับสำเนาทุกเรื่อง</b> กลุ่มอื่นเห็นเฉพาะงานตัวเอง · ทุกข้อความส่งครั้งเดียวไม่ซ้ำ')}
+  ${warn('⏰ วันนัดจริงจะไม่ยิงย้อนหลังหลังเที่ยง เพื่อลดปัญหาเปิดเครื่องตอนเย็นแล้วแจ้งเตือนของวันนี้ซ้ำ · ถ้าบันทึก "รับยาแล้ว" ในวันนัด ระบบจะกันการแจ้งซ้ำของวันนั้น')}
+  ${warn('การแจ้งเตือน Telegram ยังทำงานจากเครื่องที่เปิดเว็บอยู่ แนะนำคอมเคาน์เตอร์พยาบาลเปิดระบบไว้ช่วงเช้าเพื่อให้เตือนรอบ 08.00 น. ตรงเวลา')}`)}
+
+  ${sec('13. ตั้งค่าระบบ (เฉพาะผู้ดูแล)',`
+  <ul>
+    <li><b>จัดการรายชื่อแพทย์</b> — พิมพ์ชื่อ → ${k('＋ เพิ่มแพทย์')} · คลิกชื่อ ✏️ แก้ไข (เคสผู้ป่วยทุกรายเปลี่ยนชื่อตามอัตโนมัติ) · ✕ ลบ</li>
+    <li><b>🌐 ฐานข้อมูลกลาง</b> — Web App URL + API key ถูกฝังเป็นค่ากลางของระบบ เครื่องใหม่เปิดลิงก์กลางแล้วซิงก์อัตโนมัติ หากเครื่องใดเคยกรอกผิดให้กด ${k('ใช้ค่ากลางของระบบ')}</li>
+    <li><b>📋 Apps Script</b> — ปุ่มคัดลอกโค้ด Apps Script ใช้เมื่อมีการอัปเดตฟีเจอร์ฝั่งฐานกลาง เช่น ไฟล์แนบกลาง / สำรองอัตโนมัติ / สิทธิ์ Drive</li>
+    <li><b>🕔 สำรองอัตโนมัติ</b> — กด ${k('ตั้งสำรองอัตโนมัติ 17.00 น.')} ครั้งเดียว หลังจาก Deploy Apps Script ล่าสุดแล้ว</li>
+    <li><b>🔔 แจ้งเตือน Telegram</b> — Bot Token + Chat ID 3 กลุ่ม · ${k('🔍 ค้นหา Chat ID')} (เชิญบอทเข้ากลุ่ม → พิมพ์ข้อความในกลุ่ม 1 ข้อความ → กดปุ่ม) · ${k('📨 ทดสอบส่งข้อความ')}</li>
+    <li><b>🔐 รหัสผ่าน</b> — เปลี่ยนรหัสเจ้าหน้าที่/ผู้ดูแล (มีผลทุกเครื่องผ่านการซิงก์)</li>
+    <li><b>✍️ ผู้ลงนามในแบบฟอร์ม</b> — 4 ตำแหน่ง ชื่อถูกพิมพ์ใต้ช่องลงชื่อของแบบฟอร์มอัตโนมัติ</li>
+  </ul>`)}
+
+  ${sec('14. สำรองและกู้คืนข้อมูล',`
+  <ul>
+    <li>${k('💾 สำรองข้อมูล (Google Sheets)')} — สร้างแท็บ "Backup วัน-เวลา" ในชีตทันที · ใช้ก่อนแก้ข้อมูลครั้งใหญ่</li>
+    <li>${k('🕔 ตั้งสำรองอัตโนมัติ 17.00 น.')} — Apps Script จะสำรองทุกวันเวลา 17.00 น. เฉพาะวันที่มีข้อมูลคนไข้เปลี่ยนแปลง แม้ไม่มีใครเปิดเว็บ</li>
+    <li>${k('♻️ นำเข้า / กู้คืนข้อมูล')} (ผู้ดูแล) — เลือกหมายเลขชุดสำรอง (มีผลทุกเครื่อง) · พิมพ์ <b>0</b> = นำเข้าจากไฟล์ Excel แทน</li>
+    <li>ในชีต: แท็บ <b>DB</b> ห้ามแก้/ลบ · แท็บ <b>รายงาน</b> เปิดดู/พิมพ์ได้ (แก้ในนี้ไม่มีผลกับระบบ) · แท็บ <b>Backup ...</b> คือชุดสำรองย้อนหลัง</li>
+  </ul>`)}
+
+  ${sec('15. การอัปเดตเวอร์ชันระบบ',`
+  <ol>
+    <li>ได้ไฟล์ .html ใหม่ → <b>แบบไฟล์:</b> วางทับทุกเครื่อง · <b>แบบ Netlify:</b> เปลี่ยนชื่อเป็น index.html ใส่โฟลเดอร์คู่ logo.png / bg-hospital.png → ลากขึ้น Netlify Drop ซ้ำ → ทุกคนได้ทันที (Ctrl+F5)</li>
+    <li>ถ้ามีแก้โค้ด Apps Script: ตั้งค่า → คัดลอกโค้ด → วางทับใน Apps Script → บันทึก → ${k('Deploy → Manage deployments → ✏ → New version → Deploy')} (URL เดิมใช้ต่อได้)</li>
+    <li>ถ้าขึ้นเรื่องสิทธิ์ ให้เปิดไฟล์ <b>appsscript.json</b> และใส่ scopes ให้ครบ: spreadsheets, drive, script.external_request, script.scriptapp จากนั้นกด Run ฟังก์ชันที่ระบบให้อนุญาตสิทธิ์ แล้ว Deploy ใหม่</li>
+    <li>อัปเดตไฟล์เว็บไม่ทำให้ข้อมูลคนไข้หาย ถ้าใช้ Web App URL/API key ชุดเดิม ระบบจะดึงข้อมูลล่าสุดจากฐานกลาง</li>
+  </ol>
+  <details style="margin-top:10px">
+    <summary style="cursor:pointer;font-weight:700;color:var(--pur)">ตัวอย่าง appsscript.json สำหรับสิทธิ์ที่ระบบต้องใช้</summary>
+    <pre style="white-space:pre-wrap;background:#FAF7FD;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12px;line-height:1.45;margin-top:8px">{
+  "timeZone": "Asia/Bangkok",
+  "dependencies": {},
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/script.scriptapp"
+  ]
+}</pre>
+  </details>`)}
+
+  ${sec('16. แก้ปัญหาที่พบบ่อย',`
+  <div class="tblwrap"><table>
+    <tr><th style="width:42%">อาการ</th><th>วิธีแก้</th></tr>
+    <tr><td>เครื่องใหม่ขึ้น 🔴 ฐานข้อมูลกลางขัดข้อง</td><td>ผู้ดูแลระบบ → ตั้งค่า → กด ${k('ใช้ค่ากลางของระบบ')} → ${k('ตรวจสอบ URL/API key')} · ถ้ายังไม่ผ่านให้เช็คเน็ตและ Deploy Apps Script ล่าสุด</td></tr>
+    <tr><td>Failed to fetch</td><td>Web App URL ไม่ถูก/Deploy ไม่สำเร็จ/สิทธิ์เข้าถึงไม่ใช่ Anyone · URL ต้องลงท้าย /exec และห้ามใช้ลิงก์ /edit หรือ /dev</td></tr>
+    <tr><td>unauthorized</td><td>API key ในเว็บไม่ตรงกับ <b>const API_KEY</b> ใน Apps Script · กด ${k('ใช้ค่ากลางของระบบ')} หรือคัดลอก key ให้ตรงแล้วกดบันทึก</td></tr>
+    <tr><td>DriveApp.getFoldersByName / ไม่มีสิทธิ์ Drive</td><td>ใน Apps Script เพิ่ม scope <b>https://www.googleapis.com/auth/drive</b> ใน appsscript.json → Run ฟังก์ชันทดสอบสิทธิ์ Drive → Allow → Deploy New version</td></tr>
+    <tr><td>ScriptApp.getProjectTriggers / ไม่มีสิทธิ์ scriptapp</td><td>เพิ่ม scope <b>https://www.googleapis.com/auth/script.scriptapp</b> ใน appsscript.json → Run <b>setupAutoBackup_</b> → Allow → Deploy New version</td></tr>
+    <tr><td>appsscript.json บันทึกไม่ได้</td><td>ลบทั้งไฟล์แล้ววาง JSON ที่ถูกต้องใหม่ ห้ามมี comma ท้ายรายการสุดท้าย และต้องแก้ในไฟล์ appsscript.json ไม่ใช่ไฟล์ .gs</td></tr>
+    <tr><td>ไฟล์แนบเปิดแล้วขอสิทธิ์ Google Drive</td><td>คัดลอก Apps Script เวอร์ชันล่าสุดไป Deploy ใหม่ เพื่อให้ไฟล์ใหม่ตั้งสิทธิ์ “ใครมีลิงก์เปิดดูได้” อัตโนมัติ · ไฟล์เก่าให้กด ${k('เปลี่ยน')} หรือ ${k('☁️ อัปขึ้นกลาง')} แล้วแนบใหม่</td></tr>
+    <tr><td>ไฟล์แนบ PDF ของเคสเปิดไม่ได้จากเครื่องอื่น</td><td>เคสนั้นยังไม่มีลิงก์ไฟล์กลาง ให้เจ้าหน้าที่เลือก PDF ใหม่ 1 ครั้ง ระบบจะอัปขึ้น Drive กลางและบันทึกลิงก์กับเคส</td></tr>
+    <tr><td>เมื่อวานแนบ PDF แล้ว วันนี้เหมือนหาย</td><td>มักเกิดจากเครื่องที่ยังใช้ข้อมูลเก่าบันทึกทับก่อนซิงก์กลางสำเร็จ · อัปเดต Apps Script ล่าสุดแล้ว Deploy ใหม่ ระบบจะรักษา <b>pdfUrl/pdfName</b> เดิมไว้ถ้าฐานกลางเคยมีลิงก์</td></tr>
+    <tr><td>Telegram ไม่แจ้งเตือน</td><td>ตั้งค่า → 📨 ทดสอบ · เช็ค Token / Chat ID (เลขติดลบ) · บอทต้องอยู่ในกลุ่ม · วันนัดจริงส่งเฉพาะ 08.00-11.59 น.</td></tr>
+    <tr><td>ตอนเย็นยังแจ้งเตือนนัดของวันนี้</td><td>อัปเดตเว็บเป็นเวอร์ชันล่าสุด · ระบบใหม่จะไม่ยิงย้อนหลังหลัง 12.00 น. และถ้าบันทึกรับยาแล้วจะกันส่งซ้ำ</td></tr>
+    <tr><td>หน้าตา/ฟีเจอร์ไม่ตรงคู่มือ</td><td>ใช้เวอร์ชันเก่า — อัปเดตตามข้อ 15 แล้ว Ctrl+F5</td></tr>
+    <tr><td>กดปุ่มแล้วเงียบ / ขึ้นแถบ ⚠ error ล่างจอ</td><td>แคปหน้าจอข้อความ error (มีเลขบรรทัด) ส่งผู้ดูแลระบบ</td></tr>
+    <tr><td>ข้อมูลสองเครื่องไม่ตรงกัน</td><td>ระบบซิงก์ทุก 45 วินาที — กด ↻ หรือรีเฟรช · แก้พร้อมกันเป๊ะ ระบบใช้ "บันทึกล่าสุดชนะ"</td></tr>
+  </table></div>
+  ${dg('🔒 <b>PDPA:</b> ข้อมูลผู้ป่วยใช้ภายในหน่วยงานเท่านั้น · กลุ่ม Telegram แบบปิด · ไม่แชร์ลิงก์/รหัสผ่าน/ภาพหน้าจอที่มีชื่อผู้ป่วยออกนอกทีม · ไฟล์แนบกลางเปิดได้ด้วยลิงก์เพื่อให้ทุกเครื่องเปิดได้ จึงต้องเก็บลิงก์ไว้ในทีมเท่านั้น · สำรองข้อมูลสม่ำเสมอ')}`)}
+
+  <div class="toolbar"><button class="btn ghost" onclick="window.print()">🖨 พิมพ์คู่มือหน้านี้</button></div>`;
+}
+
+/* ---- ตั้งค่าระบบ (ผู้ดูแลเท่านั้น) ---- */
+function vSettings(){
+  if(!can('admin'))return '<div class="empty">🔒 หน้านี้สำหรับผู้ดูแลระบบเท่านั้น</div>';
+  return `
+  <h2 class="page">⚙️ ตั้งค่าระบบ</h2>
+  <p class="sub">เห็นเฉพาะผู้ดูแลระบบ — จัดการรายชื่อแพทย์ · ฐานข้อมูลกลาง · รหัสผ่าน · รายชื่อผู้ลงนามในแบบฟอร์ม</p>
+  <div class="card" style="margin-top:18px">
+    <b>จัดการรายชื่อแพทย์</b>
+    <div class="toolbar" style="margin-top:10px">
+      <input type="search" id="newdoc" placeholder="เช่น นพ.สมชาย ใจดี" style="max-width:280px">
+      <button class="btn primary" onclick="addDoctor()">＋ เพิ่มแพทย์</button>
+    </div>
+    <div>${db.doctors.map(d=>`<span class="tag waiting" style="margin:3px 6px 3px 0;padding:5px 12px">
+      <span style="cursor:pointer" onclick="editDoctor('${esc(d)}')" title="คลิกเพื่อแก้ไขชื่อ">${esc(d)} ✏️</span>
+      <span style="cursor:pointer;margin-left:6px" onclick="delDoctor('${esc(d)}')" title="ลบ">✕</span></span>`).join('')}</div>
+    <p style="color:var(--muted);font-size:12.5px;margin-top:8px">คลิกที่ชื่อ ✏️ เพื่อแก้ไข — ระบบจะอัปเดตชื่อแพทย์ในเคสผู้ป่วยทุกรายให้อัตโนมัติ และซิงก์เข้าแท็บ "แพทย์" ใน Google Sheets หลังอัปเดต Apps Script ล่าสุด</p>
+  </div>
+  <div class="card">
+    <b>🌐 ฐานข้อมูลกลาง — ใช้ร่วมกันหลายเครื่อง (Google Sheets)</b>
+    <p style="color:var(--muted);font-size:12.5px;margin:4px 0 10px">เก็บข้อมูลไว้ใน Google Sheets ของหน่วยงาน ทุกเครื่องที่เชื่อมต่อ URL เดียวกันจะเห็นข้อมูลชุดเดียวกันและอัปเดตถึงกันอัตโนมัติ — สถานะปัจจุบัน: <b>${SYNCLBL[syncState]}</b></p>
+    <div class="toolbar">
+      <input type="search" id="syncurl" placeholder="วาง Web App URL (ลงท้ายด้วย /exec)" value="${esc(SYNCURL)}" style="flex:1;min-width:260px">
+      <button class="btn primary" onclick="setSyncUrl(document.getElementById('syncurl').value)">เชื่อมต่อ</button>
+      ${SYNCURL?`<button class="btn ghost" onclick="setSyncUrl('')">ยกเลิกการเชื่อมต่อ</button>`:''}
+    </div>
+    <div class="toolbar" style="margin-top:8px">
+      <input type="password" id="synckey" placeholder="API key สำหรับ Apps Script" value="${esc(SYNCKEY)}" style="flex:1;min-width:260px">
+      <button class="btn soft" onclick="setSyncKey(document.getElementById('synckey').value)">บันทึก API key</button>
+      <button class="btn mint" onclick="testSyncAccess()">ตรวจสอบ URL/API key</button>
+      <button class="btn ghost" onclick="useDefaultSync()">ใช้ค่ากลางของระบบ</button>
+    </div>
+    <p style="color:var(--muted);font-size:12.5px;margin:6px 0 0">เปิดเว็บจากเครื่องใหม่จะใช้ค่ากลางนี้อัตโนมัติ หากเครื่องไหนเคยกรอกผิด ให้กด "ใช้ค่ากลางของระบบ"</p>
+    <div class="toolbar" style="margin-top:10px">
+      <button class="btn soft" onclick="backupGS()">💾 สำรองตอนนี้</button>
+      <button class="btn mint" onclick="setupAutoBackup()">🕔 ตั้งสำรองอัตโนมัติ 17.00 น.</button>
+    </div>
+    <p style="color:var(--muted);font-size:12.5px;margin:4px 0 0">สำรองอัตโนมัติจะทำงานฝั่ง Google Sheets แม้ไม่มีใครเปิดเว็บ และจะสำรองเฉพาะวันที่มีข้อมูลเปลี่ยนแปลง</p>
+    <details style="margin-top:6px">
+      <summary style="cursor:pointer;font-weight:700;color:var(--pur)">📖 วิธีติดตั้ง (ทำครั้งเดียว ประมาณ 5 นาที)</summary>
+      <ol style="margin:10px 0 10px 22px;line-height:1.9;font-size:13.5px">
+        <li>เข้า <b>sheets.google.com</b> → สร้างสเปรดชีตใหม่ (ตั้งชื่อ เช่น "ฐานข้อมูลยา Ortho")</li>
+        <li>เมนู <b>ส่วนขยาย (Extensions)</b> → <b>Apps Script</b></li>
+        <li>ลบโค้ดเดิมทั้งหมด แล้ววางโค้ดจากปุ่ม "คัดลอกโค้ด" ด้านล่าง → แก้ค่า <b>API_KEY</b> ในโค้ดให้เป็นรหัสลับของหน่วยงาน → กดบันทึก 💾</li>
+        <li>กด <b>ทำให้ใช้งานได้ (Deploy)</b> → <b>การทำให้ใช้งานได้รายการใหม่</b> → ประเภท <b>เว็บแอป (Web app)</b></li>
+        <li>ตั้งค่า: ดำเนินการในฐานะ = <b>ฉัน</b> · ผู้มีสิทธิ์เข้าถึง = <b>ทุกคน (Anyone)</b> → Deploy → กดอนุญาตสิทธิ์บัญชี Google (ถ้าเตือนว่าไม่ปลอดภัย กด Advanced → Go to ... unsafe ได้เลย เป็นสคริปต์ของเราเอง)</li>
+        <li>คัดลอก <b>URL เว็บแอป</b> (ลงท้าย /exec) มาวางช่องด้านบน → วาง API key เดียวกับใน Apps Script → กด "เชื่อมต่อ"</li>
+        <li>เปิดระบบแจ้งสถานะรอยา → กด <b>ตั้งหรือเปลี่ยน PIN</b> → ใช้ API key ยืนยันหนึ่งครั้ง แล้วตั้ง PIN 4–8 หลัก</li>
+        <li>เครื่องอื่น: เปิดระบบแจ้งสถานะรอยาและกรอก PIN เดียวกันได้ทันที ไม่ต้องกรอก API key ซ้ำ</li>
+      </ol>
+      <p style="font-size:12.5px;color:var(--danger);margin-bottom:8px">⚠ เก็บ URL และ API key ไว้ภายในหน่วยงานเท่านั้น — อย่าส่งต่อในช่องทางสาธารณะ</p>
+      <button class="btn mint sm" onclick="copyScript()">📋 คัดลอกโค้ด Apps Script</button>
+      <textarea id="gscode" readonly spellcheck="false" style="width:100%;height:130px;margin-top:8px;font-family:Consolas,monospace;font-size:11px;border:1.5px solid #E5DBF2;border-radius:10px;padding:8px;color:#555">const SHEET_NAME='DB';
+const API_KEY='CHANGE_ME_TO_A_LONG_RANDOM_SECRET';
+const DEFAULT_PHARMACY_PIN='9999';
+function doGet(e){
+  const action=e&&e.parameter&&e.parameter.action;
+  if(action==='pharmacyPatient')return out(pharmacyPatient_(e.parameter.token));
+  if(action==='refillPatient')return out(refillPatient_(e.parameter.token));
+  if(action==='pharmacyPinStatus')return out({ok:1,pinApiVersion:2,configured:true});
+  if(!authorizedGet_(e))return out({ok:0,err:'unauthorized'});
+  if(action==='pharmacyList')return out({ok:1,items:pharmacyLoad_()});
+  if(action==='refillList')return out({ok:1,items:refillLoad_()});
+  if(action==='pharmacyDrugList')return out({ok:1,names:pharmacyDrugLoad_()});
+  if(action==='stockLoad')return out(stockLoad_());
+  if(e&&e.parameter&&e.parameter.check){
+    return out({ok:1,ver:sheet_().getRange(1,2).getValue()||0});
+  }
+  if(e&&e.parameter&&e.parameter.backups){
+    return out({ok:1,list:listBackups_()});
+  }
+  return out(load_());
+}
+function doPost(e){
+  try{
+    const req=JSON.parse(e.postData.contents);
+    if(req.action==='pharmacyLogin')return out(pharmacyLogin_(req.pin));
+    if(req.action==='pharmacySetPin'){
+      if(!authorizedApiKey_(req))return out({ok:0,err:'unauthorized'});
+      return out(pharmacySetPin_(req.pin));
+    }
+    if(!authorizedPost_(req))return out({ok:0,err:'unauthorized'});
+    if(req.action==='pharmacyCreate')return out(pharmacyCreate_(req.item));
+    if(req.action==='pharmacyUpdate')return out(pharmacyUpdate_(req.id,req.item));
+    if(req.action==='pharmacyDelete')return out(pharmacyDelete_(req.id));
+    if(req.action==='refillCreate')return out(refillCreate_(req.item));
+    if(req.action==='refillUpdate')return out(refillUpdate_(req.id,req.item));
+    if(req.action==='refillDelete')return out(refillDelete_(req.id));
+    if(req.action==='pharmacyDrugSave')return out(pharmacyDrugSave_(req.names));
+    if(req.action==='stockSave')return out(stockSave_(req.data,req.baseVer));
+    if(req.action==='save'){
+      const current=load_();
+      if(req.baseVer){
+        if(current.ver){
+          if(String(req.baseVer)!==String(current.ver)){
+            return out({ok:0,err:'stale',data:current.data,ver:current.ver});
+          }
+        }
+      }
+      const ver=save_(mergeProtectedFields_(current.data,req.data));
+      return out({ok:1,ver:ver});
+    }
+    if(req.action==='backup'){return out(backup_());}
+    if(req.action==='restore'){return out(restore_(req.name));}
+    if(req.action==='upload'){return out(upload_(req));}
+    if(req.action==='setupAutoBackup'){return out(setupAutoBackup_());}
+    return out({ok:0,err:'unknown action'});
+  }catch(err){return out({ok:0,err:String(err)});}
+}
+function authorizedGet_(e){
+  return !!(e&&e.parameter)&&(authorizedApiKey_(e.parameter)||authorizedSession_(e.parameter.session));
+}
+function authorizedPost_(req){
+  return !!req&&(authorizedApiKey_(req)||authorizedSession_(req.session));
+}
+function authorizedApiKey_(req){
+  return !!API_KEY&&!!req&&req.key===API_KEY;
+}
+function authorizedSession_(token){
+  return !!token&&CacheService.getScriptCache().get('PHARMACY_SESSION_'+String(token))==='1';
+}
+function pharmacyPinHash_(pin){
+  const bytes=Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,String(pin||''),Utilities.Charset.UTF_8);
+  return bytes.map(function(value){const byte=value&lt;0?value+256:value;return ('0'+byte.toString(16)).slice(-2);}).join('');
+}
+function pharmacySetPin_(pin){
+  pin=String(pin==null?'':pin).trim();
+  if(!pharmacyValidPin_(pin))return {ok:0,err:'invalid_pin'};
+  PropertiesService.getScriptProperties().setProperty('PHARMACY_PIN_HASH',pharmacyPinHash_(pin));
+  return {ok:1};
+}
+function pharmacyValidPin_(pin){
+  if(pin.length&lt;4||pin.length&gt;8)return false;
+  for(let i=0;i&lt;pin.length;i++)if(pin.charAt(i)&lt;'0'||pin.charAt(i)&gt;'9')return false;
+  return true;
+}
+function pharmacyLogin_(pin){
+  pin=String(pin==null?'':pin).trim();
+  const saved=PropertiesService.getScriptProperties().getProperty('PHARMACY_PIN_HASH');
+  const enteredHash=pharmacyPinHash_(pin);
+  const defaultHash=pharmacyPinHash_(DEFAULT_PHARMACY_PIN);
+  if(!pharmacyValidPin_(pin)||(enteredHash!==defaultHash&&enteredHash!==saved))return {ok:0,err:'unauthorized'};
+  const token=Utilities.getUuid().replace(/-/g,'');
+  CacheService.getScriptCache().put('PHARMACY_SESSION_'+token,'1',21600);
+  return {ok:1,session:token,expiresIn:21600};
+}
+/* ===== ระบบแจ้งสถานะรอยา: เก็บในแท็บ PharmacyWaiting ===== */
+function pharmacySheet_(){
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+  let sh=ss.getSheetByName('PharmacyWaiting');
+  if(!sh)sh=ss.insertSheet('PharmacyWaiting');
+  return sh;
+}
+function pharmacyLoad_(){
+  const raw=pharmacySheet_().getRange(1,1).getValue();
+  if(!raw)return [];
+  try{const rows=JSON.parse(raw);return Array.isArray(rows)?rows:[];}catch(err){return [];}
+}
+function pharmacySave_(items){
+  pharmacySheet_().getRange(1,1).setValue(JSON.stringify(items));
+}
+function pharmacyClean_(v,n){return String(v||'').trim().slice(0,n||250);}
+function pharmacyItem_(input,old){
+  const fields=['hn','patient','drug','unit','quantity','prescribedQuantity','dispensedQuantity','availableDate','status','note','receiveMethod','recipientName','phone1','phone2','deliveryAddress'];
+  const item={};
+  fields.forEach(function(k){item[k]=pharmacyClean_(input&&input[k],(k==='note'||k==='deliveryAddress')?1200:250);});
+  if(['waiting','ready','delivery','received','cancelled'].indexOf(item.status)&lt;0)item.status='waiting';
+  return Object.assign({},old||{},item);
+}
+function pharmacyCreate_(input){
+  const lock=LockService.getScriptLock();lock.waitLock(10000);
+  try{
+    const items=pharmacyLoad_();
+    const year=Utilities.formatDate(new Date(),'GMT+7','yyyy');
+    let seq=0;items.forEach(function(x){if(String(x.id||'').indexOf(year+'-')===0)seq=Math.max(seq,Number(String(x.id).split('-')[1])||0);});
+    const now=new Date().toISOString();
+    const requestedId=pharmacyClean_(input&&input.id,20).toUpperCase();
+    const requestedToken=pharmacyClean_(input&&input.publicToken,80);
+    const existingAt=items.map(function(x){return x.id;}).indexOf(requestedId);
+    if(existingAt&gt;=0){
+      if(requestedToken&&items[existingAt].publicToken===requestedToken){
+        const replay=pharmacyItem_(input,items[existingAt]);replay.id=items[existingAt].id;replay.publicToken=items[existingAt].publicToken;replay.createdAt=items[existingAt].createdAt;replay.updatedAt=now;
+        const replayHistory=Array.isArray(items[existingAt].statusHistory)?items[existingAt].statusHistory.slice():[];if(items[existingAt].status!==replay.status)replayHistory.push({status:replay.status,at:now});replay.statusHistory=replayHistory;items[existingAt]=replay;pharmacySave_(items);return {ok:1,item:replay};
+      }
+      return {ok:0,err:'id_conflict'};
+    }
+    const item=pharmacyItem_(input,{});
+    item.id=/^\d{4}-\d{3}$/.test(requestedId)?requestedId:year+'-'+('000'+(seq+1)).slice(-3);
+    item.publicToken=/^[A-Za-z0-9]{16,80}$/.test(requestedToken)?requestedToken:Utilities.getUuid().replace(/-/g,'');
+    item.createdAt=pharmacyClean_(input&&input.createdAt,50)||now;item.updatedAt=now;item.statusHistory=Array.isArray(input&&input.statusHistory)&&input.statusHistory.length?input.statusHistory:[{status:item.status,at:item.createdAt}];
+    items.unshift(item);pharmacySave_(items);return {ok:1,item:item};
+  }finally{lock.releaseLock();}
+}
+function pharmacyUpdate_(id,input){
+  const lock=LockService.getScriptLock();lock.waitLock(10000);
+  try{
+    const items=pharmacyLoad_();const at=items.map(function(x){return x.id;}).indexOf(String(id||'').toUpperCase());
+    if(at&lt;0)return {ok:0,err:'not_found'};
+    const item=pharmacyItem_(input,items[at]);item.id=items[at].id;item.publicToken=items[at].publicToken;item.createdAt=items[at].createdAt;item.updatedAt=new Date().toISOString();
+    const history=Array.isArray(items[at].statusHistory)?items[at].statusHistory.slice():[];
+    if(!history.length)history.push({status:items[at].status||'waiting',at:items[at].createdAt||items[at].updatedAt||item.updatedAt});
+    if(items[at].status!==item.status)history.push({status:item.status,at:item.updatedAt});
+    item.statusHistory=history;
+    items[at]=item;pharmacySave_(items);return {ok:1,item:item};
+  }finally{lock.releaseLock();}
+}
+function pharmacyDelete_(id){
+  const lock=LockService.getScriptLock();lock.waitLock(10000);
+  try{const items=pharmacyLoad_();const next=items.filter(function(x){return x.id!==String(id||'').toUpperCase();});if(next.length===items.length)return {ok:0,err:'not_found'};pharmacySave_(next);return {ok:1};}finally{lock.releaseLock();}
+}
+function pharmacyPatient_(token){
+  const item=pharmacyLoad_().filter(function(x){return x.publicToken===String(token||'');})[0];
+  if(!item)return {ok:0,err:'not_found'};
+  return {ok:1,item:{id:item.id,patient:item.patient,drug:item.drug,quantity:item.quantity,availableDate:item.availableDate,status:item.status,note:item.note,createdAt:item.createdAt,updatedAt:item.updatedAt,statusHistory:item.statusHistory||[]}};
+}
+/* ===== ระบบจัดการยารีฟิว: เก็บแยกในแท็บ PharmacyRefill ===== */
+function refillSheet_(){
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+  let sh=ss.getSheetByName('PharmacyRefill');
+  if(!sh)sh=ss.insertSheet('PharmacyRefill');
+  return sh;
+}
+function refillLoad_(){
+  const raw=refillSheet_().getRange(1,1).getValue();
+  if(!raw)return [];
+  try{const rows=JSON.parse(raw);return Array.isArray(rows)?rows:[];}catch(err){return [];}
+}
+function refillSave_(items){refillSheet_().getRange(1,1).setValue(JSON.stringify(items));}
+function refillItem_(input,old){
+  const fields=['hn','patient','drug','unit','quantity','prescribedQuantity','dispensedQuantity','availableDate','status','note','receiveMethod','recipientName','phone1','phone2','deliveryAddress'];
+  const item={};fields.forEach(function(k){item[k]=pharmacyClean_(input&&input[k],(k==='note'||k==='deliveryAddress')?1200:250);});
+  if(['waiting','ready','delivery','received','cancelled'].indexOf(item.status)&lt;0)item.status='waiting';
+  return Object.assign({},old||{},item);
+}
+function refillCreate_(input){
+  const lock=LockService.getScriptLock();lock.waitLock(10000);
+  try{
+    const items=refillLoad_();const year=Utilities.formatDate(new Date(),'GMT+7','yyyy');let seq=0;
+    items.forEach(function(x){if(String(x.id||'').indexOf(year+'-')===0)seq=Math.max(seq,Number(String(x.id).split('-')[1])||0);});
+    const now=new Date().toISOString();const requestedId=pharmacyClean_(input&&input.id,20).toUpperCase();const requestedToken=pharmacyClean_(input&&input.publicToken,80);
+    const existingAt=items.map(function(x){return x.id;}).indexOf(requestedId);
+    if(existingAt&gt;=0){
+      if(requestedToken&&items[existingAt].publicToken===requestedToken){const replay=refillItem_(input,items[existingAt]);replay.id=items[existingAt].id;replay.publicToken=items[existingAt].publicToken;replay.createdAt=items[existingAt].createdAt;replay.updatedAt=now;const replayHistory=Array.isArray(items[existingAt].statusHistory)?items[existingAt].statusHistory.slice():[];if(items[existingAt].status!==replay.status)replayHistory.push({status:replay.status,at:now});replay.statusHistory=replayHistory;items[existingAt]=replay;refillSave_(items);return {ok:1,item:replay};}
+      return {ok:0,err:'id_conflict'};
+    }
+    const item=refillItem_(input,{});item.id=/^\d{4}-\d{3}$/.test(requestedId)?requestedId:year+'-'+('000'+(seq+1)).slice(-3);item.publicToken=/^[A-Za-z0-9]{16,80}$/.test(requestedToken)?requestedToken:Utilities.getUuid().replace(/-/g,'');item.createdAt=pharmacyClean_(input&&input.createdAt,50)||now;item.updatedAt=now;item.statusHistory=Array.isArray(input&&input.statusHistory)&&input.statusHistory.length?input.statusHistory:[{status:item.status,at:item.createdAt}];
+    items.unshift(item);refillSave_(items);return {ok:1,item:item};
+  }finally{lock.releaseLock();}
+}
+function refillUpdate_(id,input){
+  const lock=LockService.getScriptLock();lock.waitLock(10000);
+  try{
+    const items=refillLoad_();const at=items.map(function(x){return x.id;}).indexOf(String(id||'').toUpperCase());
+    if(at&lt;0)return {ok:0,err:'not_found'};
+    const item=refillItem_(input,items[at]);item.id=items[at].id;item.publicToken=items[at].publicToken;item.createdAt=items[at].createdAt;item.updatedAt=new Date().toISOString();
+    const history=Array.isArray(items[at].statusHistory)?items[at].statusHistory.slice():[];
+    if(!history.length)history.push({status:items[at].status||'waiting',at:items[at].createdAt||items[at].updatedAt||item.updatedAt});
+    if(items[at].status!==item.status)history.push({status:item.status,at:item.updatedAt});
+    item.statusHistory=history;items[at]=item;refillSave_(items);return {ok:1,item:item};
+  }finally{lock.releaseLock();}
+}
+function refillDelete_(id){
+  const lock=LockService.getScriptLock();lock.waitLock(10000);
+  try{const items=refillLoad_();const next=items.filter(function(x){return x.id!==String(id||'').toUpperCase();});if(next.length===items.length)return {ok:0,err:'not_found'};refillSave_(next);return {ok:1};}finally{lock.releaseLock();}
+}
+function refillPatient_(token){
+  const item=refillLoad_().filter(function(x){return x.publicToken===String(token||'');})[0];
+  if(!item)return {ok:0,err:'not_found'};
+  return {ok:1,item:{id:item.id,patient:item.patient,drug:item.drug,quantity:item.quantity,availableDate:item.availableDate,status:item.status,note:item.note,createdAt:item.createdAt,updatedAt:item.updatedAt,statusHistory:item.statusHistory||[]}};
+}
+function pharmacyDrugSheet_(){
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+  let sh=ss.getSheetByName('PharmacyDrugNames');
+  if(!sh){sh=ss.insertSheet('PharmacyDrugNames');sh.getRange(1,1).setValue('ชื่อยา');}
+  if(!sh.getRange(1,1).getValue())sh.getRange(1,1).setValue('ชื่อยา');
+  return sh;
+}
+function pharmacyDrugLoad_(){
+  const sh=pharmacyDrugSheet_();const last=sh.getLastRow();
+  if(last&lt;2)return [];
+  const values=sh.getRange(2,1,last-1,1).getDisplayValues().map(function(row){return pharmacyClean_(row[0],250);}).filter(Boolean);
+  const seen={};return values.filter(function(name){const key=name.toLocaleLowerCase();if(seen[key])return false;seen[key]=1;return true;});
+}
+function pharmacyDrugSave_(input){
+  const lock=LockService.getScriptLock();lock.waitLock(10000);
+  try{
+    const incoming=Array.isArray(input)?input:[];
+    const all=pharmacyDrugLoad_().concat(incoming.map(function(name){return pharmacyClean_(name,250);}).filter(Boolean));
+    const seen={};const names=all.filter(function(name){const key=name.toLocaleLowerCase();if(seen[key])return false;seen[key]=1;return true;}).sort();
+    const sh=pharmacyDrugSheet_();sh.clearContents();sh.getRange(1,1).setValue('ชื่อยา');
+    if(names.length)sh.getRange(2,1,names.length,1).setValues(names.map(function(name){return [name];}));
+    return {ok:1,names:names};
+  }finally{lock.releaseLock();}
+}
+/* ===== ระบบแจ้งเตือนเบิกยา: เก็บแยกในแท็บ VirtualStock ===== */
+function stockSheet_(){
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+  let sh=ss.getSheetByName('VirtualStock');
+  if(!sh)sh=ss.insertSheet('VirtualStock');
+  return sh;
+}
+function stockLoad_(){
+  const sh=stockSheet_();
+  const ver=sh.getRange(1,2).getValue()||0;
+  const n=Number(sh.getRange(1,1).getValue())||0;
+  if(!n)return {ok:1,data:null,ver:0};
+  let json='';
+  const values=sh.getRange(2,1,n,1).getValues();
+  for(let i=0;i&lt;n;i++)json+=values[i][0];
+  try{return {ok:1,data:JSON.parse(json),ver:ver};}
+  catch(err){return {ok:0,err:'stock_data_invalid'};}
+}
+function stockSave_(data,baseVer){
+  if(!data||!Array.isArray(data.drugs)||!Array.isArray(data.daily)||!Array.isArray(data.refills))return {ok:0,err:'invalid_stock_data'};
+  const lock=LockService.getScriptLock();lock.waitLock(10000);
+  try{
+    const current=stockLoad_();
+    if(current.data&amp;&amp;String(baseVer||0)!==String(current.ver||0))return {ok:0,err:'stale',data:current.data,ver:current.ver};
+    const json=JSON.stringify(data);
+    const CHUNK=45000,chunks=[];
+    for(let i=0;i&lt;json.length;i+=CHUNK)chunks.push([json.substr(i,CHUNK)]);
+    const sh=stockSheet_(),ver=new Date().getTime();
+    sh.clearContents();
+    sh.getRange(1,1).setValue(chunks.length);
+    sh.getRange(1,2).setValue(ver);
+    if(chunks.length)sh.getRange(2,1,chunks.length,1).setValues(chunks);
+    return {ok:1,ver:ver};
+  }finally{lock.releaseLock();}
+}
+function backup_(){
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+  const name='Backup '+Utilities.formatDate(new Date(),'GMT+7','dd-MM-yyyy HH.mm');
+  const old=ss.getSheetByName(name);
+  if(old)ss.deleteSheet(old);
+  sheet_().copyTo(ss).setName(name);
+  return {ok:1,name:name};
+}
+function setupAutoBackup_(){
+  ScriptApp.getProjectTriggers().forEach(function(t){
+    if(t.getHandlerFunction()==='autoBackupDaily_')ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger('autoBackupDaily_')
+    .timeBased()
+    .everyDays(1)
+    .atHour(17)
+    .nearMinute(0)
+    .create();
+  PropertiesService.getScriptProperties().setProperty('AUTO_BACKUP_ENABLED','1');
+  return {ok:1};
+}
+function autoBackupDaily_(){
+  const props=PropertiesService.getScriptProperties();
+  if(props.getProperty('DATA_CHANGED')!=='1')return;
+  const today=Utilities.formatDate(new Date(),'GMT+7','yyyy-MM-dd');
+  if(props.getProperty('LAST_AUTO_BACKUP_DATE')===today)return;
+  const r=backup_();
+  if(r&&r.ok){
+    props.setProperty('LAST_AUTO_BACKUP_DATE',today);
+    props.deleteProperty('DATA_CHANGED');
+  }
+}
+function listBackups_(){
+  return SpreadsheetApp.getActiveSpreadsheet().getSheets()
+    .map(function(s){return s.getName();})
+    .filter(function(n){return n.indexOf('Backup ')===0;})
+    .sort().reverse();
+}
+function restore_(name){
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+  const b=ss.getSheetByName(name);
+  if(!b)return {ok:0,err:'backup not found'};
+  const n=Number(b.getRange(1,1).getValue())||0;
+  if(!n)return {ok:0,err:'backup empty'};
+  let s='';
+  const vals=b.getRange(2,1,n,1).getValues();
+  for(let i=0;i&lt;n;i++)s+=vals[i][0];
+  const data=JSON.parse(s);
+  const ver=save_(data);
+  return {ok:1,data:data,ver:ver};
+}
+function upload_(req){
+  const folderName='ไฟล์แนบเคส-ระบบรายงานยา';
+  const it=DriveApp.getFoldersByName(folderName);
+  const folder=it.hasNext()?it.next():DriveApp.createFolder(folderName);
+  const bytes=Utilities.base64Decode(req.data);
+  const blob=Utilities.newBlob(bytes,req.mime||'application/pdf',req.name||'file.pdf');
+  const file=folder.createFile(blob);
+  file.setSharing(DriveApp.Access.ANYONE_WITH_LINK,DriveApp.Permission.VIEW);
+  return {ok:1,url:file.getUrl(),name:file.getName()};
+}
+function sheet_(){
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+  let sh=ss.getSheetByName(SHEET_NAME);
+  if(!sh)sh=ss.insertSheet(SHEET_NAME);
+  return sh;
+}
+function load_(){
+  const sh=sheet_();
+  const ver=sh.getRange(1,2).getValue()||0;
+  const n=Number(sh.getRange(1,1).getValue())||0;
+  if(!n)return {ok:1,data:null,ver:0};
+  let s='';
+  const vals=sh.getRange(2,1,n,1).getValues();
+  for(let i=0;i&lt;n;i++)s+=vals[i][0];
+  return {ok:1,data:JSON.parse(s),ver:ver};
+}
+function mergeProtectedFields_(oldData,newData){
+  if(!oldData||!newData)return newData;
+  const oldById={};
+  (oldData.patients||[]).forEach(function(p){if(p&&p.id)oldById[p.id]=p;});
+  (newData.patients||[]).forEach(function(p){
+    const old=oldById[p&&p.id];
+    if(!old)return;
+    if(old.pdfUrl&&!p.pdfUrl)p.pdfUrl=old.pdfUrl;
+    if(old.pdfName&&!p.pdfName)p.pdfName=old.pdfName;
+  });
+  return newData;
+}
+function save_(data){
+  const lock=LockService.getScriptLock();
+  lock.waitLock(10000);
+  try{
+    const sh=sheet_();
+    const s=JSON.stringify(data);
+    const CH=45000;
+    const chunks=[];
+    for(let i=0;i&lt;s.length;i+=CH)chunks.push([s.substr(i,CH)]);
+    const ver=new Date().getTime();
+    sh.clearContents();
+    sh.getRange(1,1).setValue(chunks.length);
+    sh.getRange(1,2).setValue(ver);
+    sh.getRange(2,1,chunks.length,1).setValues(chunks);
+    mirror_(data);
+    PropertiesService.getScriptProperties().setProperty('DATA_CHANGED','1');
+    return ver;
+  }finally{lock.releaseLock();}
+}
+function mirror_(data){
+  try{
+    const ss=SpreadsheetApp.getActiveSpreadsheet();
+    let sh=ss.getSheetByName('รายงาน');
+    if(!sh)sh=ss.insertSheet('รายงาน');
+    sh.clearContents();
+    const head=['ชื่อผู้ป่วย','HN','เบอร์โทร','อายุ','สิทธิ์','ยา','แพทย์','สถานะ','ได้รับยาแล้ว(Dose)','รับยาล่าสุด','วันที่อนุมัติ','วันนัด','หมายเหตุ'];
+    const DR={deno:'Denosumab',teri:'Teriparatide'};
+    const ST={pending:'ลงทะเบียนแล้ว รออนุมัติ',waiting:'อนุมัติแล้ว รอทำนัดฉีดยา',active:'ทำนัดแล้ว รอรับยา',waitnext:'ใช้ยาอยู่ รอทำนัดครั้งถัดไป',done:'สิ้นสุดการรักษา'};
+    const rows=(data.patients||[]).map(function(p){
+      return [p.name,p.hn,p.phone,p.age,p.right,DR[p.drug]||p.drug,p.doctor,ST[p.status]||p.status,p.doses||0,p.lastDose||'',p.approved,p.appt,p.note];
+    });
+    sh.getRange(1,1,1,head.length).setValues([head]);
+    if(rows.length)sh.getRange(2,1,rows.length,head.length).setValues(rows);
+    mirrorList_(ss,'แพทย์',['รายชื่อแพทย์'],(data.doctors||[]).map(function(d){return [d];}));
+    const DR2={deno:'Denosumab',teri:'Teriparatide'};
+    mirrorList_(ss,'Stock',['ยา','Lot','วันหมดอายุ','จำนวน'],(data.stock||[]).map(function(s){return [DR2[s.drug]||s.drug,s.lot||'',s.exp||'',s.qty||0];}));
+    const SG=[['ortho','หัวหน้าภาควิชาออร์โธปิดิกส์'],['pharm','หัวหน้างานเภสัชกรรม'],['deputy','รองผู้อำนวยการฝ่ายการแพทย์'],['director','ผู้อำนวยการโรงพยาบาล']];
+    mirrorList_(ss,'ผู้ลงนาม',['ตำแหน่ง','ชื่อ'],SG.map(function(x){return [x[1],(data.signers&&data.signers[x[0]])||''];}));
+  }catch(e){}
+}
+function mirrorList_(ss,name,head,rows){
+  let sh=ss.getSheetByName(name);
+  if(!sh)sh=ss.insertSheet(name);
+  sh.clearContents();
+  sh.getRange(1,1,1,head.length).setValues([head]);
+  if(rows.length)sh.getRange(2,1,rows.length,head.length).setValues(rows);
+}
+function out(o){
+  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}</textarea>
+    </details>
+  </div>
+  <div class="card">
+    <b>🔔 แจ้งเตือนผ่าน Telegram</b>
+    <p style="color:var(--muted);font-size:12.5px;margin:4px 0 10px">
+      ✅ เคสอนุมัติแล้ว → กลุ่มพยาบาล · 💊 นัดฉีดยา → กลุ่มเภสัชกร · 📋 นัดเพิ่มเติม (เช่น นัดมารับยา) → กลุ่มพยาบาล พร้อมข้อความย้ำนัดฉีดยา · ⚠️ ยาใกล้หมดอายุ → กลุ่มสต๊อกยา<br>
+      <b>กลุ่มเภสัชกรได้รับสำเนาทุกเรื่อง</b> · แจ้งล่วงหน้า 1 วัน + วันนัดจริงอีกรอบเวลา 08.00 น. · ส่งครั้งเดียวไม่ซ้ำ</p>
+    <div class="frm">
+      <div class="full"><label>Bot Token (จาก @BotFather)</label>
+        <input value="${esc(db.notify.token||'')}" onchange="setNotify('token',this.value)" placeholder="เช่น 123456789:AAxxxxxxxxxxxxxxxxxxxxxxxx"></div>
+      <div><label>Chat ID กลุ่มพยาบาล (นัดผู้ป่วย)</label>
+        <input value="${esc(db.notify.chatNurse||'')}" onchange="setNotify('chatNurse',this.value)" placeholder="เช่น -1001234567890"></div>
+      <div><label>Chat ID กลุ่มเภสัชกร (เตรียมยา)</label>
+        <input value="${esc(db.notify.chatPharm||'')}" onchange="setNotify('chatPharm',this.value)" placeholder="เช่น -1001234567890"></div>
+      <div><label>Chat ID กลุ่มสต๊อกยา (ยาหมดอายุ)</label>
+        <input value="${esc(db.notify.chatStock||'')}" onchange="setNotify('chatStock',this.value)" placeholder="เช่น -1001234567890"></div>
+      <div style="display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap">
+        <button class="btn soft" onclick="findChatIds()">🔍 ค้นหา Chat ID</button>
+        <button class="btn mint" onclick="testTG()">📨 ทดสอบส่งข้อความ</button>
+      </div>
+    </div>
+    <details style="margin-top:10px">
+      <summary style="cursor:pointer;font-weight:700;color:var(--pur)">📖 วิธีตั้งค่า Telegram Bot (ทำครั้งเดียว ~5 นาที)</summary>
+      <ol style="margin:10px 0 6px 22px;line-height:1.9;font-size:13.5px">
+        <li>ใน Telegram ค้นหา <b>@BotFather</b> → พิมพ์ <b>/newbot</b> → ตั้งชื่อบอท (เช่น OrthoMedBot) → จะได้ <b>Token</b> มา คัดลอกมาวางช่องด้านบน</li>
+        <li>สร้างกลุ่ม Telegram ตามต้องการ เช่น "นัดผู้ป่วย Ortho", "เภสัช Ortho", "สต๊อกยา Ortho" (หรือใช้กลุ่มเดียวรวมก็ได้) แล้ว<b>เชิญบอทเข้ากลุ่ม</b></li>
+        <li>หา Chat ID ของกลุ่ม (วิธีง่ายสุด): กรอก Token ด้านบนก่อน → <b>พิมพ์ข้อความอะไรก็ได้ 1 ข้อความในกลุ่ม</b>ที่เชิญบอทเข้าไปแล้ว → กดปุ่ม <b>"🔍 ค้นหา Chat ID"</b> ระบบจะแสดงชื่อกลุ่มพร้อม Chat ID ให้เลย (เลขติดลบ เช่น -1001234567890)</li>
+        <li>นำ Chat ID มากรอกในช่องของแต่ละกลุ่ม → กด "📨 ทดสอบส่งข้อความ" ถ้ามีข้อความเด้งในกลุ่ม = สำเร็จ</li>
+      </ol>
+      <p style="font-size:12.5px;color:var(--danger)">⚠ Token คือกุญแจของบอท เก็บเป็นความลับภายในหน่วยงาน และข้อความแจ้งเตือนมีชื่อผู้ป่วย ควรใช้กลุ่มปิดเฉพาะเจ้าหน้าที่เท่านั้น (PDPA)</p>
+    </details>
+  </div>
+  <div class="card">
+    <b>🔐 รหัสผ่านเข้าใช้งาน</b>
+    <p style="color:var(--muted);font-size:12.5px;margin:4px 0 12px">แชร์รหัสให้เฉพาะผู้เกี่ยวข้อง — ผู้ที่ไม่มีรหัสจะเข้าได้แบบ "ดูอย่างเดียว" เท่านั้น</p>
+    <div class="frm">
+      <div><label>รหัสเจ้าหน้าที่ (กรอกข้อมูลคนไข้)</label><input value="${esc(db.auth.staff)}" onchange="setPin('staff',this.value)"></div>
+      <div><label>รหัสผู้ดูแลระบบ (อนุมัติ/ตั้งค่า/ลบ)</label><input value="${esc(db.auth.admin)}" onchange="setPin('admin',this.value)"></div>
+    </div>
+  </div>
+  <div class="card">
+    <b>✍️ รายชื่อผู้ลงนามในแบบฟอร์มกำกับการใช้ยา</b>
+    <p style="color:var(--muted);font-size:12.5px;margin:4px 0 12px">ชื่อจะถูกพิมพ์ลงในวงเล็บใต้ช่อง "ลงชื่อ" ของแบบฟอร์มอัตโนมัติ (ส่วนแพทย์ผู้รักษาจะใช้ชื่อแพทย์เจ้าของไข้ของแต่ละเคส) — ช่องไหนเว้นว่างจะเป็นจุดไข่ปลาให้เขียนมือ และซิงก์เข้าแท็บ "ผู้ลงนาม" ใน Google Sheets หลังอัปเดต Apps Script ล่าสุด</p>
+    <div class="frm">
+      ${SIGNERS.map(([k,l])=>`<div><label>${l}</label>
+        <input value="${esc(db.signers[k]||'')}" onchange="setSigner('${k}',this.value)" placeholder="เช่น นพ.สมชาย ใจดี"></div>`).join('')}
+    </div>
+  </div>`;
+}
+
+/* ---- summary ---- */
+function vSummary(){
+  const st=['pending','waiting','active','waitnext','done'];
+  const rows=db.patients.filter(match);
+  return `
+  <h2 class="page">📊 Summary เคสทั้งหมด</h2>
+  <p class="sub">ภาพรวมทุกเคสในระบบ</p>
+  <div class="statrow" style="margin-bottom:18px">
+    ${st.map(s=>`<div class="stat"><div class="v">${count(p=>p.status===s)}</div><div class="l">${STATUSNAME[s]}</div></div>`).join('')}
+    <div class="stat"><div class="v">${count(p=>p.drug==='deno')}</div><div class="l">Denosumab ทั้งหมด</div></div>
+    <div class="stat"><div class="v">${count(p=>p.drug==='teri')}</div><div class="l">Teriparatide ทั้งหมด</div></div>
+    <div class="stat"><div class="v">${db.patients.filter(p=>p.drug==='deno').reduce((s,p)=>s+(parseInt(p.doses)||0),0)}</div><div class="l">จ่าย Denosumab แล้ว (Dose)</div></div>
+    <div class="stat"><div class="v">${db.patients.filter(p=>p.drug==='teri').reduce((s,p)=>s+(parseInt(p.doses)||0),0)}</div><div class="l">จ่าย Teriparatide แล้ว (Dose)</div></div>
+  </div>
+  <div class="card">
+    <div class="toolbar">
+      <input type="search" class="srch" placeholder="🔍 ค้นหา..." value="${esc(search)}" oninput="doSearch(this)">
+      <button class="btn mint" onclick="exportCSV()">⬇ Export Excel (.xlsx)</button>
+      <button class="btn ghost" onclick="window.print()">🖨 พิมพ์</button>
+    </div>
+    <div class="tblwrap"><table>
+      <tr><th>#</th><th>ผู้ป่วย</th><th>HN</th><th>ยา</th><th>แพทย์</th><th>สถานะ</th><th>ได้รับยาแล้ว</th><th>วันที่อนุมัติ</th><th>วันนัด</th><th>ไฟล์แนบ</th><th>หมายเหตุ</th><th></th></tr>
+      ${rows.map((p,i)=>`<tr>
+        <td>${i+1}</td><td style="white-space:nowrap"><b style="cursor:pointer;color:var(--pur);border-bottom:1.5px dotted var(--pur3)" onclick="showHistory('${p.id}')" title="คลิกดูประวัติการรับยา">${esc(p.name)}</b></td><td>${esc(p.hn)||'–'}</td>
+        <td>${drugTag(p.drug)}</td><td style="white-space:nowrap">${esc(p.doctor)||'–'}</td><td style="white-space:nowrap">${statusTag(p.status)}</td>
+        <td style="white-space:nowrap"><b>${p.doses||0}</b> Dose${p.lastDose?` <small style="color:var(--muted)">ล่าสุด ${thDate(p.lastDose)}</small>`:''}</td>
+        <td>${thDate(p.approved)}</td>
+        <td style="white-space:nowrap">${thDate(p.appt)}${p.appt2?`<br><small style="color:var(--muted)">${esc(p.appt2Label||'นัด')} ${thDate(p.appt2)}</small>`:''}</td>
+        <td>${p.pdfName?`<button class="btn soft sm" onclick="openPtFile('${p.id}')" title="${esc(p.pdfName)}">${p.pdfUrl?'📄 เปิด':'☁️ อัปขึ้นกลาง'}</button>`:'–'}</td>
+        <td>${p.note?`<span class="note-red">${esc(p.note)}</span>`:'–'}</td>
+        <td>${can('staff')?`<button class="btn soft sm" onclick="openModal('${p.id}')">แก้ไข</button>`:''}</td>
+      </tr>`).join('')}
+    </table></div>
+  </div>`;
+}
+
+/* ---- stock ---- */
+function vStock(){
+  const total={deno:0,teri:0};
+  db.stock.forEach(s=>total[s.drug]+=s.qty);
+  return `
+  <h2 class="page">📦 Check Stock ยา</h2>
+  <p class="sub">ยอดคงเหลือแยกตาม Lot — ระบบตัดอัตโนมัติเมื่อบันทึกรับยา โดยตัด Lot ที่ใกล้หมดอายุก่อน · กด + / − เพื่อปรับจำนวน</p>
+  <div class="statrow" style="margin-bottom:18px">
+    <div class="stat"><div class="v ${total.deno<2?'lowstock':''}">${total.deno}</div><div class="l">Denosumab คงเหลือ (เข็ม)</div></div>
+    <div class="stat"><div class="v ${total.teri<2?'lowstock':''}">${total.teri}</div><div class="l">Teriparatide คงเหลือ (ปากกา)</div></div>
+  </div>
+  <div class="card">
+    ${can('staff')?`<div class="toolbar"><button class="btn primary" onclick="openStockModal()">＋ เพิ่มรายการ / รับยาเข้า</button></div>`:''}
+    <div class="tblwrap"><table>
+      <tr><th>ยา</th><th>Lot No.</th><th>วันหมดอายุ</th><th style="text-align:center">จำนวนคงเหลือ</th><th></th></tr>
+      ${db.stock.length?db.stock.map(s=>{
+        const exp=s.exp&&new Date(s.exp)<new Date(Date.now()+90*864e5);
+        return `<tr>
+        <td>${drugTag(s.drug)} ${s.drug==='deno'?'(Prolia) 60 mg':'20 mcg'}</td>
+        <td>${esc(s.lot)||'–'}</td>
+        <td class="${exp?'lowstock':''}">${thDate(s.exp)}${exp?' ⚠':''}</td>
+        <td style="text-align:center"><span class="stockqty">
+          ${can('staff')?`<button class="minus" onclick="stockAdj('${s.id}',-1)">−</button>`:''}
+          <span class="q ${s.qty<2?'lowstock':''}">${s.qty}</span>
+          ${can('staff')?`<button class="plus" onclick="stockAdj('${s.id}',1)">＋</button>`:''}</span></td>
+        <td>${can('admin')?`<button class="btn ghost sm" onclick="delStock('${s.id}')">ลบ</button>`:''}</td>
+      </tr>`;}).join(''):'<tr><td colspan="5"><div class="empty">ไม่มีรายการ stock</div></td></tr>'}
+    </table></div>
+    <p style="color:var(--muted);font-size:12.5px;margin-top:10px">⚠ = หมดอายุภายใน 90 วัน · ตัวเลขแดง = คงเหลือน้อยกว่า 2</p>
+  </div>`;
+}
+
+/* ================= ACTIONS ================= */
+let stepTarget=null;
+function toggleStep(id,key){
+  if(!need('admin'))return;
+  const p=db.patients.find(x=>x.id===id);if(!p)return;
+  stepTarget={id:id,key:key};
+  const s=STEPS.find(x=>x[0]===key);
+  document.getElementById('tm-title').textContent='ขั้นตอน: '+(s?s[1]:'')+' — '+p.name;
+  tdpSet('t-date',p.steps[key]||todayISO());
+  document.getElementById('tmodal').classList.add('show');
+}
+function closeStep(){document.getElementById('tmodal').classList.remove('show');}
+function saveStep(){
+  if(!stepTarget)return;
+  const p=db.patients.find(x=>x.id===stepTarget.id);
+  if(!p){closeStep();return;}
+  const d=tdpGet('t-date');
+  if(!d){alert('กรุณาเลือกวันที่ให้ครบ หรือกด "ล้างติ๊กออก"');return;}
+  p.steps[stepTarget.key]=d;
+  save();closeStep();render();
+}
+function clearStep(){
+  if(!stepTarget)return;
+  const p=db.patients.find(x=>x.id===stepTarget.id);
+  if(!p){closeStep();return;}
+  delete p.steps[stepTarget.key];
+  save();closeStep();render();
+}
+function approve(id){
+  if(!need('admin'))return;
+  const p=db.patients.find(x=>x.id===id);if(!p)return;
+  p.status='waiting';
+  p.approved=p.approved||latestStepDate(p)||new Date().toISOString().slice(0,10);
+  save();render();toast('✓ ย้ายไป "รอทำนัดฉีดยา" แล้ว');
+  notifyApproved(p);
+  setTimeout(()=>{
+    if(confirm('พิมพ์ "แบบฟอร์มกำกับการใช้ยา '+DRUGNAME[p.drug]+'" (เติมชื่อผู้ป่วยและผู้ลงนามอัตโนมัติ) เลยหรือไม่?'))printForm(p.id);
+  },150);
+}
+
+/* ================= แบบฟอร์มกำกับการใช้ยา (พิมพ์พร้อมชื่อ) ================= */
+const SIGNERS=[
+  ['ortho','หัวหน้าภาควิชาออร์โธปิดิกส์'],
+  ['pharm','หัวหน้างานเภสัชกรรม'],
+  ['deputy','รองผู้อำนวยการฝ่ายการแพทย์'],
+  ['director','ผู้อำนวยการโรงพยาบาล']
+];
+function setSigner(k,v){if(!need('admin'))return;db.signers[k]=v.trim();save();toast('✓ บันทึกชื่อผู้ลงนามแล้ว');}
+const RIGHTS=['สปสช.','ประกันสังคม','สวัสดิการข้าราชการ','อื่นๆ'];
+const VHR=[
+  'กระดูกสันหลังหัก หรือกระดูกสะโพกหักจากโรคกระดูกพรุน ภายในระยะเวลา 12 เดือน ในผู้ป่วยที่มีอายุตั้งแต่ 65 ปีขึ้นไป ที่มี T-score น้อยกว่าหรือเท่ากับ -2.5',
+  'มีกระดูกสันหลังหักซ้ำหรือมีกระดูกสันหลังหักตั้งแต่ 2 ระดับขึ้นไป และมีความรุนแรงระดับปานกลางถึงรุนแรงมากทั้ง 2 ระดับ',
+  'มีกระดูกสะโพกหักและกระดูกสันหลังหักจากโรคกระดูกพรุน หรือกระดูกหักจากโรคกระดูกพรุนซ้ำตั้งแต่ 3 ครั้งหรือ 3 ตำแหน่งขึ้นไป',
+  'มีกระดูกหักจากโรคกระดูกพรุนเกิดขึ้น ในระหว่างที่ได้รับยารักษาโรคกระดูกพรุนอย่างสม่ำเสมอและต่อเนื่องเป็นระยะเวลาตั้งแต่ 2 ปีขึ้นไป ร่วมกับไม่พบสาเหตุอื่นของโรคกระดูกพรุนชนิดทุติยภูมิ'
+];
+const FORMS={
+  deno:{
+    title:'แนวทางการกำกับการใช้ยา Denosumab โรงพยาบาลมหาวิทยาลัยพะเยา',
+    dose:'<b>ขนาดและวิธีการบริหารยา:</b> Denosumab (Prolia) ขนาด 60 มก. ฉีดเข้าชั้นไขมันใต้ผิวหนัง ทุก 6 เดือน',
+    indHead:'ข้อบ่งชี้ในการใช้ Denosumab',
+    ind:[
+      'Alternative therapy (High risk osteoporosis ที่ไม่เหมาะจะใช้ Bisphosphonate)',
+      'Sequential therapy (Very high risk osteoporosis ที่ได้รับการรักษาด้วย Teriparatide หรือ Romosozumab มาแล้ว 2 ปี หรือ 1 ปีตามลำดับ)',
+      'Primary therapy (Very high risk osteoporosis ที่ไม่สามารถใช้ Teriparatide หรือ Romosozumab)'],
+    contraHead:'ข้อห้ามในการใช้ยา Denosumab',
+    contra:[
+      'มีประวัติแพ้ยา Denosumab',
+      'Pregnancy or breast feeding',
+      'ภาวะ Hypocalcemia จาก Vitamin D deficiency, Chronic Kidney Disease stage 4-5, Hypoparathyroidism'],
+    reqTitle:'การขออนุมัติใช้ยา Denosumab INJ 60MG/1ML',
+    budget:'Denosumab'
+  },
+  teri:{
+    title:'แนวทางการกำกับการใช้ยา Teriparatide โรงพยาบาลมหาวิทยาลัยพะเยา',
+    dose:'<b>ขนาดและวิธีการบริหารยา:</b> Teriparatide 20 ไมโครกรัม ฉีดเข้าชั้นไขมันใต้ผิวหนัง บริเวณหน้าท้องหรือต้นขา วันละ 1 ครั้ง',
+    indHead:'ข้อบ่งชี้ในการใช้ยา Teriparatide',
+    ind:[
+      'Sequential therapy (Very high-risk osteoporosis ที่ระยะเวลาการรักษาอย่างน้อย 1 ปี แต่ไม่เกิน 2 ปี)',
+      'Treatment failure หรือ Inadequate responder (High risk osteoporosis มีการตอบสนองต่อการรักษาด้วย bisphosphonate ไม่ดีถึงแม้ได้รับยาอย่างถูกต้องและสม่ำเสมอตั้งแต่ 2 ปีขึ้นไป)',
+      'Atypical femoral fracture (Atypical femoral fracture จากยา Bisphosphonate หรือ Denosumab)'],
+    contraHead:'ข้อห้ามในการใช้ยา Teriparatide',
+    contra:[
+      'มีประวัติ osteosarcoma หรือมีมะเร็งแพร่กระจายมาที่กระดูก',
+      'กำลังป่วยด้วยโรคมะเร็ง หรือเคยเป็นมะเร็งในช่วง 5 ปีที่ผ่านมา',
+      'มีความเสี่ยงที่ต่อการเกิด osteosarcoma ได้แก่ Paget’s disease of bone, เคยได้รับการฉายรังสีบริเวณกระดูก, เด็กเล็กหรือวัยรุ่นที่ศูนย์การเจริญเติบโตของกระดูก (growth plate) ที่แขนขายังไม่ปิด',
+      'มี metabolic bone disease อื่น ๆ เช่น มี hypercalcemia ที่ยังไม่ได้รับการรักษา หรือมี hyperparathyroidism'],
+    reqTitle:'การขออนุมัติใช้ยา Teriparatide Prefilled Pen INJ 600 MCG/2.4ML',
+    budget:'Teriparatide'
+  }
+};
+function formHTML(p){
+  const F=FORMS[p.drug],S=db.signers;
+  const dot=(v,w)=>`<span class="dt" style="min-width:${w}px">${v?esc(String(v)):''}&nbsp;</span>`;
+  const field=(label,val,cls,after='')=>`<span class="fitem ${cls}"><span class="flabel">${label}</span><span class="fline">${val?esc(String(val)):''}&nbsp;</span>${after?`<span class="fafter">${after}</span>`:''}</span>`;
+  const ord=(p.steps&&p.steps.order)||'';
+  let od='',om='',oy='';
+  if(ord){const a=ord.split('-');od=+a[2];om=+a[1];oy=+a[0]+543;}
+  const rightOpt=r=>`<span class="rb">${p.right===r?'⦿':'◯'}</span> ${r}`;
+  const nameLine=n=>n?`(<b>${esc(n)}</b>)`:'(.......................................................)';
+  const opin=`<span class="cb">☐</span> เห็นควรอนุมัติ<br><span class="cb">☐</span> ไม่สมควรอนุมัติ เนื่องจาก......................................<br>...............................................................................`;
+  const pharmBody=`เห็นควรอนุมัติสำรองยา................................ไวอัล<br>มูลค่า......................................บาท<br>งบประมาณการจัดซื้อรายการยา ${F.budget}<br>คงเหลือ..................................บาท`;
+  const sigBox=(head,body,name)=>`<td><b>ความเห็น ${head}</b><br><div style="margin-top:6px">${body}</div>
+    <div class="sig">ลงชื่อ..........................................<br>${nameLine(name)}<br><b>${head}</b></div></td>`;
+  return `<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><title>${F.reqTitle} - ${esc(p.name)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+@page{size:A4;margin:12mm 15mm}
+body{font-family:'Sarabun','TH SarabunPSK',sans-serif;font-size:13px;line-height:1.6;color:#000;margin:0;padding:16px}
+@media print{body{padding:0}}
+.pg{page-break-after:always}
+.formhead{display:grid;grid-template-columns:48px 1fr 48px;align-items:center;gap:8px;margin:0 0 8px}
+.formlogo{width:42px;height:52px;object-fit:contain}
+h1{font-size:15.5px;text-align:center;margin:0;text-decoration:underline}
+.dt{display:inline-block;border-bottom:1px dotted #000;text-align:center;font-weight:600;padding:0 4px}
+.patientline{display:grid;grid-template-columns:minmax(220px,1fr) 82px 104px 126px;gap:8px;align-items:end;white-space:nowrap;margin-bottom:4px}
+.fitem{display:flex;align-items:flex-end;gap:3px;min-width:0}
+.flabel{font-weight:600;flex:0 0 auto}
+.fline{display:block;flex:1 1 auto;min-width:0;border-bottom:1px dotted #000;text-align:center;font-weight:600;padding:0 3px;line-height:1.35}
+.fafter{font-weight:600;flex:0 0 auto}
+.fage .fline{flex:0 0 38px}.fhn .fline{flex:0 0 70px}.forder .fline{flex:0 0 70px}
+.rb,.cb{font-size:14px}
+.sec{font-weight:700;font-size:14px;margin:8px 0 4px}
+ul,ol{margin:2px 0 8px;padding-left:24px}
+li{margin-bottom:3px}
+.doseline{border-top:2px solid #000;border-bottom:2px solid #000;padding:4px 0;margin:6px 0}
+table.ap{width:100%;border-collapse:collapse;margin-top:8px}
+table.ap td{border:1px solid #000;width:50%;padding:8px 10px;vertical-align:top}
+.sig{text-align:center;margin-top:12px;line-height:1.9}
+.cert{text-align:center;margin:34px 0 30px;line-height:2}
+.ref{font-size:11px;text-align:right;margin-top:14px;color:#333}
+.row{margin-bottom:4px}
+</style></head><body>
+<div class="pg">
+  <div class="formhead">
+    <img class="formlogo" src="logo.png" onerror="this.style.visibility='hidden'">
+    <h1>${F.title}</h1>
+    <span></span>
+  </div>
+  <div class="patientline">
+    ${field('ชื่อ-นามสกุล(ผู้ป่วย)',p.name,'fname')}
+    ${field('อายุ',ageOf(p),'fage','ปี')}
+    ${field('HN',p.hn,'fhn')}
+    ${field('วันที่สั่งใช้',ord?od+'/'+om+'/'+oy:'','forder')}
+  </div>
+  <div class="row"><b>สิทธิ์การรักษา</b>&nbsp;&nbsp;&nbsp;${RIGHTS.map(rightOpt).join('&nbsp;&nbsp;&nbsp;&nbsp;')}</div>
+  <div class="row"><b>Last BMD</b> (กรณีที่มี) Femoral neck = ………….……. Total hip = …………….……. Spine = ……………..…..</div>
+  <div class="row"><b>Last eGFR</b> ………………………………ml/min <b>วันที่</b>…….../…………../………….. <b>Last corrected Calcium</b> ……………..…….mg/dl</div>
+  <div class="doseline">${F.dose}</div>
+  <div class="sec">${F.indHead}</div>
+  <ul style="list-style:none;padding-left:8px">${F.ind.map(i=>`<li><span class="cb">☐</span> ${i}</li>`).join('')}</ul>
+  <div style="font-weight:600">Primary very high risk osteoporosis</div>
+  <ul style="list-style:circle">${VHR.map(i=>`<li>${i}</li>`).join('')}</ul>
+  <div class="sec">${F.contraHead}</div>
+  <ol>${F.contra.map(i=>`<li>${i}</li>`).join('')}</ol>
+  <div class="ref">อ้างอิงจาก : คำแนะนำเวชปฏิบัติการดูแลรักษาโรคกระดูกพรุน มูลนิธิโรคกระดูกพรุนแห่งประเทศไทย พ.ศ. 2564</div>
+</div>
+<div>
+  <div style="margin-top:24px">ข้าพเจ้าซึ่งเป็นแพทย์ผู้รักษาขอรับรองว่าผู้ป่วยรายนี้มีความจำเป็นต้องใช้ยาในรายการดังกล่าว</div>
+  <div class="cert">ลงชื่อ..................................................แพทย์ผู้รักษา<br>
+  ${nameLine(p.doctor)}<br>
+  วันที่ ${dot(od,45)} / ${dot(om,55)} / ${dot(oy,60)}</div>
+  <div style="font-weight:700;text-decoration:underline">${F.reqTitle}</div>
+  <table class="ap">
+    <tr>${sigBox('หัวหน้าภาควิชาออร์โธปิดิกส์',opin,S.ortho)}${sigBox('รองผู้อำนวยการฝ่ายการแพทย์',opin,S.deputy)}</tr>
+    <tr>${sigBox('หัวหน้างานเภสัชกรรม',pharmBody,S.pharm)}${sigBox('ผู้อำนวยการโรงพยาบาล',opin,S.director)}</tr>
+  </table>
+  <div class="ref">อ้างอิงจาก : คำแนะนำเวชปฏิบัติการดูแลรักษาโรคกระดูกพรุน มูลนิธิโรคกระดูกพรุนแห่งประเทศไทย พ.ศ. 2564</div>
+</div>
+<scr`+`ipt>window.onload=function(){setTimeout(function(){window.print();},600);};</scr`+`ipt>
+</body></html>`;
+}
+function printForm(id){
+  const p=db.patients.find(x=>x.id===id);if(!p)return;
+  const w=window.open('','_blank');
+  if(!w){alert('เบราว์เซอร์บล็อกหน้าต่างใหม่ กรุณาอนุญาต pop-up สำหรับหน้านี้');return;}
+  w.document.write(formHTML(p));
+  w.document.close();
+}
+
+/* ---- เก็บไฟล์ PDF ใน IndexedDB ---- */
+function openIDB(){
+  return new Promise((res,rej)=>{
+    const q=indexedDB.open('orthoMedDocs',1);
+    q.onupgradeneeded=()=>q.result.createObjectStore('docs');
+    q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);
+  });
+}
+async function putDoc(key,file){
+  const d=await openIDB();
+  return new Promise((res,rej)=>{
+    const t=d.transaction('docs','readwrite');
+    t.objectStore('docs').put(file,key);
+    t.oncomplete=res;t.onerror=()=>rej(t.error);
+  });
+}
+async function getDoc(key){
+  const d=await openIDB();
+  return new Promise((res,rej)=>{
+    const q=d.transaction('docs').objectStore('docs').get(key);
+    q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);
+  });
+}
+async function attachDoc(drug,inp){
+  if(!need('staff')){inp.value='';return;}
+  const f=inp.files[0];if(!f)return;
+  try{
+    await putDoc(drug,f);
+    db.docs[drug]=f.name;save();render();
+    toast('✓ แนบเอกสาร '+DRUGNAME[drug]+' แล้ว');
+  }catch(e){
+    alert('เบราว์เซอร์นี้เก็บไฟล์ไม่ได้ แนะนำเก็บไฟล์ PDF ไว้ในโฟลเดอร์เดียวกับเว็บ แล้วเปิดพิมพ์จากโฟลเดอร์แทน');
+  }
+  inp.value='';
+}
+/* ---- ไฟล์ PDF แนบรายเคส ---- */
+let ptFileTarget=null;
+function pickPtFile(id){
+  if(!need('staff'))return;
+  ptFileTarget=id;
+  document.getElementById('ptfile').click();
+}
+function fileToB64(f){
+  return new Promise((res,rej)=>{
+    const r=new FileReader();
+    r.onload=()=>res(String(r.result).split(',')[1]);
+    r.onerror=rej;
+    r.readAsDataURL(f);
+  });
+}
+async function attachPtFile(inp){
+  const f=inp.files[0];
+  if(!f||!ptFileTarget){inp.value='';return;}
+  const p=db.patients.find(x=>x.id===ptFileTarget);
+  if(!p){inp.value='';ptFileTarget=null;return;}
+  if(f.size>15*1024*1024){alert('ไฟล์ใหญ่เกิน 15 MB กรุณาย่อไฟล์ก่อน');inp.value='';return;}
+  /* อัปโหลดขึ้น Google Drive ผ่านฐานข้อมูลกลาง → เปิดได้ทุกเครื่อง */
+  if(!SYNCURL){
+    alert('ยังไม่ได้เชื่อมฐานข้อมูลกลาง จึงแนบไฟล์ให้เปิดได้ทุกเครื่องไม่ได้\n\nกรุณาเชื่อมฐานข้อมูลกลางก่อน แล้วแนบไฟล์อีกครั้ง');
+    inp.value='';ptFileTarget=null;return;
+  }
+  toast('⏳ กำลังอัปโหลดไฟล์ขึ้นพื้นที่กลาง...');
+  const pid=p.id;
+  syncBusy=true;                                 /* ล็อกไม่ให้ซิงก์มาทับระหว่างอัปโหลด */
+  try{
+    const b64=await fileToB64(f);
+    const res=await apiPost({action:'upload',name:f.name,mime:f.type||'application/pdf',data:b64});
+    if(!(res.ok&&res.url))throw new Error(res.err||'upload failed');
+    const p2=db.patients.find(x=>x.id===pid);    /* หาเคสใหม่หลัง await เผื่อข้อมูลถูกซิงก์เปลี่ยน */
+    if(!p2)throw new Error('ไม่พบเคสนี้แล้ว (อาจถูกลบ/แก้ไขจากเครื่องอื่น)');
+    p2.pdfUrl=res.url;p2.pdfName=f.name;
+    save();render();
+    toast('✓ อัปโหลด '+f.name+' แล้ว — เปิดได้จากทุกเครื่อง');
+  }catch(e){
+    const detail=(e&&e.message)?e.message:String(e||'ไม่ทราบสาเหตุ');
+    const hint=detail==='unauthorized'
+      ? '\n\nสาเหตุ: API key ในเว็บไม่ตรงกับค่า API_KEY ใน Apps Script หรือยังไม่ได้กด "บันทึก API key"\n\nวิธีแก้:\n1) เปิด Apps Script ดูบรรทัด const API_KEY=...\n2) คัดลอกค่าระหว่างเครื่องหมายคำพูดมาใส่ช่อง API key ในหน้า ตั้งค่าระบบ\n3) กด "บันทึก API key" แล้วกด "ตรวจสอบ URL/API key"\n4) ถ้าผ่านแล้วค่อยแนบไฟล์ใหม่'
+      : '\n\nวิธีแก้ที่พบบ่อย:\n1) หน้า ตั้งค่าระบบ → คัดลอกโค้ด Apps Script เวอร์ชันล่าสุดไปวางทับ\n2) Deploy → จัดการการทำให้ใช้งานได้ → แก้ไข → เวอร์ชันใหม่ → Deploy\n3) เปิด/อนุญาตสิทธิ์ Google Drive ให้ Apps Script แล้วลองแนบใหม่อีกครั้ง';
+    alert('อัปโหลดไฟล์ขึ้นพื้นที่กลางไม่สำเร็จ\n\nรายละเอียด: '+detail+'\n\nไฟล์นี้ยังไม่ถูกบันทึก เพราะถ้าเก็บเฉพาะเครื่อง เครื่องอื่นจะเปิดไม่ได้'+hint);
+  }finally{
+    syncBusy=false;inp.value='';ptFileTarget=null;
+  }
+}
+async function openPtFile(id){
+  const p=db.patients.find(x=>x.id===id);
+  if(p&&p.pdfUrl){window.open(p.pdfUrl);return;}   /* ไฟล์บน Drive เปิดได้ทุกเครื่อง */
+  const f=await getDoc('pt-'+id).catch(()=>null);
+  if(!f){
+    const msg='เคสนี้ยังไม่มี "ลิงก์ไฟล์กลาง" ในฐานข้อมูล\n\nไฟล์เดิมน่าจะเคยเก็บเฉพาะเครื่องที่แนบครั้งแรก จึงเปิดจากเครื่องอื่นไม่ได้';
+    if(can('staff')&&confirm(msg+'\n\nกดตกลงเพื่อเลือกไฟล์ PDF จากเครื่องนี้ แล้วระบบจะอัปโหลดขึ้นพื้นที่กลางให้เปิดได้ทุกเครื่อง')){
+      pickPtFile(id);
+    }else{
+      alert(msg+'\n\nให้เจ้าหน้าที่กด "เปลี่ยน/แนบไฟล์" แล้วเลือก PDF ใหม่ 1 ครั้ง ระบบจะอัปขึ้นพื้นที่กลางเพื่อให้ทุกเครื่องเปิดได้');
+    }
+    return;
+  }
+  if(p&&!p.pdfUrl&&can('staff')&&SYNCURL&&confirm('ไฟล์นี้ยังเก็บเฉพาะเครื่องนี้\n\nต้องการอัปขึ้นพื้นที่กลางเพื่อให้ทุกเครื่องเปิดได้ไหม?')){
+    try{
+      syncBusy=true;
+      toast('⏳ กำลังอัปโหลดไฟล์เดิมขึ้นพื้นที่กลาง...');
+      const b64=await fileToB64(f);
+      const res=await apiPost({action:'upload',name:p.pdfName||'patient-file.pdf',mime:f.type||'application/pdf',data:b64});
+      if(!(res.ok&&res.url))throw new Error(res.err||'upload failed');
+      p.pdfUrl=res.url;p.pdfName=res.name||p.pdfName||'patient-file.pdf';
+      save();render();
+      syncBusy=false;
+      toast('✓ อัปโหลดไฟล์เดิมแล้ว — เปิดได้จากทุกเครื่อง');
+      window.open(p.pdfUrl);return;
+    }catch(e){
+      const detail=(e&&e.message)?e.message:String(e||'ไม่ทราบสาเหตุ');
+      const hint=detail==='unauthorized'
+        ? '\n\nสาเหตุ: API key ในเว็บไม่ตรงกับค่า API_KEY ใน Apps Script หรือยังไม่ได้กด "บันทึก API key"'
+        : '\n\nกรุณาอัปเดต/Deploy Apps Script เวอร์ชันล่าสุด และอนุญาตสิทธิ์ Google Drive แล้วลองแนบไฟล์ใหม่อีกครั้ง';
+      alert('อัปโหลดไฟล์เดิมขึ้นพื้นที่กลางไม่สำเร็จ\n\nรายละเอียด: '+detail+hint);
+    }
+  }
+  window.open(URL.createObjectURL(f));
+}
+async function openDocFile(drug){
+  const f=await getDoc(drug).catch(()=>null);
+  if(!f){alert('ไม่พบไฟล์ กรุณาแนบไฟล์ใหม่อีกครั้ง');return;}
+  window.open(URL.createObjectURL(f));
+}
+let apptId=null;
+function startDrug(id){
+  if(!need('staff'))return;
+  const p=db.patients.find(x=>x.id===id);if(!p)return;
+  apptId=id;
+  document.getElementById('am-title').textContent='ทำนัดฉีดยา: '+p.name;
+  tdpSet('a-date',p.appt||'');
+  tdpSet('a-date2',p.appt2||'');
+  document.getElementById('a-label2').value=p.appt2Label||'นัดมารับยา';
+  document.getElementById('amodal').classList.add('show');
+}
+function closeAppt(){document.getElementById('amodal').classList.remove('show');}
+function saveAppt(){
+  const d=tdpGet('a-date');
+  if(!d){alert('กรุณาเลือก วัน / เดือน / ปี ให้ครบ');return;}
+  const p=db.patients.find(x=>x.id===apptId);if(!p)return;
+  p.appt=d;p.status='active';p.note='';
+  p.appt2=tdpGet('a-date2');
+  p.appt2Label=document.getElementById('a-label2').value.trim();
+  save();closeAppt();render();toast('✓ บันทึกนัด '+thDate(d)+' แล้ว — ย้ายไปหน้าติดตามวันนัด');
+}
+function previewStockDeduction(drug,qty){
+  const lots=db.stock.filter(s=>s.drug===drug&&s.qty>0)
+    .sort((a,b)=>(a.exp||'9999-12-31')<(b.exp||'9999-12-31')?-1:1);
+  const total=lots.reduce((t,s)=>t+s.qty,0);
+  let remain=qty;
+  const cuts=[];
+  for(const s of lots){
+    if(remain<=0)break;
+    const take=Math.min(s.qty,remain);
+    cuts.push({id:s.id,lot:s.lot||'-',exp:s.exp||'',qty:take});
+    remain-=take;
+  }
+  return {ok:remain===0,total,left:total-qty,short:remain,cuts};
+}
+function applyStockDeduction(cuts){
+  cuts.forEach(c=>{
+    const s=db.stock.find(x=>x.id===c.id);
+    if(s)s.qty=Math.max(0,(parseInt(s.qty)||0)-c.qty);
+  });
+}
+function restoreStockCuts(cuts,drug){
+  (cuts||[]).forEach(c=>{
+    const qty=parseInt(c.qty)||0;
+    if(qty<=0)return;
+    let s=db.stock.find(x=>x.id===c.id);
+    if(!s){
+      s={id:c.id||uid(),drug:drug,lot:c.lot||'',exp:c.exp||'',qty:0};
+      db.stock.push(s);
+    }
+    s.qty=(parseInt(s.qty)||0)+qty;
+  });
+}
+function normalizeStockCuts(cuts){
+  return (cuts||[]).map(c=>({id:c.id||'',lot:c.lot||'',exp:c.exp||'',qty:parseInt(c.qty)||0})).filter(c=>c.qty>0);
+}
+function stockCutsQty(cuts){return normalizeStockCuts(cuts).reduce((t,c)=>t+c.qty,0);}
+function takeBackFromCuts(cuts,qty,drug){
+  let remain=qty;
+  const next=normalizeStockCuts(cuts);
+  const restore=[];
+  for(let i=next.length-1;i>=0&&remain>0;i--){
+    const take=Math.min(next[i].qty,remain);
+    restore.push(Object.assign({},next[i],{qty:take}));
+    next[i].qty-=take;
+    remain-=take;
+  }
+  restoreStockCuts(restore,drug);
+  return next.filter(c=>c.qty>0);
+}
+function stockCutText(cuts){
+  return cuts.map(c=>'Lot '+c.lot+' '+c.qty+(c.exp?' (หมดอายุ '+thDate(c.exp)+')':'')).join('\n');
+}
+function nextRound(id){
+  if(!need('staff'))return;
+  const p=db.patients.find(x=>x.id===id);if(!p)return;
+  let qty=1;
+  if(p.drug==='teri'){
+    /* Teriparatide รับครั้งละหลายด้าม ต้องกรอกจำนวนเอง */
+    const v=prompt('ยืนยัน: '+p.name+' รับยา Teriparatide แล้ว\n\nกรอกจำนวนยาที่ได้รับครั้งนี้ (ด้าม):','3');
+    if(v===null)return;
+    qty=parseInt(v);
+    if(!(qty>0)){alert('กรุณากรอกจำนวนเป็นตัวเลขมากกว่า 0');return;}
+    var nt=prompt('หมายเหตุการรับยาครั้งนี้ (ถ้ามี):','');
+    if(nt===null)nt='';
+  }else{
+    if(!confirm('ยืนยัน: '+p.name+' รับยา Dose นี้แล้ว ย้ายไป "รอทำนัดครั้งถัดไป"?\n(ระบบจะนับจำนวน Dose ที่ได้รับ +1)'))return;
+  }
+  const stock=previewStockDeduction(p.drug,qty);
+  if(!stock.ok){
+    alert('⚠ สต๊อก '+DRUGNAME[p.drug]+' ไม่พอ\n\nต้องใช้ '+qty+' แต่คงเหลือ '+stock.total+' (ขาด '+stock.short+')\nกรุณารับยาเข้าที่หน้า Stock ก่อนบันทึกรับยา');
+    return;
+  }
+  const oldAppt=p.appt||'';
+  applyStockDeduction(stock.cuts);
+  p.status='waitnext';p.appt='';p.appt2='';p.note='';
+  p.doses=(parseInt(p.doses)||0)+qty;
+  p.lastDose=new Date().toISOString().slice(0,10);
+  if(oldAppt===p.lastDose)p.ntfD0=oldAppt;
+  p.doseLog=p.doseLog||[];
+  p.doseLog.push({hid:uid(),d:p.lastDose,q:String(qty),n:(typeof nt!=='undefined'&&nt)?nt.trim():'',stockCuts:normalizeStockCuts(stock.cuts)});
+  const left=db.stock.filter(s=>s.drug===p.drug).reduce((t,s)=>t+s.qty,0);
+  save();render();
+  toast('✓ รับยา '+qty+' Dose · ตัดสต๊อกแล้ว คงเหลือ '+left+' Dose');
+  if(stock.cuts.length>1)alert('ตัดสต๊อก '+DRUGNAME[p.drug]+' จาก Lot ใกล้หมดอายุก่อน:\n\n'+stockCutText(stock.cuts));
+}
+function finishDrug(id){
+  if(!need('staff'))return;
+  if(!confirm('ยืนยันสิ้นสุดการรักษา?'))return;
+  const p=db.patients.find(x=>x.id===id);if(p){p.status='done';save();render();}
+}
+function delPatient(id){
+  if(!need('admin'))return;
+  if(!confirm('ยืนยันลบเคสนี้?'))return;
+  db.patients=db.patients.filter(x=>x.id!==id);save();render();
+  openIDB().then(d=>d.transaction('docs','readwrite').objectStore('docs').delete('pt-'+id)).catch(()=>{});
+}
+function addDoctor(){
+  if(!need('admin'))return;
+  const v=document.getElementById('newdoc').value.trim();
+  if(!v)return;
+  if(!db.doctors.includes(v))db.doctors.push(v);
+  save();render();
+}
+function editDoctor(old){
+  if(!need('admin'))return;
+  const v=prompt('แก้ไขชื่อแพทย์:',old);
+  if(v===null)return;
+  const nw=v.trim();
+  if(!nw||nw===old)return;
+  if(db.doctors.includes(nw)){alert('มีชื่อ "'+nw+'" อยู่แล้ว');return;}
+  db.doctors=db.doctors.map(d=>d===old?nw:d);
+  let n=0;
+  db.patients.forEach(p=>{if(p.doctor===old){p.doctor=nw;n++;}});
+  save();render();
+  toast('✓ แก้ชื่อเป็น "'+nw+'" แล้ว (อัปเดตเคสผู้ป่วย '+n+' ราย)');
+}
+function delDoctor(d){
+  if(!need('admin'))return;
+  if(!confirm('ลบ '+d+' ออกจากรายชื่อ?'))return;
+  db.doctors=db.doctors.filter(x=>x!==d);save();render();
+}
+function stockAdj(id,n){
+  if(!need('staff'))return;
+  const s=db.stock.find(x=>x.id===id);if(!s)return;
+  s.qty=Math.max(0,s.qty+n);save();render();
+}
+function delStock(id){
+  if(!need('admin'))return;
+  if(!confirm('ลบรายการนี้?'))return;
+  db.stock=db.stock.filter(x=>x.id!==id);save();render();
+}
+
+/* ================= MODALS ================= */
+let editId=null;
+function openModal(id,defStatus,defDrug){
+  if(!need('staff'))return;
+  editId=id;
+  const p=id?db.patients.find(x=>x.id===id):null;
+  document.getElementById('pm-title').textContent=p?'แก้ไขเคส: '+p.name:'เพิ่มเคสใหม่';
+  document.getElementById('f-doctor').innerHTML='<option value="">– เลือกแพทย์ –</option>'+
+    db.doctors.map(d=>`<option ${p&&p.doctor===d?'selected':''}>${esc(d)}</option>`).join('');
+  document.getElementById('f-name').value=p?p.name:'';
+  document.getElementById('f-hn').value=p?p.hn:'';
+  document.getElementById('f-phone').value=p?p.phone:'';
+  tdpSet('f-dob',p&&p.dob?p.dob:'');
+  (function(){
+    const a=p&&p.dob?ageYMD(p.dob):null;
+    document.getElementById('f-agy').value=a?a.y:(p&&p.age?p.age:'');
+    document.getElementById('f-agm').value=a?a.m:'';
+    document.getElementById('f-agd').value=a?a.d:'';
+  })();
+  document.getElementById('f-right').value=p&&p.right?p.right:'';
+  document.getElementById('f-drug').value=p?p.drug:(defDrug||'deno');
+  document.getElementById('f-status').value=p?p.status:(defStatus||'pending');
+  tdpSet('f-approved',p?p.approved:'');
+  tdpSet('f-appt',p?p.appt:'');
+  tdpSet('f-appt2',p&&p.appt2?p.appt2:'');
+  document.getElementById('f-appt2label').value=p&&p.appt2Label?p.appt2Label:'';
+  document.getElementById('f-doses').value=p?(p.doses||0):0;
+  tdpSet('f-lastdose',p&&p.lastDose?p.lastDose:'');
+  document.getElementById('f-note').value=p?p.note:'';
+  document.getElementById('pm-del').style.display=(id&&can('admin'))?'':'none';
+  document.getElementById('pmodal').classList.add('show');
+}
+/* ---- ประวัติการรับยารายโดส ---- */
+function entryQty(e){return parseInt(e&&e.q)||1;}
+function doseEntries(p){
+  let raw=(p.doseLog||[]).map(e=>typeof e==='string'
+    ?{hid:uid(),d:e,q:'',n:'',stockCuts:[]}
+    :(e&&typeof e==='object'?{hid:e.hid||uid(),d:e.d||'',q:e.q||'',n:e.n||'',stockCuts:normalizeStockCuts(e.stockCuts)}:{hid:uid(),d:'',q:'',n:'',stockCuts:[]}));
+  if(!raw.length&&p.lastDose)raw=[{hid:uid(),d:p.lastDose,q:'',n:'',stockCuts:[]}];
+  return raw;
+}
+let hState=null;
+function showHistory(id){
+  const p=db.patients.find(x=>x.id===id);if(!p)return;
+  hState={id:id,entries:doseEntries(p)};
+  renderHistory();
+  document.getElementById('hmodal').classList.add('show');
+}
+function syncHistoryInputs(){
+  if(!hState)return;
+  hState.entries.forEach((e,i)=>{
+    const dEl=document.getElementById('hd-'+i);
+    if(dEl)e.d=dEl.dataset.iso||'';
+    const q=document.getElementById('hq-'+i);if(q)e.q=q.value.trim();
+    const n=document.getElementById('hn-'+i);if(n)e.n=n.value.trim();
+  });
+}
+function addHistoryRow(){
+  if(!need('staff'))return;
+  syncHistoryInputs();
+  hState.entries.push({hid:uid(),d:todayISO(),q:'',n:'',stockCuts:[]});
+  renderHistory();
+}
+function delHistoryRow(i){
+  if(!need('staff'))return;
+  syncHistoryInputs();
+  hState.entries.splice(i,1);
+  renderHistory();
+}
+function renderHistory(){
+  const p=db.patients.find(x=>x.id===hState.id);if(!p)return;
+  const en=hState.entries;
+  const editable=can('staff');
+  const total=parseInt(p.doses)||0;
+  const rows=en.length?en.map((e,i)=>`
+    <tr><td style="text-align:center"><b>${i+1}</b></td>
+    <td style="min-width:225px;width:235px">${editable?`<div class="tdp" id="hd-${i}"></div>`:(e.d?thDateFull(e.d):'<span style="color:var(--muted)">—</span>')}</td>
+    <td style="width:60px">${editable?`<input class="hin" id="hq-${i}" placeholder="${p.drug==='teri'?'ด้าม':'1'}">`:(esc(e.q)||'–')}</td>
+    <td>${editable?`<input class="hin" id="hn-${i}" placeholder="หมายเหตุ...">`:(esc(e.n)||'–')}</td>
+    ${editable?`<td style="width:28px;text-align:center"><span style="cursor:pointer;color:var(--danger);font-weight:700" onclick="delHistoryRow(${i})" title="ลบแถวนี้">✕</span></td>`:''}
+    </tr>`).join('')
+    :`<tr><td colspan="${editable?5:4}" style="text-align:center;color:var(--muted);padding:14px">ยังไม่มีบันทึกการรับยา</td></tr>`;
+  document.getElementById('hpanel').innerHTML=`
+    <h3>💉 ประวัติการรับยา: ${esc(p.name)}</h3>
+    <p style="font-size:13.5px;color:var(--muted);margin:4px 0 12px">
+      HN ${esc(p.hn)||'–'} · ${DRUGNAME[p.drug]} · ${esc(p.doctor)||'–'} · สถานะ: ${STATUSNAME[p.status]||'–'}</p>
+    <div class="statrow" style="margin-bottom:12px">
+      <div class="stat"><div class="v">${total}</div><div class="l">รวมได้รับยาแล้ว (Dose${p.drug==='teri'?'/ด้าม':''})</div></div>
+      <div class="stat"><div class="v" style="font-size:17px;line-height:2.1">${p.appt?thDate(p.appt):'–'}</div><div class="l">นัดฉีดยาครั้งถัดไป</div></div>
+    </div>
+    <div class="tblwrap"><table>
+      <tr><th style="text-align:center">ครั้งที่</th><th>วันที่</th><th>จำนวนยา</th><th>หมายเหตุ</th>${editable?'<th></th>':''}</tr>
+      ${rows}
+    </table></div>
+    ${editable?'<p style="font-size:12px;color:var(--muted);margin-top:8px">1 แถว = การรับยา 1 ครั้ง — เพิ่มจำนวนจะตัด stock เพิ่ม · ลด/ลบแถวจะคืน stock กลับ Lot เดิมเมื่อมีข้อมูล Lot ที่ตัดไว้</p>':''}
+    <div class="acts" style="justify-content:space-between">
+      <span>${editable?`<button class="btn ghost" onclick="addHistoryRow()">＋ เพิ่มแถว</button>`:''}</span>
+      <span style="display:flex;gap:8px">
+        ${editable?`<button class="btn mint" onclick="saveHistory()">✓ บันทึก</button>
+        <button class="btn soft" onclick="document.getElementById('hmodal').classList.remove('show');openModal('${p.id}')">แก้ไขเคส</button>`:''}
+        <button class="btn ghost" onclick="document.getElementById('hmodal').classList.remove('show')">ปิด</button>
+      </span>
+    </div>`;
+  if(editable)en.forEach((e,i)=>{
+    tdpSet('hd-'+i,e.d);
+    document.getElementById('hq-'+i).value=e.q;
+    document.getElementById('hn-'+i).value=e.n;
+  });
+}
+function saveHistory(){
+  if(!need('staff'))return;
+  if(!hState)return;
+  const p=db.patients.find(x=>x.id===hState.id);if(!p)return;
+  const oldEntries=doseEntries(p);
+  const oldById=Object.fromEntries(oldEntries.map(e=>[e.hid,e]));
+  syncHistoryInputs();
+  const arr=hState.entries.filter(e=>e.d||e.q||e.n).map(e=>Object.assign({},e,{stockCuts:normalizeStockCuts(e.stockCuts)}));
+  const newIds=new Set(arr.map(e=>e.hid));
+  let needAdd=0, canRestore=0;
+  for(const old of oldEntries){
+    if(newIds.has(old.hid))continue;
+    if(old.stockCuts&&old.stockCuts.length)canRestore+=Math.min(entryQty(old),stockCutsQty(old.stockCuts));
+  }
+  arr.forEach(e=>{
+    const old=oldById[e.hid];
+    const oldQty=old?entryQty(old):0;
+    const newQty=entryQty(e);
+    if(newQty>oldQty)needAdd+=newQty-oldQty;
+    else if(newQty<oldQty&&old&&old.stockCuts&&old.stockCuts.length)canRestore+=Math.min(oldQty-newQty,stockCutsQty(old.stockCuts));
+  });
+  const currentStock=db.stock.filter(s=>s.drug===p.drug).reduce((t,s)=>t+(parseInt(s.qty)||0),0);
+  if(needAdd>currentStock+canRestore){
+    alert('⚠ สต๊อก '+DRUGNAME[p.drug]+' ไม่พอสำหรับประวัติที่เพิ่ม\n\nต้องตัดเพิ่ม '+needAdd+' แต่มีให้ใช้หลังคืน Lot เดิมแล้ว '+(currentStock+canRestore)+'\nกรุณารับยาเข้าที่หน้า Stock ก่อนบันทึก');
+    return;
+  }
+  let added=0, restored=0, unknownRestore=0;
+
+  for(const old of oldEntries){
+    if(newIds.has(old.hid))continue;
+    const qty=entryQty(old);
+    if(old.stockCuts&&old.stockCuts.length){
+      const restoreQty=Math.min(qty,stockCutsQty(old.stockCuts));
+      restoreStockCuts(old.stockCuts,p.drug);
+      restored+=restoreQty;
+      if(restoreQty<qty)unknownRestore+=qty-restoreQty;
+    }else{
+      unknownRestore+=qty;
+    }
+  }
+
+  for(const e of arr){
+    const old=oldById[e.hid];
+    const oldQty=old?entryQty(old):0;
+    const newQty=entryQty(e);
+    if(newQty>oldQty){
+      const diff=newQty-oldQty;
+      const stock=previewStockDeduction(p.drug,diff);
+      if(!stock.ok){
+        alert('⚠ สต๊อก '+DRUGNAME[p.drug]+' ไม่พอสำหรับประวัติที่เพิ่ม\n\nต้องตัดเพิ่ม '+diff+' แต่คงเหลือ '+stock.total+' (ขาด '+stock.short+')\nกรุณารับยาเข้าที่หน้า Stock ก่อนบันทึก');
+        return;
+      }
+      applyStockDeduction(stock.cuts);
+      e.stockCuts=normalizeStockCuts((e.stockCuts||[]).concat(stock.cuts));
+      added+=diff;
+    }else if(newQty<oldQty){
+      const diff=oldQty-newQty;
+      if(old&&old.stockCuts&&old.stockCuts.length){
+        const restoreQty=Math.min(diff,stockCutsQty(old.stockCuts));
+        e.stockCuts=takeBackFromCuts(old.stockCuts,diff,p.drug);
+        restored+=restoreQty;
+        if(restoreQty<diff)unknownRestore+=diff-restoreQty;
+      }else{
+        unknownRestore+=diff;
+        e.stockCuts=normalizeStockCuts(e.stockCuts);
+      }
+    }
+  }
+
+  p.doseLog=arr;
+  const filled=arr.map(e=>e.d).filter(Boolean);
+  if(filled.length)p.lastDose=filled[filled.length-1];
+  if(p.appt&&filled.includes(p.appt))p.ntfD0=p.appt;
+  /* รวมจำนวน Dose อัตโนมัติจากช่องจำนวนยา (ถ้าแถวไหนไม่กรอก นับเป็น 1) */
+  p.doses=arr.reduce((s,e)=>s+entryQty(e),0);
+  save();render();
+  document.getElementById('hmodal').classList.remove('show');
+  if(unknownRestore>0){
+    alert('มีรายการเก่าบางแถวที่ยังไม่มีข้อมูล Lot เดิม จึงไม่สามารถคืน stock กลับ Lot เดิมได้: '+unknownRestore+' Dose\n\nรายการที่บันทึกหลังอัปเดตนี้จะคืน Lot เดิมได้อัตโนมัติ');
+  }
+  if(added>0&&restored>0){
+    const left=db.stock.filter(s=>s.drug===p.drug).reduce((t,s)=>t+s.qty,0);
+    toast('✓ บันทึกประวัติแล้ว · ตัดเพิ่ม '+added+' / คืน stock '+restored+' คงเหลือ '+left);
+  }else if(added>0){
+    const left=db.stock.filter(s=>s.drug===p.drug).reduce((t,s)=>t+s.qty,0);
+    toast('✓ บันทึกประวัติแล้ว · ตัดสต๊อกเพิ่ม '+added+' คงเหลือ '+left);
+  }else if(restored>0){
+    const left=db.stock.filter(s=>s.drug===p.drug).reduce((t,s)=>t+s.qty,0);
+    toast('✓ บันทึกประวัติแล้ว · คืน stock '+restored+' กลับ Lot เดิม คงเหลือ '+left);
+  }else{
+    toast('✓ บันทึกประวัติแล้ว — รวม '+p.doses+' Dose');
+  }
+}
+function delFromModal(){
+  if(!editId)return;
+  const id=editId;
+  closeModal();
+  delPatient(id);
+}
+function closeModal(){document.getElementById('pmodal').classList.remove('show');}
+function savePatient(){
+  try{
+    const name=document.getElementById('f-name').value.trim();
+    if(!name){alert('กรุณากรอกชื่อผู้ป่วย');return;}
+    const data={
+      name,hn:document.getElementById('f-hn').value.trim(),
+      phone:document.getElementById('f-phone').value.trim(),
+      dob:tdpGet('f-dob'),
+      right:document.getElementById('f-right').value,
+      drug:document.getElementById('f-drug').value,
+      doctor:document.getElementById('f-doctor').value,
+      status:document.getElementById('f-status').value,
+      approved:tdpGet('f-approved'),
+      appt:tdpGet('f-appt'),
+      appt2:tdpGet('f-appt2'),
+      appt2Label:document.getElementById('f-appt2label').value.trim(),
+      doses:Math.max(0,parseInt(document.getElementById('f-doses').value)||0),
+      lastDose:tdpGet('f-lastdose'),
+      note:document.getElementById('f-note').value.trim()
+    };
+    const ex=editId?db.patients.find(x=>x.id===editId):null;
+    if(ex){Object.assign(ex,data);}
+    else{
+      const np=Object.assign({id:uid(),steps:{}},data);
+      db.patients.push(np);
+      notifyNewCase(np);
+    }
+    save();closeModal();render();toast('✓ บันทึกแล้ว');
+  }catch(e){
+    alert('บันทึกไม่สำเร็จ: '+(e&&e.message?e.message:e));
+  }
+}
+function openStockModal(){if(!need('staff'))return;tdpSet('s-exp','');document.getElementById('smodal').classList.add('show');}
+function closeStockModal(){document.getElementById('smodal').classList.remove('show');}
+function saveStock(){
+  db.stock.push({id:uid(),
+    drug:document.getElementById('s-drug').value,
+    lot:document.getElementById('s-lot').value.trim(),
+    exp:tdpGet('s-exp'),
+    qty:Math.max(0,parseInt(document.getElementById('s-qty').value)||0)});
+  save();closeStockModal();render();toast('✓ เพิ่ม stock แล้ว');
+}
+document.querySelectorAll('.modalbg').forEach(m=>{
+  if(m.id==='loginbg')return;
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');});
+});
+
+/* ================= EXPORT / IMPORT (Excel) ================= */
+const DRUGKEY={'Denosumab':'deno','Teriparatide':'teri'};
+const STATUSKEY=Object.fromEntries(Object.entries(STATUSNAME).map(([k,v])=>[v,k]));
+/* รองรับชื่อสถานะแบบเก่าจากไฟล์สำรองรุ่นก่อน */
+Object.assign(STATUSKEY,{'รออนุมัติ':'pending','รอทำนัดฉีดยา':'waiting','ใช้ยาอยู่':'active','ได้รับยาแล้ว / ใช้ยาอยู่':'active','รอทำนัดครั้งถัดไป':'waitnext'});
+function needXLSX(){
+  if(typeof XLSX==='undefined'){
+    alert('ยังโหลดตัวช่วย Excel ไม่ได้ กรุณาเชื่อมต่ออินเทอร์เน็ตแล้วรีเฟรชหน้าเว็บ 1 ครั้ง');
+    return true;
+  }
+  return false;
+}
+function doseLogText(log){
+  return (log||[]).map(e=>{
+    if(typeof e==='string')return (e||'-')+';;';
+    return ((e&&e.d)||'-')+';'+((e&&e.q)||'')+';'+((e&&e.n)||'');
+  }).join(' | ');
+}
+function doseStockCutsText(log){
+  return JSON.stringify((log||[]).map(e=>normalizeStockCuts(e&&e.stockCuts)));
+}
+function patientRows(){
+  return db.patients.map((p,i)=>{
+    const r={'ลำดับ':i+1,'ชื่อผู้ป่วย':p.name,'HN':p.hn||'','เบอร์โทร':p.phone||'',
+      'วันเกิด':p.dob||'','อายุ':ageOf(p),'สิทธิ์การรักษา':p.right||'',
+      'ยา':DRUGNAME[p.drug],'แพทย์':p.doctor||'','สถานะ':STATUSNAME[p.status],
+      'ได้รับยาแล้ว (Dose)':p.doses||0,'วันที่รับยาล่าสุด':p.lastDose||'',
+      'ประวัติรับยา (แต่ละโดส)':doseLogText(p.doseLog),
+      'ประวัติ Stock Lot ที่ตัด':doseStockCutsText(p.doseLog),
+      'วันที่อนุมัติ':p.approved||'','วันนัด':p.appt||'',
+      'นัดเพิ่มเติม (วันที่)':p.appt2||'','นัดเพิ่มเติม (เรื่อง)':p.appt2Label||'',
+      'ไฟล์แนบ':p.pdfName||'','ลิงก์ไฟล์แนบ':p.pdfUrl||'','หมายเหตุ':p.note||''};
+    STEPS.forEach(s=>r[s[1]]=(p.steps&&p.steps[s[0]])||'');
+    return r;
+  });
+}
+function exportXLSX(){
+  if(!need('staff'))return;
+  if(needXLSX())return;
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(patientRows()),'ผู้ป่วย');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(db.doctors.map(d=>({'รายชื่อแพทย์':d}))),'แพทย์');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(db.stock.map(s=>({
+    'ยา':DRUGNAME[s.drug],'Lot':s.lot||'','วันหมดอายุ':s.exp||'','จำนวน':s.qty}))),'Stock');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(SIGNERS.map(([k,l])=>({
+    'ตำแหน่ง':l,'ชื่อ':db.signers[k]||''}))),'ผู้ลงนาม');
+  XLSX.writeFile(wb,'backup_ortho_med_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  toast('⬇ ดาวน์โหลดไฟล์ Excel แล้ว');
+}
+function exportCSV(){ /* ปุ่ม Export ในหน้า Summary — ส่งออกเป็น .xlsx */
+  if(!need('staff'))return;
+  if(needXLSX())return;
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(patientRows()),'Summary');
+  XLSX.writeFile(wb,'summary_case_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  toast('⬇ ดาวน์โหลด Summary แล้ว');
+}
+function importXLSX(inp){
+  document.getElementById('xmodal').classList.remove('show');
+  if(!need('admin')){inp.value='';return;}
+  const f=inp.files[0];if(!f)return;
+  if(needXLSX()){inp.value='';return;}
+  const rd=new FileReader();
+  rd.onload=()=>{try{
+    const wb=XLSX.read(rd.result,{type:'array',cellDates:true});
+    const get=n=>wb.Sheets[n]?XLSX.utils.sheet_to_json(wb.Sheets[n],{defval:''}):[];
+    const iso=v=>{
+      if(!v)return'';
+      if(v instanceof Date){const d=new Date(v.getTime()-v.getTimezoneOffset()*6e4);return d.toISOString().slice(0,10);}
+      return String(v).trim();
+    };
+    const patients=get('ผู้ป่วย').filter(r=>String(r['ชื่อผู้ป่วย']||'').trim()).map(row=>{
+      const steps={};
+      STEPS.forEach(s=>{const v=iso(row[s[1]]);if(v)steps[s[0]]=v;});
+      let stockCutsByDose=[];
+      try{stockCutsByDose=JSON.parse(String(row['ประวัติ Stock Lot ที่ตัด']||'[]'));}catch(e){stockCutsByDose=[];}
+      return {id:uid(),name:String(row['ชื่อผู้ป่วย']).trim(),
+        hn:String(row['HN']||'').trim(),phone:String(row['เบอร์โทร']||'').trim(),
+        dob:iso(row['วันเกิด']),age:String(row['อายุ']||'').trim(),
+        right:String(row['สิทธิ์การรักษา']||'').trim(),
+        drug:DRUGKEY[String(row['ยา']||'').trim()]||'deno',
+        doctor:String(row['แพทย์']||'').trim(),
+        status:STATUSKEY[String(row['สถานะ']||'').trim()]||'pending',
+        approved:iso(row['วันที่อนุมัติ']),appt:iso(row['วันนัด']),
+        appt2:iso(row['นัดเพิ่มเติม (วันที่)']),
+        appt2Label:String(row['นัดเพิ่มเติม (เรื่อง)']||'').trim(),
+        doses:Math.max(0,parseInt(row['ได้รับยาแล้ว (Dose)']!==undefined?row['ได้รับยาแล้ว (Dose)']:row['ได้รับยาแล้ว (ครั้ง)'])||0),
+        lastDose:iso(row['วันที่รับยาล่าสุด']),
+        doseLog:String(row['ประวัติรับยา (แต่ละโดส)']||'').split('|').map((s,i)=>{
+          const a=s.trim().split(';');
+          const d=(a[0]||'').trim();
+          return {hid:uid(),d:d==='-'?'':d,q:(a[1]||'').trim(),n:(a[2]||'').trim(),stockCuts:normalizeStockCuts(stockCutsByDose[i])};
+        }).filter(e=>e.d||e.q||e.n),
+        pdfName:String(row['ไฟล์แนบ']||'').trim(),
+        pdfUrl:String(row['ลิงก์ไฟล์แนบ']||'').trim(),
+        note:String(row['หมายเหตุ']||'').trim(),steps};
+    });
+    const doctors=get('แพทย์').map(r=>String(r['รายชื่อแพทย์']||'').trim()).filter(Boolean);
+    const stock=get('Stock').map(r=>({id:uid(),
+      drug:DRUGKEY[String(r['ยา']||'').trim()]||'deno',
+      lot:String(r['Lot']||'').trim(),exp:iso(r['วันหมดอายุ']),
+      qty:Math.max(0,parseInt(r['จำนวน'])||0)}));
+    const signers={};
+    get('ผู้ลงนาม').forEach(r=>{
+      const m=SIGNERS.find(([k,l])=>l===String(r['ตำแหน่ง']||'').trim());
+      if(m)signers[m[0]]=String(r['ชื่อ']||'').trim();
+    });
+    if(!patients.length&&!doctors.length&&!stock.length)throw 0;
+    if(!confirm('การนำเข้าจะแทนที่ข้อมูลปัจจุบันทั้งหมด ยืนยันหรือไม่?'))return;
+    db={patients,doctors:doctors.length?doctors:db.doctors,stock,
+        docs:db.docs,auth:db.auth,notify:db.notify,
+        signers:Object.keys(signers).length?signers:db.signers};
+    ensureDefaults();
+    save();render();toast('✓ นำเข้าข้อมูลจาก Excel สำเร็จ');
+  }catch(e){alert('ไฟล์ไม่ถูกต้อง หรือรูปแบบคอลัมน์ไม่ตรงกับไฟล์สำรองของระบบ');}
+  finally{inp.value='';}};
+  rd.readAsArrayBuffer(f);
+}
+
+window.onerror=function(msg,src,line){
+  toast('⚠ เกิดข้อผิดพลาด: '+msg+' (บรรทัด '+line+')');
+  return false;
+};
+if(ROLE)document.getElementById('loginbg').classList.remove('show');
+render();
+if(SYNCURL)initSync(false);
+window.addEventListener('focus',()=>{if(SYNCURL&&syncState==='on')initSync(false);});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&SYNCURL&&syncState==='on')initSync(false);});
+setTimeout(checkNotify,8000);            /* เช็คแจ้งเตือนหลังซิงก์ข้อมูลเสร็จ */
+setInterval(checkNotify,3600000);        /* และทุก 1 ชั่วโมงที่เปิดค้างไว้ */
+(function scheduleMorning(){             /* ยิงแจ้งเตือนรอบ 08.00 น. ตรงถ้าเปิดหน้าค้างไว้ */
+  const now=new Date();
+  const next=new Date(now.getFullYear(),now.getMonth(),now.getDate(),8,0,30);
+  if(now>=next)next.setDate(next.getDate()+1);
+  setTimeout(function(){checkNotify();scheduleMorning();},next-now);
+})();
+(function(){
+  const M=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const d=new Date();
+  document.getElementById('todayth').textContent=d.getDate()+' '+M[d.getMonth()]+' '+(d.getFullYear()+543);
+})();
+</script>
+</body>
+</html>

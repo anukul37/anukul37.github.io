@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>ระบบแจ้งสถานะรอยา | ห้องยา</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+  <style>
+    :root{--purple:#5b2186;--violet:#7a3aa3;--blue:#246fd5;--ink:#202633;--muted:#657184;--line:#dde3ec;--bg:#f5f7fb;--amber:#f6ab19;--green:#11875d;--red:#c84242}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans Thai","Tahoma",sans-serif}.app{max-width:1180px;margin:auto;padding:28px 20px 50px}.top{background:linear-gradient(120deg,#481270,var(--violet));color:#fff;padding:28px;border-radius:22px;box-shadow:0 14px 35px #32104930}.eyebrow{font-size:14px;opacity:.82}.top h1{margin:6px 0;font-size:30px}.top p{margin:0;opacity:.88}.grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 6px 18px #1832640c}.card h2{font-size:21px;margin:0 0 18px}.help{color:var(--muted);font-size:14px;margin-top:-10px}label{display:block;font-size:14px;font-weight:700;margin:14px 0 6px}input,select,textarea,button{font:inherit}input,select,textarea{width:100%;padding:11px 12px;border:1px solid #cbd4e0;border-radius:10px;background:#fff;color:var(--ink)}textarea{min-height:74px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.btn{border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}.primary{background:var(--purple);color:#fff}.secondary{background:#eaf1fc;color:#1856a8}.danger{background:#fff0f0;color:#a62e2e}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.notice{border:2px solid var(--amber);background:#fffdf4;border-radius:14px;padding:16px;margin-bottom:18px}.notice strong{font-size:20px}.pill{display:inline-block;padding:7px 12px;border-radius:999px;font-weight:700}.waiting{background:#fff0c3;color:#805000}.ready{background:#d9f5e8;color:#096342}.cancelled{background:#fce2e3;color:#952c32}.result{display:none}.result.show{display:block}.data{border:1px solid var(--line);border-radius:14px;overflow:hidden}.row{display:grid;grid-template-columns:145px 1fr;gap:12px;padding:12px 14px;border-bottom:1px dashed #d4dbe5}.row:last-child{border-bottom:0}.key{color:var(--muted);font-weight:700}.value{font-weight:700}.qrbox{text-align:center;padding:18px;background:#fafbfe;border:1px solid var(--line);border-radius:14px;margin-top:18px}.qrbox canvas{width:190px!important;height:190px!important;background:#fff;padding:8px}.qrbox p{font-size:13px;color:var(--muted);margin:10px 0 0}.table-wrap{overflow:auto;margin-top:18px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--muted);font-size:12px}.no-items{color:var(--muted);padding:15px 0}.form-preview{display:none}.form-preview.show{display:block}.notice-print{position:relative;width:210mm;height:297mm;background:url('assets/notice-template.png') center/100% 100% no-repeat;color:#087aca;font-family:"Noto Sans Thai","Tahoma",sans-serif;font-size:4.5mm}.notice-print .mask{position:absolute;background:#fff}.notice-print .field{position:absolute;line-height:1.1;white-space:nowrap;overflow:hidden;color:#087aca}.notice-print .drug{left:104mm;top:76.5mm;width:94mm;color:#202633;font-size:3.2mm}.notice-print .top-rx{left:33mm;top:122mm;width:40mm}.notice-print .top-disp{left:33mm;top:130mm;width:40mm}.notice-print .top-back{left:33mm;top:138mm;width:40mm}.notice-print .bot-rx{left:31mm;top:176.5mm;width:48mm}.notice-print .bot-disp{left:31mm;top:184.5mm;width:48mm}.notice-print .bot-back{left:31mm;top:192.5mm;width:48mm}.notice-print .ref{left:177mm;top:159.5mm;width:25mm;color:#222;font-size:3mm}.notice-print .patient-note{left:10mm;top:202mm;width:90mm;color:#222;font-size:3.2mm;white-space:normal;line-height:1.35}.notice-print .print-qr{position:absolute;left:25.5mm;top:222.5mm;width:31mm;height:31mm;background:#fff;padding:1mm}.notice-print .qr-label{position:absolute;left:18mm;top:254.5mm;width:46mm;text-align:center;color:#222;font-size:3.2mm}.patient-screen{display:none}.patient-mode{background:#edf4f5}.patient-mode .app{max-width:520px;padding:0}.patient-mode .top,.patient-mode .grid,.patient-mode #recordsCard{display:none}.patient-mode .patient-screen{display:block;min-height:100vh;padding:30px 20px;background:radial-gradient(circle at 90% 7%,#82dbd7 0 2px,transparent 3px),linear-gradient(160deg,#083844,#0a6170 55%,#0a7d78)}.patient-brand{color:#def9f4;font-size:14px;letter-spacing:.08em;text-transform:uppercase}.patient-screen h1{color:#fff;font-size:31px;line-height:1.2;margin:34px 0 6px}.patient-screen .sub{color:#b9e1dd;margin:0 0 25px}.patient-panel{background:#fff;border-radius:28px;padding:22px;box-shadow:0 18px 40px #002e384d}.patient-state{padding:16px;border-radius:18px;background:#ecfaf6;border-left:6px solid #129b7c}.patient-state.waiting{background:#fff6dc;border-left-color:#e9a914}.patient-state.cancelled{background:#fff0f0;border-left-color:#cf5252}.patient-state strong{display:block;font-size:21px}.patient-state span{display:block;color:#5d6c73;margin-top:6px;line-height:1.45}.patient-data{margin-top:16px}.patient-data div{padding:15px 0;border-bottom:1px solid #e4ecec}.patient-data div:last-child{border:0}.patient-data small{display:block;color:#668087;font-weight:700;margin-bottom:4px}.patient-data b{font-size:18px}.patient-note-box{margin-top:17px;background:#f1f7f7;padding:15px;border-radius:14px;color:#36565b;line-height:1.5}.patient-footer{color:#b9e1dd;text-align:center;font-size:12px;margin-top:22px}@media(max-width:760px){.app{padding:16px}.top{border-radius:16px;padding:22px}.top h1{font-size:25px}.grid{grid-template-columns:1fr}.two{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:2px}}@page{size:A4 portrait;margin:0}@media print{body{background:#fff}.app{max-width:none;padding:0}.top,.card:not(.print-card),#adminCard,#recordsCard,.actions,#result,.patient-screen{display:none!important}.print-card{display:block!important;border:0;box-shadow:none;padding:0}.print-card .form-preview{display:block!important}}
+  </style>
+  <style>
+    body,.notice-print{font-family:"Sarabun","TH Sarabun New","Tahoma",sans-serif!important}
+    .three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.access-gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:linear-gradient(#f7f4ffde,#eef8ffeb),url('../welcome-background.png') center/cover no-repeat}.access-gate.unlocked{display:none}.access-box{width:min(430px,100%);max-height:calc(100vh - 32px);overflow:auto;padding:30px;border:1px solid #ffffffd9;border-radius:24px;background:#fffffff2;box-shadow:0 22px 60px #3120522b;backdrop-filter:blur(12px)}.access-box h1{margin:0 0 7px;color:#32164f;font-size:27px}.access-box p{margin:0 0 20px;color:#687083;line-height:1.5}.access-error{min-height:22px;margin:10px 0 0!important;color:#a52f3d!important;font-weight:600}.pin-setup{margin-top:18px;padding-top:18px;border-top:1px solid #ddd6eb}.pin-setup[hidden]{display:none}.link-btn{width:100%;border:0;background:transparent;color:#5b2186;font:inherit;font-weight:700;cursor:pointer}.top{position:relative}.staff-buttons{position:absolute;right:22px;top:22px;display:flex;gap:8px}.logout-btn,.change-code-btn{border:1px solid #ffffff66;border-radius:10px;padding:8px 12px;background:#ffffff18;color:#fff;font:inherit;font-weight:700;cursor:pointer}.logout-btn:hover,.change-code-btn:hover{background:#ffffff2b}@media(max-width:760px){.three{grid-template-columns:1fr}.staff-buttons{position:static;margin-top:16px}}
+    .portal{display:none}.portal-mode{min-height:100vh;background:linear-gradient(#ffffff24,#ffffff24),url('../welcome-background.png') center/cover fixed no-repeat}.portal-mode .app{max-width:900px;padding:54px 20px}.portal-mode .portal{display:block}.portal-mode .top,.portal-mode .grid,.portal-mode #recordsCard{display:none}.portal-brand{display:inline-block;padding:7px 12px;border:1px solid #ffffffaa;border-radius:999px;background:#f8f3ffcc;color:#5a2585;font-size:13px;font-weight:700;letter-spacing:.08em;box-shadow:0 8px 24px #5a388514}.portal h1{margin:17px 0 7px;color:#2a174b;font-size:42px;line-height:1.15;text-shadow:0 2px 12px #fff}.portal-org{margin:0;color:#515971;font-size:18px;line-height:1.55}.portal-prompt{margin:24px 0 20px;color:#5e6679;font-size:16px}.portal-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.portal-card{display:flex;align-items:center;gap:15px;width:100%;padding:22px;border:1px solid #ffffffd9;border-radius:20px;background:#fffffff0;color:#283049;text-align:left;box-shadow:0 12px 30px #262c5d18;backdrop-filter:blur(8px);cursor:pointer}.portal-card:hover{border-color:#7340a5;transform:translateY(-2px)}.portal-icon{display:grid;place-items:center;flex:0 0 48px;height:48px;border-radius:15px;background:#5d2689;color:#fff;font-size:27px}.portal-card strong{display:block;font-size:19px}.portal-card small{display:block;margin-top:3px;color:#72798a;font-size:14px;line-height:1.35}.portal-card b{margin-left:auto;color:#5d2689;font-size:13px;white-space:nowrap}.portal-card.muted{opacity:.68;cursor:default}.portal-card.muted:hover{border-color:#ded4e9;transform:none}@media(max-width:650px){.portal-mode{background-position:center top}.portal-mode .app{padding:36px 16px}.portal h1{font-size:34px}.portal-grid{grid-template-columns:1fr}.portal-card{padding:18px}}
+    .patient-mode{background:#eef2f8!important}
+    .patient-mode .patient-screen{padding:0 0 28px!important;min-height:100vh!important;background:linear-gradient(155deg,#211053 0%,#5f218d 50%,#7a3ca7 100%)!important}
+    .scan-hero{padding:30px 26px 82px;color:#fff}.scan-tag{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border:1px solid #ffffff55;border-radius:999px;background:#ffffff12;font-size:14px}.scan-tag:before{content:"✚";font-size:18px;color:#f5c94d}.scan-hero h1{margin:20px 0 6px;font-size:34px;line-height:1.1}.scan-hero p{margin:0;color:#eadfff;font-size:17px}.scan-content{margin:-55px 16px 0}.scan-status{display:flex;gap:14px;align-items:flex-start;padding:18px;border-radius:22px;background:#fff;border:1px solid #e4d3bb;box-shadow:0 11px 30px #16063f2b}.scan-status .scan-icon{display:grid;place-items:center;flex:0 0 45px;height:45px;border-radius:15px;font-size:23px}.scan-status span{display:block;color:#6f7180;font-size:13px}.scan-status strong{display:block;margin:2px 0 3px;font-size:20px;line-height:1.25}.scan-status p{margin:0;color:#606675;font-size:14px;line-height:1.4}.scan-status.waiting{background:#fffaf0;border-color:#f4bb4c}.scan-status.waiting .scan-icon{background:#fff0c6;color:#9a6200}.scan-status.ready{background:#f2fcf7;border-color:#91d5b2}.scan-status.ready .scan-icon{background:#d9f5e8;color:#087656}.scan-status.delivery{background:#f1f7ff;border-color:#a5c7ef}.scan-status.delivery .scan-icon{background:#dcedff;color:#175b9d}.scan-status.received{background:#f6f7fb;border-color:#d5d9e5}.scan-status.received .scan-icon{background:#e7e8ee;color:#414657}.scan-card{margin-top:16px;padding:18px;border-radius:22px;background:#fff;box-shadow:0 11px 30px #16063f20}.scan-card-head{display:flex;justify-content:space-between;gap:10px;padding-bottom:12px;border-bottom:1px solid #e9eaf0;color:#596273;font-size:14px}.scan-code{font-size:12px;color:#8a679c}.scan-row{display:flex;justify-content:space-between;gap:20px;padding:15px 0;border-bottom:1px dashed #d9dce5}.scan-row:last-child{border:0;padding-bottom:0}.scan-row small{display:block;color:#788194;margin-bottom:3px}.scan-row b{font-size:17px;text-align:right}.scan-row .amount{display:inline-block;padding:4px 10px;border-radius:9px;background:#fce7e9;color:#a5323d}.scan-note{margin-top:15px;padding:13px 14px;border-radius:14px;background:#f6f4fb;color:#525465;line-height:1.45;font-size:14px}.scan-privacy{text-align:center;color:#eee6ff;font-size:12px;margin:20px 20px 0}
+    .scan-note{border:1px solid #ef9ca5!important;background:#fff0f1!important;color:#b42332!important;font-weight:700!important}.scan-note strong{display:block;margin-bottom:3px}.scan-contact{margin-top:12px;padding:13px 14px;border-radius:14px;background:#f0f4fc;color:#334f7e;font-weight:600;line-height:1.45}.scan-privacy{display:none!important}
+    .notice-print{background:none!important;overflow:hidden}
+    .notice-print .form-bg{position:absolute;inset:0;width:210mm;height:297mm;z-index:0;display:block;image-rendering:-webkit-optimize-contrast}
+    .notice-print .mask,.notice-print .field,.notice-print .print-qr,.notice-print .qr-label{z-index:1}
+    .notice-print .shipping-fee-top{position:absolute;left:4.55%;top:20.15%;width:28%;height:2.15%;z-index:2;background:#fff;color:#111;font-size:3.45mm;line-height:1.25;white-space:nowrap}
+    .notice-print .shipping-fee-bottom{position:absolute;left:4.05%;top:95.45%;width:91.5%;height:3.4%;z-index:2;background:#fff;color:#111;font-size:3.25mm;line-height:1.25;white-space:nowrap}
+    .notice-print .qr-cover{position:absolute;left:22mm;top:218mm;width:40mm;height:41mm;background:#fff;z-index:1}
+    .notice-print .print-qr{z-index:2;background:#fff!important;padding:0!important}
+    .notice-print .qr-label{display:none!important}
+    .delivery{background:#dcedff;color:#175b9d}
+    .received{background:#e7e8ee;color:#414657}
+    @media print{
+      .access-gate,.logout-btn{display:none!important}
+      html,body{width:210mm!important;height:297mm!important;margin:0!important;padding:0!important;overflow:hidden!important}
+      .app{width:210mm!important;height:296.5mm!important;margin:0!important;padding:0!important;overflow:hidden!important}
+      .grid{display:block!important;width:210mm!important;height:296.5mm!important;margin:0!important;padding:0!important;overflow:hidden!important}
+      .form-preview,.print-card{display:block!important;width:210mm!important;height:296.5mm!important;margin:0!important;padding:0!important;overflow:hidden!important;break-after:avoid-page!important;page-break-after:avoid!important;break-inside:avoid!important;page-break-inside:avoid!important}
+      .save-feedback{display:none!important}
+      .notice-print{width:210mm!important;height:296.5mm!important;aspect-ratio:auto!important;overflow:hidden!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+      .notice-print .form-bg{width:210mm!important;height:296.5mm!important;object-fit:fill!important;image-rendering:-webkit-optimize-contrast!important}
+      .notice-print .field{font-size:2.15vw;color:#111!important}
+      .notice-print .drug{left:52%!important;top:41.5%!important;width:43%!important}
+      .notice-print .patient-info{position:absolute;left:52%!important;top:29%!important;width:43%!important;line-height:1.8;color:#111!important;font-size:1.8vw!important;z-index:2}
+      .notice-print .patient-note{display:none!important}
+      .notice-print .print-extra{position:absolute;color:#111;z-index:2;font-size:1.55vw;line-height:1.25}
+      .notice-print .method-tick{font-size:2.3vw;font-weight:700}
+      .notice-print .self-tick{left:3.3%;top:10.4%}
+      .notice-print .mail-tick{left:3.3%;top:17.6%}
+      .notice-print .self-recipient{left:13%;top:14.25%;width:31%;font-size:1.9vw!important;line-height:1!important}
+      .notice-print .mail-recipient{left:13%;top:22.75%;width:31%;font-size:1.9vw!important;line-height:1!important}
+      .notice-print .phone-one{left:10%;top:29.7%;width:33%}
+      .notice-print .phone-two{left:10%;top:32.7%;width:33%}
+      .notice-print .delivery-address{left:4%;top:39%;width:40%;height:11%;white-space:pre-wrap}
+      .notice-print .ref-top{left:10.5%;top:8.1%;width:32%;font-size:3.05vw!important;font-weight:700;line-height:1!important}
+      .notice-print .top-rx{left:19.3%!important;top:46.2%!important;width:15%!important}
+      .notice-print .top-disp{left:19.3%!important;top:48.7%!important;width:15%!important}
+      .notice-print .top-back{left:19.3%!important;top:51.2%!important;width:15%!important}
+      .notice-print .bot-rx{left:18.5%!important;top:66.3%!important;width:18%!important}
+      .notice-print .bot-disp{left:18.5%!important;top:68.8%!important;width:18%!important}
+      .notice-print .bot-back{left:18.5%!important;top:71.3%!important;width:18%!important}
+      .notice-print .patient-note{left:48%!important;top:67%!important;width:43%!important;font-size:1.55vw!important;white-space:normal!important}
+      .notice-print .ref{left:84.05%!important;top:59.7%!important;width:14%!important;font-size:2.35vw!important;font-weight:700;line-height:1!important}
+      .notice-print .print-qr{left:7%!important;top:75%!important;width:12.5%!important;height:auto!important;aspect-ratio:1/1!important}
+      .notice-print .qr-label{display:block!important;position:absolute;left:5%!important;top:85.5%!important;width:17%!important;text-align:center;color:#222;font-size:1.2vw!important;z-index:2}
+      .notice-print .shipping-fee-top{position:absolute;left:4.55%;top:20.15%;width:28%;height:2.15%;z-index:2;background:#fff;color:#111;font-size:1.65vw;line-height:1.25;white-space:nowrap}
+      .notice-print .shipping-fee-bottom{position:absolute;left:4.05%;top:95.45%;width:91.5%;height:3.4%;z-index:2;background:#fff;color:#111;font-size:1.55vw;line-height:1.25;white-space:nowrap}
+    }
+  </style>
+</head>
+<body class="staff-locked">
+  <section class="access-gate" id="accessGate" aria-label="เข้าสู่ระบบเจ้าหน้าที่">
+    <div class="access-box">
+      <h1>เข้าสู่ระบบเจ้าหน้าที่</h1>
+      <p>กรอก PIN ที่ตั้งไว้เพื่อจัดการและแก้ไขข้อมูลรอยา</p>
+      <form id="accessForm"><label for="accessCode">PIN 4–8 หลัก</label><input id="accessCode" type="password" inputmode="numeric" pattern="[0-9]{4,8}" maxlength="8" autocomplete="current-password" required autofocus><button class="btn primary" type="submit" style="width:100%;margin-top:16px">เข้าสู่ระบบ</button><p class="access-error" id="accessError" role="alert"></p></form>
+      <button class="link-btn" id="togglePinSetup" type="button">ตั้งหรือเปลี่ยน PIN</button>
+      <form class="pin-setup" id="pinSetupForm" hidden><p>ใช้ API key เดิมยืนยันสิทธิ์เพียงครั้งเดียว</p><label for="setupApiKey">API key เดิม</label><input id="setupApiKey" type="password" autocomplete="off" required><label for="newPin">PIN ใหม่ 4–8 หลัก</label><input id="newPin" type="password" inputmode="numeric" pattern="[0-9]{4,8}" maxlength="8" required><label for="confirmPin">ยืนยัน PIN ใหม่</label><input id="confirmPin" type="password" inputmode="numeric" pattern="[0-9]{4,8}" maxlength="8" required><button class="btn primary" type="submit" style="width:100%;margin-top:16px">บันทึก PIN ใหม่</button><p class="access-error" id="pinSetupError" role="alert"></p></form>
+    </div>
+  </section>
+  <main class="app">
+    <section class="portal" id="portal">
+      <div class="portal-brand">PHARMACY HUB</div>
+      <h1>ยินดีต้อนรับสู่ระบบจัดการยา</h1>
+      <p class="portal-org">ศูนย์ศัลยกรรมกระดูกและข้อ<br>โรงพยาบาลมหาวิทยาลัยพะเยา</p>
+      <p class="portal-prompt">เลือกห้องระบบที่ต้องการใช้งาน</p>
+      <div class="portal-grid">
+        <button class="portal-card" id="openPharmacy" type="button"><span class="portal-icon">⌁</span><span><strong>ระบบแจ้งสถานะรอยา</strong><small>สร้างใบแจ้ง, QR และติดตามสถานะยา</small></span><b>เริ่มใช้งาน →</b></button>
+        <button class="portal-card" id="openOrtho" type="button"><span class="portal-icon">⌁</span><span><strong>ระบบรายงานยาที่ต้องอนุมัติ</strong><small>สำหรับศูนย์ศัลยกรรมกระดูกและข้อ</small></span><b>เริ่มใช้งาน →</b></button>
+      </div>
+    </section>
+    <section class="patient-screen" id="patientScreen" aria-live="polite"></section>
+    <header class="top"><div class="eyebrow">ห้องยา</div><h1>ระบบแจ้งสถานะรอยา</h1><p>สร้าง QR สำหรับใบแจ้ง และให้ผู้ป่วยตรวจสอบสถานะได้ด้วยตนเอง</p><div class="staff-buttons"><button class="change-code-btn" id="changeCodeBtn" type="button">เปลี่ยน PIN</button><button class="logout-btn" id="logoutBtn" type="button">ออกจากระบบ</button></div></header>
+    <section class="grid">
+      <article class="card" id="adminCard">
+        <h2>สร้างรายการรอยา</h2><p class="help">สำหรับเจ้าหน้าที่ - ข้อมูลอยู่ในเครื่องนี้เท่านั้นสำหรับต้นแบบ</p>
+        <form id="entryForm">
+          <div class="two"><div><label for="hn">HN</label><input id="hn" maxlength="20" placeholder="เช่น 680003221"></div><div><label for="patient">ชื่อผู้ป่วย</label><input id="patient" placeholder="ชื่อ-นามสกุล"></div></div>
+          <div class="two"><div><label for="drug">รายการยา</label><input id="drug" list="drugSuggestions" autocomplete="off" placeholder="พิมพ์ชื่อยาเพื่อค้นหา"><datalist id="drugSuggestions"></datalist><label for="drugImport" class="help" style="margin-top:8px;cursor:pointer;color:#5b2186">นำเข้ารายชื่อยา (.txt หรือ .csv)</label><input id="drugImport" type="file" accept=".txt,.csv,text/plain,text/csv" style="padding:7px"><p class="help" id="drugImportState" style="margin:6px 0 0"></p></div><div><label for="unit">หน่วยยา</label><select id="unit"><option value="เม็ด">เม็ด</option><option value="ซอง" selected>ซอง</option></select></div></div>
+          <div class="three"><div><label for="prescribedQuantity">จำนวนสั่งจ่าย</label><input id="prescribedQuantity" type="number" min="0" step="1" inputmode="numeric" placeholder="เช่น 84"></div><div><label for="dispensedQuantity">จำนวนได้รับยา</label><input id="dispensedQuantity" type="number" min="0" step="1" inputmode="numeric" placeholder="เช่น 60"></div><div><label for="quantity">จำนวนค้าง (อัตโนมัติ)</label><input id="quantity" readonly placeholder="ระบบคำนวณให้"></div></div>
+          <div class="two"><div><label for="availableDate">มารับได้หลังวันที่</label><input id="availableDate" type="date"></div><div><label for="status">สถานะ</label><select id="status"><option value="waiting">อยู่ระหว่างการจัดหา/ยายังไม่มา</option><option value="ready">ยามาแล้ว โปรดนำเอกสารมาติดต่อรับยา</option><option value="delivery">จัดส่งยาให้ผู้ป่วยแล้ว</option><option value="received">รับยาแล้ว</option></select></div></div>
+          <label for="note">หมายเหตุสำหรับผู้ป่วย</label><textarea id="note" placeholder="เช่น กรุณานำใบแจ้งนี้มาติดต่อห้องยา"></textarea>
+          <label for="receiveMethod">วิธีรับยา</label><select id="receiveMethod"><option value="self">ผู้ป่วยมารับยาด้วยตนเอง</option><option value="mail">จัดส่งทางไปรษณีย์</option></select>
+          <div class="two"><div><label for="recipientName">ชื่อผู้รับยา/ญาติ</label><input id="recipientName" placeholder="กรอกเมื่อมีผู้รับยาแทน"></div><div><label for="phone1">เบอร์โทรศัพท์ติดต่อ</label><input id="phone1" inputmode="tel" placeholder="เช่น 081-234-5678"></div></div>
+          <div class="two"><div><label for="phone2">เบอร์โทรศัพท์สำรอง</label><input id="phone2" inputmode="tel" placeholder="ถ้ามี"></div><div><label for="referencePreview">เลขที่ใบแจ้ง</label><input id="referencePreview" readonly placeholder="ระบบสร้างเมื่อบันทึก"></div></div>
+          <label for="deliveryAddress">ที่อยู่จัดส่งยา</label><textarea id="deliveryAddress" placeholder="กรอกเมื่อเลือกจัดส่งทางไปรษณีย์"></textarea>
+          <div class="actions"><button class="btn primary" type="submit" id="saveBtn">บันทึกข้อมูลลงใบแจ้ง</button><button class="btn secondary" type="button" id="newDraftBtn">สร้างใบแจ้งและ QR ฉบับร่าง</button><button class="btn secondary" type="button" id="loadExample">ใส่ข้อมูลตัวอย่าง</button></div>
+        </form>
+      </article>
+      <article class="card print-card">
+        <div id="lookupEmpty"><h2>ตรวจสอบสถานะ</h2><p class="help">สแกน QR จากใบแจ้งเพื่อเปิดหน้านี้ หรือกรอกรหัสอ้างอิงด้านล่าง</p><label for="lookup">รหัสอ้างอิง</label><input id="lookup" placeholder="เช่น 2026-001"><div class="actions"><button class="btn primary" id="lookupBtn">ตรวจสอบสถานะ</button></div></div>
+        <div class="result" id="result"><div class="notice" id="notice"></div><div class="data" id="details"></div><div class="qrbox" id="qrbox"><canvas id="qr"></canvas><p>สแกนเพื่อตรวจสอบสถานะล่าสุด</p></div><div class="actions" id="resultActions"><button class="btn secondary" id="printBtn">พิมพ์ใบแจ้ง</button><button class="btn danger" id="deleteBtn">ลบรายการนี้จากเครื่อง</button></div></div>
+        <section class="form-preview" id="printPreview"><h2>ใบแจ้งรับยาค้างจ่าย</h2><p>กรุณานำเอกสารนี้มาติดต่อห้องยาเพื่อรับยา</p></section>
+      </article>
+    </section>
+    <section class="card" id="recordsCard"><h2>รายการในเครื่องนี้</h2><div class="table-wrap"><table><thead><tr><th>รหัส</th><th>HN</th><th>ผู้ป่วย</th><th>ยา</th><th>สถานะ</th><th></th></tr></thead><tbody id="rows"></tbody></table></div><p class="no-items" id="noItems">ยังไม่มีรายการ</p></section>
+  </main>
+  <script>
+    const storeKey='pharmacy-waiting-demo-v1'; const patientMode=new URLSearchParams(location.search).get('patient')==='1'; let activeId=null; let qr;
+    const $=id=>document.getElementById(id); const getAll=()=>JSON.parse(localStorage.getItem(storeKey)||'[]'); const saveAll=v=>localStorage.setItem(storeKey,JSON.stringify(v));
+    function nextReference(){const year=String(new Date().getFullYear());const key='pharmacy-waiting-sequence-'+year;const sequence=Number(localStorage.getItem(key)||'0')+1;localStorage.setItem(key,String(sequence));return `${year}-${String(sequence).padStart(3,'0')}`;}
+    const thaiDate=d=>d?new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'long',year:'numeric'}).format(new Date(d+'T00:00:00')):'-';
+    const statusMeta={waiting:['อยู่ระหว่างการจัดหา/ยายังไม่มา','waiting'],ready:['ยามาแล้ว โปรดนำเอกสารมาติดต่อรับยา','ready'],delivery:['จัดส่งยาให้ผู้ป่วยแล้ว','delivery'],received:['รับยาแล้ว','received'],cancelled:['ยกเลิกรายการ','cancelled']};
+    function safe(t){return String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+    const quantityNumber=value=>{const match=String(value??'').replace(/,/g,'').match(/-?\d+(?:\.\d+)?/);return match?Number(match[0]):0};
+    const quantityUnit=value=>String(value??'').includes('เม็ด')?'เม็ด':String(value??'').includes('ซอง')?'ซอง':'';
+    const quantityText=(value,unit)=>value===''||value===null||value===undefined?'':`${Number(value)||0} ${unit}`;
+    function recalculateQuantity(){const prescribed=$('prescribedQuantity').value;const dispensed=$('dispensedQuantity').value;const unit=$('unit').value;if(prescribed===''){$('quantity').value='';return ''}const remaining=Math.max(0,quantityNumber(prescribed)-quantityNumber(dispensed));$('quantity').value=quantityText(remaining,unit);return $('quantity').value;}
+    const drugNamesKey='pharmacy-drug-names-v1';
+    const getImportedDrugNames=()=>{try{return JSON.parse(localStorage.getItem(drugNamesKey)||'[]')}catch{return []}};
+    function refreshDrugSuggestions(){const names=[...getImportedDrugNames(),...getAll().map(item=>item.drug)].map(name=>String(name||'').trim()).filter(Boolean);const unique=[...new Map(names.map(name=>[name.toLocaleLowerCase('th'),name])).values()].sort((a,b)=>a.localeCompare(b,'th'));$('drugSuggestions').innerHTML=unique.map(name=>`<option value="${safe(name)}"></option>`).join('');return unique;}
+    function view(item){if(!item)return;activeId=item.id;$('lookupEmpty').style.display='none';$('result').classList.add('show');const [text,cls]=statusMeta[item.status];$('notice').innerHTML=`<span class="pill ${cls}">${text}</span><p>${item.status==='waiting'?'รายการยายังไม่มา โปรดตรวจสอบสถานะอีกครั้งภายหลัง':item.status==='ready'?'ยามาแล้ว โปรดนำเอกสารมาติดต่อรับยา':item.status==='delivery'?'ห้องยากำลังจัดส่งยาให้ผู้ป่วย':item.status==='received'?'ผู้ป่วยได้รับยาเรียบร้อยแล้ว':'กรุณาติดต่อห้องยาเพื่อสอบถามรายละเอียด'}</p>`;$('details').innerHTML=`<div class="row"><span class="key">HN</span><span class="value">${safe(item.hn||'ยังไม่ได้ระบุ')}</span></div><div class="row"><span class="key">ชื่อผู้ป่วย</span><span class="value">${safe(item.patient||'ยังไม่ได้ระบุ')}</span></div><div class="row"><span class="key">รายการยา</span><span class="value">${safe(item.drug||'ยังไม่ได้ระบุ')}</span></div><div class="row"><span class="key">จำนวนค้าง</span><span class="value">${safe(item.quantity||'ยังไม่ได้ระบุ')}</span></div><div class="row"><span class="key">มารับได้หลังวันที่</span><span class="value">${thaiDate(item.availableDate)}</span></div><div class="row"><span class="key">หมายเหตุ</span><span>${safe(item.note||'-')}</span></div><div class="row"><span class="key">รหัสอ้างอิง</span><span>${item.id}</span></div>`; $('printPreview').innerHTML=`<div class="notice-print"><img class="form-bg" src="assets/notice-template.png" alt=""><span class="shipping-fee-top">(มีค่าใช้จ่ายการจัดส่งยา 55 บาท)</span><span class="shipping-fee-bottom">*กรณีผู้ป่วยประสงค์ให้ส่งไปรษณีย์ จะมีค่าใช้จ่ายการจัดส่งยาทุกพื้นที่ 55 บาท โดยจะจัดเก็บค่าใช้จ่ายแบบชำระปลายทาง</span><span class="print-extra ref-top">${item.id.replace(/^PHM-/,'')}</span>${item.receiveMethod==="mail"?"<span class=\"print-extra mail-recipient\">"+safe(item.recipientName||item.patient||"")+"</span>":"<span class=\"print-extra self-recipient\">"+safe(item.recipientName||item.patient||"")+"</span>"}${item.phone1?"<span class=\"print-extra phone-one\">"+safe(item.phone1)+"</span>":""}${item.phone2?"<span class=\"print-extra phone-two\">"+safe(item.phone2)+"</span>":""}${item.deliveryAddress?"<span class=\"print-extra delivery-address\">"+safe(item.deliveryAddress)+"</span>":""}<span class="field top-rx">${safe(item.prescribedQuantity||'')}</span><span class="field top-disp">${safe(item.dispensedQuantity||'')}</span><span class="field top-back">${safe(item.quantity||'')}</span><span class="field bot-rx">${safe(item.prescribedQuantity||'')}</span><span class="field bot-disp">${safe(item.dispensedQuantity||'')}</span><span class="field bot-back">${safe(item.quantity||'')}</span><span class="field ref">${item.id.replace(/^PHM-/,'')}</span><span class="field patient-note">${safe(item.note||'')}</span><canvas class="print-qr" id="printQr"></canvas><span class="qr-label">สแกนติดตามสถานะยา</span></div>`;if(!qr)qr=new QRious({element:$('qr'),size:220,level:'M'});const qrValue=location.origin+location.pathname+'?patient=1#'+item.id;qr.value=qrValue;new QRious({element:$('printQr'),size:260,level:'M',value:qrValue});renderRows();}
+    function maskedName(name){const first=(name||'ผู้รับบริการ').trim().split(/\s+/)[0];return first+' XXX';}
+    function showPatient(item){document.body.classList.add('patient-mode');const meta=statusMeta[item.status];const message=item.status==='ready'?'ยามาแล้ว โปรดนำเอกสารมาติดต่อรับยา':item.status==='delivery'?'ห้องยากำลังจัดส่งยาให้ผู้ป่วย':item.status==='received'?'ผู้ป่วยได้รับยาเรียบร้อยแล้ว':item.status==='cancelled'?'กรุณาติดต่อห้องยาเพื่อสอบถามข้อมูลเพิ่มเติม':'รายการยายังไม่มา โปรดตรวจสอบใหม่ภายหลัง';$('patientScreen').innerHTML='<div class="patient-brand">PHARMACY STATUS</div><h1>ตรวจสอบสถานะ<br>รายการยาของคุณ</h1><p class="sub">แสดงข้อมูลเท่าที่จำเป็นเพื่อความเป็นส่วนตัว</p><div class="patient-panel"><div class="patient-state '+meta[1]+'"><strong>'+meta[0]+'</strong><span>'+message+'</span></div><div class="patient-data"><div><small>ผู้รับบริการ</small><b>'+safe(maskedName(item.patient))+'</b></div><div><small>รายการยา</small><b>'+safe(item.drug||'อยู่ระหว่างระบุรายการ')+'</b></div><div><small>จำนวนค้างจ่าย</small><b>'+safe(item.quantity||'')+'</b></div><div><small>รับได้หลังวันที่</small><b>'+thaiDate(item.availableDate)+'</b></div></div><div class="patient-note-box">'+safe(item.note||'หากมีข้อสงสัย โทร 054-466-666 ต่อ 7121, 7123, 7408')+'</div></div><div class="patient-footer">ข้อมูลนี้ไม่แสดง HN และมีการปกปิดนามสกุล</div>';}
+    const staffView=view; view=function(item){if(patientMode){if(item)showPatient(item);else{$('patientScreen').innerHTML='<div class="patient-brand">PHARMACY STATUS</div><h1>ไม่พบรายการ</h1><p class="sub">กรุณาติดต่อห้องยา</p>';}return;}staffView(item);};
+    showPatient=function(item){const [state,cls]=statusMeta[item.status];const icon=item.status==='ready'?'✓':item.status==='delivery'?'↗':item.status==='received'?'✓':'◷';const message=item.status==='ready'?'ยามาแล้ว โปรดนำเอกสารมาติดต่อรับยา':item.status==='delivery'?'ห้องยากำลังจัดส่งยาให้ผู้ป่วย':item.status==='received'?'ผู้ป่วยได้รับยาเรียบร้อยแล้ว':'รายการยายังมาไม่ถึง โปรดตรวจสอบใหม่ภายหลัง';$('patientScreen').innerHTML=`<section class="scan-hero"><div class="scan-tag">ห้องยา</div><h1>ติดตามสถานะ<br>ยาค้างจ่าย</h1><p>ตรวจสอบสถานะรายการของคุณ</p></section><main class="scan-content"><section class="scan-status ${cls}"><div class="scan-icon">${icon}</div><div><span>สถานะล่าสุด</span><strong>${state}</strong><p>${message}</p></div></section><section class="scan-card"><div class="scan-card-head"><span>รายละเอียดรายการ</span><span class="scan-code">รหัส ${item.id.replace(/^PHM-/,'')}</span></div><div class="scan-row"><div><small>ผู้รับบริการ</small><b>${safe(maskedName(item.patient))}</b></div></div><div class="scan-row"><div><small>รายการยา</small><b>${safe(item.drug||'อยู่ระหว่างระบุรายการ')}</b></div></div><div class="scan-row"><div><small>จำนวนค้างจ่าย</small><b class="amount">${safe(item.quantity||'-')}</b></div><div><small>รับได้หลังวันที่</small><b>${thaiDate(item.availableDate)}</b></div></div><div class="scan-note">${safe(item.note||'หากมีข้อสงสัย กรุณาติดต่อห้องยา')}</div></section><p class="scan-privacy">ข้อมูลนี้ไม่แสดง HN และมีการปกปิดนามสกุล</p></main>`;document.body.classList.add('patient-mode');};    function renderRows(){
+      const items=getAll();$('noItems').style.display=items.length?'none':'block';$('rows').innerHTML=items.map(i=>{const [t,c]=statusMeta[i.status];return `<tr><td>${i.id}</td><td>${safe(i.hn)}</td><td>${safe(i.patient)}</td><td>${safe(i.drug)}</td><td><span class="pill ${c}">${t}</span></td><td><div style="display:flex;gap:7px"><button class="btn secondary" onclick="openItem('${i.id}')">เปิด</button><button class="btn primary" onclick="printItem('${i.id}')">พิมพ์</button></div></td></tr>`}).join('');refreshDrugSuggestions();}
+    const legacyPatientView=showPatient;showPatient=function(item){legacyPatientView(item);const note=document.querySelector('.scan-note');if(note&&item.note){note.innerHTML='<strong>หมายเหตุสำหรับผู้ป่วย</strong>'+safe(item.note);note.insertAdjacentHTML('afterend','<div class="scan-contact">หากมีข้อสงสัย โทร 054-466-666 ต่อ 7121, 7123, 7408</div>')}else if(note){note.className='scan-contact';note.textContent='หากมีข้อสงสัย โทร 054-466-666 ต่อ 7121, 7123, 7408'}document.querySelector('.scan-privacy')?.remove();};
+    window.openItem=id=>{const item=getAll().find(i=>i.id===id);if(!item)return;activeId=item.id;loadIntoForm(item);view(item);if(location.hash.slice(1)!==item.id)history.replaceState(null,'','#'+item.id);};
+    window.printItem=id=>{window.openItem(id);setTimeout(()=>window.print(),120);};
+    function makeDraft(){
+      const id=nextReference();
+      const item={id,hn:'',patient:'',drug:'',unit:'ซอง',quantity:'',prescribedQuantity:'',dispensedQuantity:'',availableDate:'',status:'waiting',note:'',receiveMethod:'self',recipientName:'',phone1:'',phone2:'',deliveryAddress:'',createdAt:new Date().toISOString()};saveAll([item,...getAll()]);location.hash=id;view(item);return item;}
+    function loadIntoForm(item){if(!item)return;const unit=item.unit||quantityUnit(item.prescribedQuantity)||quantityUnit(item.dispensedQuantity)||quantityUnit(item.quantity)||'ซอง';$('hn').value=item.hn||'';$('patient').value=item.patient||'';$('drug').value=item.drug||'';$('unit').value=unit;$('prescribedQuantity').value=item.prescribedQuantity===''?'':quantityNumber(item.prescribedQuantity);$('dispensedQuantity').value=item.dispensedQuantity===''?'':quantityNumber(item.dispensedQuantity);recalculateQuantity();$('availableDate').value=item.availableDate||'';$('status').value=item.status||'waiting';$('note').value=item.note||'';$('receiveMethod').value=item.receiveMethod||'self';$('recipientName').value=item.recipientName||'';$('phone1').value=item.phone1||'';$('phone2').value=item.phone2||'';$('deliveryAddress').value=item.deliveryAddress||'';$('referencePreview').value=item.id.replace(/^PHM-/,'');}
+    $('entryForm').addEventListener('submit',e=>{e.preventDefault();let item=getAll().find(i=>i.id===activeId);if(!item)item=makeDraft();const unit=$('unit').value;recalculateQuantity();Object.assign(item,{hn:$('hn').value.trim(),patient:$('patient').value.trim(),drug:$('drug').value.trim(),unit,quantity:$('quantity').value.trim(),prescribedQuantity:quantityText($('prescribedQuantity').value,unit),dispensedQuantity:quantityText($('dispensedQuantity').value,unit),availableDate:$('availableDate').value,status:$('status').value,note:$('note').value.trim(),receiveMethod:$('receiveMethod').value,recipientName:$('recipientName').value.trim(),phone1:$('phone1').value.trim(),phone2:$('phone2').value.trim(),deliveryAddress:$('deliveryAddress').value.trim(),updatedAt:new Date().toISOString()});saveAll(getAll().map(i=>i.id===item.id?item:i));location.hash=item.id;view(item);});
+    $('lookupBtn').onclick=()=>{const id=$('lookup').value.trim().toUpperCase();const item=getAll().find(i=>i.id===id);if(item){activeId=item.id;loadIntoForm(item);view(item);history.replaceState(null,'','#'+item.id)}else alert('ไม่พบรายการในเครื่องนี้\nสำหรับระบบใช้งานจริง ต้องเชื่อมต่อฐานข้อมูลของห้องยา');}; $('printBtn').onclick=()=>{$('entryForm').requestSubmit();setTimeout(()=>window.print(),80);};$('deleteBtn').onclick=()=>{if(activeId&&confirm('ลบรายการนี้จากเครื่องใช่หรือไม่?')){saveAll(getAll().filter(i=>i.id!==activeId));location.hash='';location.reload();}};
+    $('prescribedQuantity').addEventListener('input',recalculateQuantity);$('dispensedQuantity').addEventListener('input',recalculateQuantity);$('unit').addEventListener('change',recalculateQuantity);
+    $('drugImport').addEventListener('change',async event=>{const file=event.target.files&&event.target.files[0];if(!file)return;const state=$('drugImportState');try{const text=await file.text();const blocked=new Set(['ชื่อยา','รายการยา','drug','drug name','name']);const imported=text.split(/\r?\n/).map(line=>line.split(/[\t,;]/)[0].trim().replace(/^"|"$/g,'')).filter(name=>name&&!blocked.has(name.toLocaleLowerCase('th')));const all=[...getImportedDrugNames(),...imported];const unique=[...new Map(all.map(name=>[name.toLocaleLowerCase('th'),name])).values()];localStorage.setItem(drugNamesKey,JSON.stringify(unique));refreshDrugSuggestions();state.textContent='กำลังบันทึกรายชื่อยาไปยังฐานข้อมูลกลาง…';const shared=window.saveSharedDrugNames?await window.saveSharedDrugNames(unique):unique;state.textContent=`นำเข้าสำเร็จ ${imported.length} รายการ — ทุกเครื่องใช้รายชื่อยาร่วมกันทั้งหมด ${shared.length} รายการ`;event.target.value='';}catch(error){state.textContent=error&&error.message==='unknown action'?'Apps Script ยังเป็นเวอร์ชันเก่า กรุณา Deploy New version':'นำเข้ารายชื่อยาไม่สำเร็จ กรุณาตรวจการเชื่อมต่อฐานข้อมูลกลาง';}});
+    $('newDraftBtn').onclick=()=>{const item=makeDraft();loadIntoForm(item)}; $('loadExample').onclick=()=>{$('hn').value='680003221';$('patient').value='ตัวอย่าง ผู้ป่วย';$('drug').value='Glucosamine';$('unit').value='ซอง';$('prescribedQuantity').value='84';$('dispensedQuantity').value='60';recalculateQuantity();$('availableDate').value='2026-10-19';$('status').value='waiting';$('note').value='กรุณานำใบแจ้งนี้มาติดต่อห้องยา'};
+    $('openPharmacy').onclick=()=>{document.body.classList.remove('portal-mode');const item=makeDraft();loadIntoForm(item);};
+    $('openOrtho').onclick=()=>{location.href='http://127.0.0.1:8788/';};
+    window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(id){const item=getAll().find(i=>i.id===id);view(item);loadIntoForm(item)}});renderRows();if(location.hash){const item=getAll().find(i=>i.id===location.hash.slice(1));view(item);loadIntoForm(item)}else{document.body.classList.add('portal-mode');}
+  </script>
+  <script>
+    /* ฐานข้อมูลกลาง: Google Sheets ผ่าน Apps Script เดียวกับระบบรายงานยา */
+    (() => {
+      const defaultEndpoint = 'https://script.google.com/macros/s/AKfycbzkTF08dH_w6FU8CixUThwO25fDZ9n2SI6XMqTJqnWbSeo-gTFpsVy9JYdDqRDdPmS51A/exec';
+      const endpoint = () => localStorage.getItem('upSyncUrl') || defaultEndpoint;
+      const keyName = 'upSyncKey';
+      const apiKey = () => localStorage.getItem(keyName) || '';
+      const sessionToken = () => sessionStorage.getItem('pharmacyCentralSession') || '';
+      const hasCentralCredentials = () => Boolean(endpoint() && (apiKey() || sessionToken()));
+      let centralReady = false;
+      const isRemote = () => centralReady;
+      const source = document.createElement('details');
+      source.className = 'help';
+      source.innerHTML = '<summary style="cursor:pointer;font-weight:700">เชื่อมต่อฐานข้อมูลกลาง</summary><p>ใช้ Google Sheets และ Apps Script เดียวกับระบบรายงานยา</p><label for="databaseUrl">Web App URL</label><input id="databaseUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec"><label for="databaseKey">API key</label><input id="databaseKey" type="password" placeholder="API key ของ Google Apps Script"><div class="actions"><button class="btn secondary" type="button" id="saveDatabaseKey">เชื่อมต่อ</button><button class="btn secondary" type="button" id="refreshDatabase">ดึงข้อมูลล่าสุด</button></div><p id="databaseState" class="help"></p>';
+      $('adminCard').querySelector('h2').after(source);
+      const state = m => { const el = $('databaseState'); if (el) el.textContent = m; };
+      localStorage.removeItem('pharmacyStatusOfflineQueue');
+      const setCentralReady = ready => { centralReady=Boolean(ready); [$('saveBtn'),$('newDraftBtn')].forEach(button=>{if(button)button.disabled=!centralReady;}); };
+      setCentralReady(false);
+      const feedback = document.createElement('div');
+      feedback.className = 'save-feedback';
+      feedback.setAttribute('role', 'status');
+      feedback.style.cssText = 'position:fixed;right:20px;bottom:20px;z-index:99;max-width:calc(100% - 40px);padding:14px 18px;border-radius:13px;background:#126b50;color:#fff;font-weight:700;box-shadow:0 12px 28px #123d2d55;opacity:0;transform:translateY(12px);pointer-events:none;transition:.22s ease';
+      document.body.append(feedback);
+      const summaryStyle = document.createElement('style');
+      summaryStyle.textContent = '.patient-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px}.summary-box{padding:13px;border-radius:13px;border:1px solid #e0e5ee}.summary-box b{display:block;font-size:28px;line-height:1.1}.summary-box small{display:block;margin-top:4px;font-weight:700;line-height:1.35}.summary-wait{background:#fff8df;color:#8a5b00;border-color:#f0d286}.summary-ready{background:#eefaf4;color:#087656;border-color:#a8dcbc}.summary-delivery{background:#eef6ff;color:#185b9d;border-color:#bbd7f4}.summary-received{background:#f2f2f6;color:#414657;border-color:#d4d8e3}@media(max-width:850px){.patient-summary{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.patient-summary{grid-template-columns:1fr}.summary-box{display:flex;justify-content:space-between;align-items:center}.summary-box small{margin:0}}';
+      document.head.append(summaryStyle);
+      const summary = document.createElement('div'); summary.className = 'patient-summary';
+      $('recordsCard').querySelector('h2').after(summary);
+      const renderSummary = () => { const items = getAll(); const count = status => items.filter(item => item.status === status).length; summary.innerHTML = '<div class="summary-box summary-wait"><b>'+count('waiting')+'</b><small>อยู่ระหว่างการจัดหา/ยายังไม่มา</small></div><div class="summary-box summary-ready"><b>'+count('ready')+'</b><small>ยามาแล้ว โปรดนำเอกสารมาติดต่อรับยา</small></div><div class="summary-box summary-delivery"><b>'+count('delivery')+'</b><small>จัดส่งยาให้ผู้ป่วยแล้ว</small></div><div class="summary-box summary-received"><b>'+count('received')+'</b><small>รับยาแล้ว</small></div>'; };
+      const baseRenderRows = renderRows;
+      renderRows = () => { baseRenderRows(); renderSummary(); };
+      renderRows();
+      let feedbackTimer;
+      const savedFeedback = value => { feedback.textContent = '✓ บันทึกข้อมูลเรียบร้อยแล้ว  ' + updatedLabel(value); feedback.style.opacity = '1'; feedback.style.transform = 'translateY(0)'; clearTimeout(feedbackTimer); feedbackTimer = setTimeout(() => { feedback.style.opacity = '0'; feedback.style.transform = 'translateY(12px)'; }, 3500); };
+      const draftFeedback = item => { feedback.textContent = '✓ สร้างและบันทึก QR แล้ว — รหัส ' + item.id + ' (QR นี้คงเดิม)'; feedback.style.opacity = '1'; feedback.style.transform = 'translateY(0)'; clearTimeout(feedbackTimer); feedbackTimer = setTimeout(() => { feedback.style.opacity = '0'; feedback.style.transform = 'translateY(12px)'; }, 4500); };
+      const deletedFeedback = id => { feedback.textContent = '✓ ลบรายการ ' + id + ' เรียบร้อยแล้ว'; feedback.style.opacity = '1'; feedback.style.transform = 'translateY(0)'; clearTimeout(feedbackTimer); feedbackTimer = setTimeout(() => { feedback.style.opacity = '0'; feedback.style.transform = 'translateY(12px)'; }, 4500); };
+      const fetchTimed = async (url, options = {}, timeout = 20000) => {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeout);
+        try { return await fetch(url, Object.assign({}, options, {signal: controller.signal})); }
+        catch(error){if(error.name==='AbortError'||/aborted|abort/i.test(error.message||''))throw new Error('central_timeout');throw error;}
+        finally { clearTimeout(timer); }
+      };
+      const request = async (path = '', options = {}) => {
+        const headers = Object.assign({}, options.headers || {});
+        const address = new URL(path || '', endpoint());
+        const method=(options.method||'GET').toUpperCase();
+        if(method==='GET'){if(apiKey())address.searchParams.set('key',apiKey());if(sessionToken())address.searchParams.set('session',sessionToken());}
+        const nextOptions=Object.assign({},options,{headers});
+        if(method==='POST'&&options.body){try{const payload=JSON.parse(options.body);if(apiKey()&&!payload.key)payload.key=apiKey();if(sessionToken()&&!payload.session)payload.session=sessionToken();nextOptions.body=JSON.stringify(payload);}catch{}}
+        const response = await fetchTimed(address.toString(), nextOptions);
+        if(response.status===404)throw new Error('deployment_not_found');
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok || !body.ok) throw new Error(body.error || body.err || 'connection_failed');
+        return body;
+      };
+      const cacheRemote = items => saveAll(items);
+      const accessGate = $('accessGate');
+      const unlockStaff = () => { accessGate.classList.add('unlocked'); document.body.classList.remove('staff-locked'); };
+      const lockStaff = (showSetup=false) => { sessionStorage.removeItem('pharmacyStaffUnlocked'); sessionStorage.removeItem('pharmacyCentralSession'); accessGate.classList.remove('unlocked'); document.body.classList.add('staff-locked'); $('accessCode').value=''; $('accessError').textContent=''; $('pinSetupForm').hidden=!showSetup; $('pinSetupError').textContent=''; setTimeout(()=>(showSetup?$('setupApiKey'):$('accessCode')).focus(),0); };
+      if(patientMode)unlockStaff();
+      $('accessForm').addEventListener('submit', async event => {
+        event.preventDefault();
+        const code = $('accessCode').value.trim();
+        const errorBox = $('accessError');
+        if (!/^\d{4,8}$/.test(code)) { errorBox.textContent='กรุณากรอก PIN ตัวเลข 4–8 หลัก'; return; }
+        errorBox.textContent='กำลังตรวจสอบ PIN ส่วนกลาง…';
+        const submitButton=event.submitter;if(submitButton)submitButton.disabled=true;
+        try{const response=await fetchTimed(endpoint(),{method:'POST',headers:{'content-type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'pharmacyLogin',pin:code})});const data=await response.json();if(!response.ok||!data.ok||!data.session)throw new Error(data.err||'unauthorized');sessionStorage.setItem('pharmacyCentralSession',data.session);sessionStorage.setItem('pharmacyStaffUnlocked','1');unlockStaff();errorBox.textContent='';loadRemote().catch(()=>{setCentralReady(false);state('ติดต่อฐานข้อมูลส่วนกลางไม่ได้ — ปิดการแก้ไขข้อมูลชั่วคราว');});}catch(error){if(error.message==='central_timeout')errorBox.textContent='ฐานข้อมูลส่วนกลางตอบช้า กรุณาลองใหม่อีกครั้ง';else if(error.message==='pin_not_set'){errorBox.textContent='ยังไม่ได้ตั้ง PIN ส่วนกลาง กรุณากด “ตั้งหรือเปลี่ยน PIN”';$('pinSetupForm').hidden=false}else if(error.message==='unknown action')errorBox.textContent='Apps Script ยังเป็นเวอร์ชันเก่า กรุณา Deploy เป็น New version';else errorBox.textContent='PIN ไม่ถูกต้อง หรือ Apps Script ยังเป็นเวอร์ชันเก่า';}finally{if(submitButton)submitButton.disabled=false;}
+      });
+      $('togglePinSetup').addEventListener('click',()=>{const form=$('pinSetupForm');form.hidden=!form.hidden;if(!form.hidden)$('setupApiKey').focus();});
+      $('pinSetupForm').addEventListener('submit',async event=>{event.preventDefault();const api=$('setupApiKey').value.trim();const pin=$('newPin').value.trim();const confirm=$('confirmPin').value.trim();const errorBox=$('pinSetupError');if(!/^[0-9]{4,8}$/.test(pin)){errorBox.textContent='PIN ต้องเป็นตัวเลข 4–8 หลัก';return}if(pin!==confirm){errorBox.textContent='PIN ทั้งสองช่องไม่ตรงกัน';return}errorBox.textContent='กำลังตรวจสอบ Apps Script…';try{let statusResponse;let statusData;try{statusResponse=await fetch(endpoint()+'?action=pharmacyPinStatus',{cache:'no-store'});statusData=await statusResponse.json()}catch(error){throw new Error('deployment_unreachable')}if(!statusResponse.ok||!statusData||statusData.ok!==1)throw new Error(statusData&&statusData.err?statusData.err:'deployment_unreachable');if(typeof statusData.configured!=='boolean'||Number(statusData.pinApiVersion||0)<2)throw new Error('old_version');errorBox.textContent='กำลังบันทึก PIN ส่วนกลาง…';const setResponse=await fetch(endpoint(),{method:'POST',headers:{'content-type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'pharmacySetPin',key:api,pin})});let setData;try{setData=await setResponse.json()}catch(error){throw new Error('deployment_unreachable')}if(!setResponse.ok||!setData.ok)throw new Error(setData.err||'unauthorized');const loginResponse=await fetch(endpoint(),{method:'POST',headers:{'content-type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'pharmacyLogin',pin})});const loginData=await loginResponse.json();if(!loginResponse.ok||!loginData.ok||!loginData.session)throw new Error(loginData.err||'login_failed');localStorage.setItem(keyName,api);sessionStorage.setItem('pharmacyCentralSession',loginData.session);sessionStorage.setItem('pharmacyStaffUnlocked','1');const items=await loadRemote();cacheRemote(items);renderRows();unlockStaff();$('pinSetupForm').reset();errorBox.textContent='';}catch(error){const messages={deployment_unreachable:'เปิด Web App URL ไม่ได้ กรุณาคัดลอก URL /exec จาก Deployment ที่ใช้งานอยู่มาใส่ใหม่',old_version:'Apps Script ยังเป็นเวอร์ชันเก่า กรุณา Deploy โค้ด PIN เวอร์ชัน 2 เป็น New version',unauthorized:'API key ไม่ตรงกับค่า API_KEY ใน Apps Script',invalid_pin:'Apps Script ตรวจรูปแบบ PIN ผิด กรุณาอัปเดตโค้ดและ Deploy New version'};errorBox.textContent=messages[error.message]||'ตั้ง PIN ไม่สำเร็จ: '+error.message;}});
+      $('logoutBtn').addEventListener('click',()=>lockStaff(false));
+      $('changeCodeBtn').addEventListener('click',()=>lockStaff(true));
+      const itemFromForm = () => {
+        const unit = $('unit').value; recalculateQuantity();
+        return ({
+        hn: $('hn').value.trim(), patient: $('patient').value.trim(), drug: $('drug').value.trim(), unit, quantity: $('quantity').value.trim(),
+        prescribedQuantity: quantityText($('prescribedQuantity').value,unit), dispensedQuantity: quantityText($('dispensedQuantity').value,unit), availableDate: $('availableDate').value,
+        status: $('status').value, note: $('note').value.trim(), receiveMethod: $('receiveMethod').value, recipientName: $('recipientName').value.trim(),
+        phone1: $('phone1').value.trim(), phone2: $('phone2').value.trim(), deliveryAddress: $('deliveryAddress').value.trim()
+      })};
+      const updatedLabel = value => value ? new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : '-';
+      const renderRemoteQr = item => {
+        if (!item || !item.publicToken || patientMode) return;
+        const value = location.origin + location.pathname.replace(/[^/]*$/, '') + 'status.html?token=' + encodeURIComponent(item.publicToken);
+        qr = new QRious({ element: $('qr'), size: 220, level: 'L', value });
+        const target = $('printQr');
+        if (target) new QRious({ element: target, size: 260, level: 'L', value });
+      };
+      const show = item => { view(item); if (!patientMode && $('details')) $('details').insertAdjacentHTML('beforeend', '<div class="row"><span class="key">อัปเดตสถานะล่าสุด</span><span>'+updatedLabel(item.updatedAt)+'</span></div>'); if (!patientMode && !item.publicToken) { $('qrbox').innerHTML = '<p style="padding:24px 8px;color:#8a5c00;font-weight:700">QR ยังไม่พร้อม กรุณาสร้างและบันทึกใบแจ้งผ่านฐานข้อมูลกลาง</p>'; return; } renderRemoteQr(item); };
+      window.openItem = id => {
+        const item = getAll().find(x => String(x.id) === String(id));
+        if (!item) return;
+        activeId = item.id;
+        loadIntoForm(item);
+        show(item);
+        if (location.hash.slice(1) !== item.id) history.replaceState(null, '', '#' + item.id);
+      };
+      const cacheSharedDrugNames = names => {
+        const unique=[...new Map((names||[]).map(name=>String(name||'').trim()).filter(Boolean).map(name=>[name.toLocaleLowerCase('th'),name])).values()];
+        localStorage.setItem(drugNamesKey,JSON.stringify(unique));refreshDrugSuggestions();return unique;
+      };
+      async function loadSharedDrugNames(){
+        if(!isRemote())return getImportedDrugNames();
+        const data=await request('?action=pharmacyDrugList');
+        const remoteNames=data.names||[];const localNames=getImportedDrugNames();
+        const merged=[...new Map([...remoteNames,...localNames].map(name=>String(name||'').trim()).filter(Boolean).map(name=>[name.toLocaleLowerCase('th'),name])).values()];
+        let names=merged;const remoteKeys=new Set(remoteNames.map(name=>String(name||'').trim().toLocaleLowerCase('th')));const hasLocalMissing=localNames.some(name=>!remoteKeys.has(String(name||'').trim().toLocaleLowerCase('th')));
+        if(hasLocalMissing){const saved=await request('',{method:'POST',headers:{'content-type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'pharmacyDrugSave',names:merged})});names=saved.names||merged;}
+        names=cacheSharedDrugNames(names);
+        const el=$('drugImportState');if(el)el.textContent=`รายชื่อยาส่วนกลาง ${names.length} รายการ`;
+        return names;
+      }
+      window.saveSharedDrugNames=async names=>{
+        if(!isRemote())throw new Error('กรุณาเข้าสู่ระบบและเชื่อมต่อฐานข้อมูลกลางก่อนนำเข้ารายชื่อยา');
+        const data=await request('',{method:'POST',headers:{'content-type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'pharmacyDrugSave',names:names||[]})});
+        return cacheSharedDrugNames(data.names||[]);
+      };
+      async function loadRemote() {
+        if (!hasCentralCredentials()) { setCentralReady(false); state('ยังไม่ได้เชื่อมต่อฐานข้อมูลส่วนกลาง'); throw new Error('central_not_connected'); }
+        state('กำลังดึงข้อมูลล่าสุด…');
+        try {
+          const data=await request('?action=pharmacyList');const items=data.items||[];
+          setCentralReady(true);cacheRemote(items);renderRows();state('เชื่อมต่อฐานข้อมูลกลางแล้ว');loadSharedDrugNames().catch(()=>{});
+          return items;
+        } catch (error) {
+          setCentralReady(false);
+          if(error.message==='unauthorized'&&sessionToken()){
+            lockStaff(false);
+            $('accessError').textContent='สิทธิ์เข้าสู่ระบบหมดอายุ กรุณากรอก PIN อีกครั้ง';
+            state('สิทธิ์เข้าสู่ระบบหมดอายุ — กรุณาเข้าสู่ระบบใหม่');
+          }else{
+            state('ติดต่อฐานข้อมูลส่วนกลางไม่ได้ — ปิดการสร้าง แก้ไข และลบข้อมูลชั่วคราว');
+          }
+          throw error;
+        }
+      }
+      async function createRemote(item = {}) {
+        const data = await request('', { method: 'POST', headers: { 'content-type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'pharmacyCreate', key: apiKey(), item }) });
+        cacheRemote([data.item, ...getAll().filter(x => x.id !== data.item.id)]);
+        return data.item;
+      }
+      async function updateRemote(id, item) {
+        const data = await request('', { method: 'POST', headers: { 'content-type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'pharmacyUpdate', key: apiKey(), id, item }) });
+        cacheRemote(getAll().map(x => x.id === data.item.id ? data.item : x));
+        return data.item;
+      }
+      async function saveCurrent(event, printAfter = false) {
+        if (event) { event.preventDefault(); event.stopImmediatePropagation(); }
+        if(!isRemote()){alert('ไม่สามารถบันทึกได้ เนื่องจากติดต่อฐานข้อมูลส่วนกลางไม่ได้\nกรุณารอให้เชื่อมต่อสำเร็จแล้วลองใหม่');return;}
+        try{const existing=getAll().find(x=>x.id===activeId);const item=existing&&existing.publicToken?await updateRemote(existing.id,itemFromForm()):await createRemote(itemFromForm());activeId=item.id;location.hash=item.id;loadIntoForm(item);show(item);renderRows();state('บันทึกข้อมูลล่าสุดแล้ว: '+updatedLabel(item.updatedAt));savedFeedback(item.updatedAt);if(printAfter)setTimeout(()=>window.print(),100);}catch(error){setCentralReady(false);alert('บันทึกไม่สำเร็จ เนื่องจากติดต่อฐานข้อมูลส่วนกลางไม่ได้');}
+      }
+      $('entryForm').addEventListener('submit', event => saveCurrent(event), true);
+      $('printBtn').onclick = () => saveCurrent(null, true);
+      $('newDraftBtn').onclick = async () => {
+        if(!isRemote()){alert('ไม่สามารถสร้างเลขที่และ QR ได้ เนื่องจากติดต่อฐานข้อมูลส่วนกลางไม่ได้');return;}
+        try{const item=await createRemote();activeId=item.id;location.hash=item.id;loadIntoForm(item);show(item);renderRows();state('สร้างและบันทึก QR แล้ว: '+item.id+' — QR นี้คงเดิม');draftFeedback(item);}catch(error){setCentralReady(false);alert('สร้างใบแจ้งไม่สำเร็จ เนื่องจากติดต่อฐานข้อมูลส่วนกลางไม่ได้');}
+      };
+      $('deleteBtn').onclick = async () => {
+        const item = getAll().find(x => x.id === activeId);
+        if (!item || !confirm('ลบรายการนี้ใช่หรือไม่?')) return;
+        try {
+          if(!isRemote())throw new Error('ติดต่อฐานข้อมูลส่วนกลางไม่ได้');
+          try{await request('',{method:'POST',headers:{'content-type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'pharmacyDelete',id:item.id})});}catch(remoteError){if(remoteError.message!=='not_found')throw remoteError;}
+          cacheRemote(getAll().filter(x => x.id !== item.id));
+          activeId=null;history.replaceState(null,'',location.pathname+location.search);
+          $('entryForm').reset();$('quantity').value='';$('referencePreview').value='';
+          $('result').classList.remove('show');$('lookupEmpty').style.display='block';$('printPreview').innerHTML='';
+          renderRows();state('ลบรายการ '+item.id+' เรียบร้อยแล้ว');deletedFeedback(item.id);
+        } catch (error) { alert('ลบรายการไม่สำเร็จ: ' + (error.message || 'ไม่สามารถติดต่อฐานข้อมูลส่วนกลางได้')); }
+      };
+      $('lookupBtn').onclick = async () => {
+        try{await loadRemote();const item=getAll().find(x=>x.id===$('lookup').value.trim().toUpperCase());if(item){activeId=item.id;loadIntoForm(item);show(item);history.replaceState(null,'','#'+item.id);}else alert('ไม่พบรายการ');}catch{alert('ไม่สามารถค้นหาได้ เนื่องจากติดต่อฐานข้อมูลส่วนกลางไม่ได้');}
+      };
+      $('saveDatabaseKey').onclick = async () => {
+        localStorage.setItem('upSyncUrl', $('databaseUrl').value.trim()); localStorage.setItem(keyName, $('databaseKey').value.trim());
+        try { await loadRemote(); source.open = false; } catch (error) { state(error.message === 'deployment_not_found' ? 'เชื่อมต่อไม่สำเร็จ: ไม่พบ Deployment นี้ กรุณา Deploy Apps Script ใหม่แล้วนำ URL /exec ใหม่มาใส่' : error.message === 'unauthorized' ? 'เชื่อมต่อไม่สำเร็จ: API key ไม่ตรงกับ Google Apps Script' : error.message === 'unknown action' ? 'เชื่อมต่อไม่สำเร็จ: กรุณา Deploy Apps Script เวอร์ชันใหม่จากหน้าระบบรายงานยา' : error.message === 'connection_failed' ? 'เชื่อมต่อไม่สำเร็จ: Apps Script ตอบกลับไม่ถูกต้อง กรุณาตรวจสอบ Deployment' : 'เชื่อมต่อไม่สำเร็จ: ' + error.message); }
+      };
+      $('refreshDatabase').onclick = () => loadRemote().catch(error => state(error.message==='central_timeout'?'ฐานข้อมูลส่วนกลางตอบช้า กรุณาลองใหม่':'เชื่อมต่อไม่สำเร็จ — ปิดการแก้ไขข้อมูลชั่วคราว'));
+      $('databaseUrl').value = endpoint(); $('databaseKey').value = apiKey();
+      $('openOrtho').onclick = () => { location.href = '../approval-reports/'; };
+      document.body.classList.remove('portal-mode');
+      const reconnect=()=>{if(!patientMode&&sessionStorage.getItem('pharmacyStaffUnlocked')==='1'&&hasCentralCredentials()&&!centralReady)loadRemote().catch(()=>{});};
+      window.addEventListener('online',reconnect);setInterval(reconnect,30000);
+      if (patientMode) {
+        const token = new URLSearchParams(location.search).get('token');
+        if (token) {
+          fetch(endpoint() + '?action=pharmacyPatient&token=' + encodeURIComponent(token)).then(r => r.json()).then(data => {
+            if (data.ok) showPatient(data.item); else { document.body.classList.add('patient-mode'); $('patientScreen').innerHTML = '<section class="scan-hero"><div class="scan-tag">ห้องยา</div><h1>ไม่พบรายการ</h1><p>กรุณาติดต่อห้องยา</p></section>'; }
+          }).catch(() => { document.body.classList.add('patient-mode'); $('patientScreen').innerHTML = '<section class="scan-hero"><div class="scan-tag">ห้องยา</div><h1>ไม่สามารถเชื่อมต่อข้อมูล</h1><p>กรุณาลองใหม่ภายหลัง หรือติดต่อห้องยา</p></section>'; });
+        }
+      } else {
+        if(sessionToken()){sessionStorage.setItem('pharmacyStaffUnlocked','1');unlockStaff();}
+        loadRemote().then(items => { const id = location.hash.slice(1); const item = items.find(x => x.id === id); if (item) { loadIntoForm(item); show(item); } }).catch(() => state(sessionToken()?'ติดต่อฐานข้อมูลส่วนกลางไม่ได้ — ปิดการแก้ไขข้อมูลชั่วคราว':'กรุณาเข้าสู่ระบบด้วย PIN ส่วนกลาง'));
+      }
+    })();
+  </script>
+</body>
+</html>
+
+
