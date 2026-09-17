@@ -34,13 +34,13 @@ const validStockData=value=>!!value&&Array.isArray(value.drugs)&&Array.isArray(v
 function normalize(){db.nextRefill=Math.max(0,...db.refills.map(x=>Number(x.id)||0))+1;db.imports=db.imports||[]}
 async function pullCentral(force=false){
  if(!enabled())return;
- if(!force&&centralState==='ready'&&Date.now()-lastPull<5000)return;
+ if(!force&&Date.now()-lastPull<5000)return;
  try{
   const result=await centralRequest();
   if(result.data){if(!validStockData(result.data))throw Error('Apps Script ยังเป็นเวอร์ชันเก่า กรุณา Deploy เวอร์ชันใหม่');db=result.data;normalize();save();centralVer=result.ver||0}
   else if(db){normalize();const saved=await centralRequest({action:'stockSave',data:db,baseVer:0});centralVer=saved.ver||0}
   centralState='ready';centralMessage='เชื่อมต่อฐานข้อมูลกลางแล้ว';lastPull=Date.now();
- }catch(error){setCentralError(error)}
+ }catch(error){lastPull=Date.now();setCentralError(error)}
 }
 async function pushCentral(previous){
  if(!enabled())return;
